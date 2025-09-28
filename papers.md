@@ -11,7 +11,7 @@ These are the classic papers that established the core principles of the field.
       * **Authors:** Carver Mead (1990)
       * **Why it's important:** This is the paper that started it all. Mead lays out the philosophical and engineering vision for building electronic systems that mimic the structure and principles of the brain, emphasizing low-power, parallel, and event-driven computation.
 
-  * **Title:** **[A 128x128 120 dB 15 µs Latency Asynchronous Temporal Contrast Vision Sensor](https://www.google.com/search?q=https://www.ini.uzh.ch/~tobi/papers/lichtsteiner-jssc08.pdf)**
+  * **Title:** **[A 128x128 120 dB 15 µs Latency Asynchronous Temporal Contrast Vision Sensor](https://www.ifi.uzh.ch/dam/jcr:18928364-d16b-4403-9217-2098aaad72bd/lichtsteiner_dvs_jssc08.pdf)**
 
       * **Authors:** P. Lichtsteiner, C. Posch, and T. Delbruck (2008)
       * **Why it's important:** This is the landmark paper introducing the first practical, high-performance Dynamic Vision Sensor (DVS), the basis for modern event cameras. It demonstrated the key advantages of asynchronous, sparse event generation for vision.
