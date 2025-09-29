@@ -16,10 +16,9 @@ These are the classic papers that established the core principles of the field.
       * **Authors:** P. Lichtsteiner, C. Posch, and T. Delbruck (2008)
       * **Why it's important:** This is the landmark paper introducing the first practical, high-performance Dynamic Vision Sensor (DVS), the basis for modern event cameras. It demonstrated the key advantages of asynchronous, sparse event generation for vision.
 
-  * **Title:** **[Synaptic plasticity: timing is everything](https://www.ifi.uzh.ch/dam/jcr:18928364-d16b-4403-9217-2098aaad72bd/lichtsteiner_dvs_jssc08.pdf)**
+  [Bi & Poo, 1998] “Synaptic Modifications in Cultured Hippocampal Neurons: Dependence on Spike Timing, Synaptic Strength, and Postsynaptic Cell Type”, J. Neurosci. 18:10464–10472. DOI: 10.1523/JNEUROSCI.18-24-10464.1998  
+PDF verzija dostupna na ResearchGate: “Synaptic Modifications in Cultured Hippocampal Neurons (Bi & Poo, 1998)” https://www.jneurosci.org/content/jneuro/18/24/10464.full.pdf   
 
-      * **Authors:** Guo-qiang Bi and Mu-ming Poo (1998)
-      * **Why it's important:** This highly influential neuroscience paper experimentally established Spike-Timing-Dependent Plasticity (STDP), a fundamental biological learning rule. STDP has been a major inspiration for learning algorithms in SNNs.
 
 ### 🧠 2. Neuromorphic Hardware (Brainchips)
 
