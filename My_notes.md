@@ -108,7 +108,7 @@ RECEPTOR CIRCUIT SADRŽI: fotodiodu, tranzistor, amplifier -> "TRANSIMPEDANCE CO
 Povećan bandwith -> veća brzina
 adaptive biasing -> znatno manja potrošnja energije
 reset switch -> OKIDA input i output zajedno i tako resetira napon
----------------------------------------------------------------------
+
 OVO OPISUJE ONAJ PROCES KADA SE EVENT POJAVI NA KAMERI I ONDA SAMO IZBLJEDI I RESETIRA SE
 
 ON i OFF eventi -> circuit ih emitira u periferiju
@@ -121,7 +121,7 @@ omogućava da se više resursa posveti aktivnijim područjima (procesiraš ono d
 Cilj je da se circuit ne pregrijava pretjerano, da ne troši resurse nepotrebno, da radi samo kad se nešto događa
 
 KARAKTERISTIKE NAJVAŽNIJIH ASPEKATA:
------------------------------------------
+
 Uniformity of response - vraća razliku u osvjetljenju piksela -> bitno je uniformno i standardizirano evaluirati promjene
 Dynamic range - razlika imzeđu maksimalnog i minimalnog osvjetljenja u "sceni" kroz piksele; reliable and reproducible events
 Pixel bandwith - iznos raspona jačine najjačeg i najslabijeg intenziteta koji 1 piksel "prepozna"/"odradi". Stariji i noviji eventi se razlikuju u intenzitetu; intenzitet opada protokom vremena (fade-out)
