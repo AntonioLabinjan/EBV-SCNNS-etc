@@ -129,9 +129,9 @@ Latency&Latency jitter - ideja: ča je osvjetljenje manje, latencija je veća =>
 Utvrđeno je kako je latencija ipak jako mala u svim uvjetima (SUPER ZA REAL-TIME PROCESSING)
 
 
-###Synaptic modifications in cultured hippocampal neurons:
-###Dependence on spike timing, synaptic strength and postsynaptic cell type
-###Guo-qiang Bi&Mu-ming Poo
+### Synaptic modifications in cultured hippocampal neurons:
+### Dependence on spike timing, synaptic strength and postsynaptic cell type
+### Guo-qiang Bi&Mu-ming Poo
 
 Eksperimenti rađeni na hipokampusnim neuronima štakora
 Postsinaptički i presinaptički neuroni
