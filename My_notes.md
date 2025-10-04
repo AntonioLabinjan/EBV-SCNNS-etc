@@ -82,18 +82,18 @@ Evo ti jasno u natuknicama:
 * Na svaki piksel primjenjuje kernel (konvolucijsku masku) koji aproksimira Laplacian operator.
 * Tipični kernel izgleda npr. ovako:
 Laplacian filter kerneli:
-
+```
 0  -1   0
 -1  4  -1
 0  -1   0
-
+```
 
 i "jača" verzija:
-
+```
 -1  -1  -1
 -1   8  -1
 -1  -1  -1
-
+```
 
 * Kad se primijeni, filter daje visoke vrijednosti na mjestima gdje postoji jaka promjena intenziteta → tj. rub.
 
