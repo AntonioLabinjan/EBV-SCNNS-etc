@@ -60,7 +60,69 @@ Triggera izlaz kad sve skupa dosegne kritičnu vrijednost (threshold).
 - Računa se prosjek prostorno weighted inputa (ne vrijedi svaki input jednako, ovisno o poziciji)
 - Cilj je napraviti senzor sličan oku koji može reagirati na sve inpute, neovisno od kud dolaze i koji im je intenzitet (zato se koriste weightovi)
 - Koriste se amplifieri kako bi se bolje simulirao pravi potencijal živčanog sustava
-- Laplacian filter => ISTRAŽIT MALO DETALJNIJE
+- Laplacian filter => edge detction filter
+
+Ajmeee, top što pitaš za Laplacian filter! 🔥 To ti je jedan od najpoznatijih **edge detection filtera** u računalnom vidu i obradi slika.
+
+Evo ti jasno u natuknicama:
+
+---
+
+### 🔹 Što je Laplacian filter?
+
+* **Matematički temelj:** koristi **Laplacian operator** (druga derivacija funkcije).
+* **Poanta:** pronalazi mjesta gdje se intenzitet slike brzo mijenja → tj. rubove (*edges*).
+* Za razliku od Sobel/Prewitt (koji koriste prvu derivaciju i detektiraju smjer ruba), Laplacian gleda **drugu derivaciju** → pa je osjetljiv na *naglu promjenu nagiba*.
+
+---
+
+### 🔹 Kako radi na slici?
+
+* Sliku gleda kao **matricu piksela**.
+* Na svaki piksel primjenjuje kernel (konvolucijsku masku) koji aproksimira Laplacian operator.
+* Tipični kernel izgleda npr. ovako:
+
+[
+\begin{bmatrix}
+0 & -1 & 0 \
+-1 & 4 & -1 \
+0 & -1 & 0
+\end{bmatrix}
+]
+
+ili malo “jača” verzija:
+
+[
+\begin{bmatrix}
+-1 & -1 & -1 \
+-1 & 8 & -1 \
+-1 & -1 & -1
+\end{bmatrix}
+]
+
+* Kad se primijeni, filter daje visoke vrijednosti na mjestima gdje postoji jaka promjena intenziteta → tj. rub.
+
+---
+
+### 🔹 Zašto je koristan?
+
+* Detektira rubove **neovisno o smjeru** (Sobel detektira horizontalne/vertikalne, Laplacian je “isotropic”).
+* Jako dobar za **naglašavanje struktura** i **detekciju kontura**.
+* Često se koristi nakon blura (npr. Gaussian blur + Laplacian = *Laplacian of Gaussian*, LoG) → to pomaže da se smanji šum.
+
+---
+
+### 🔹 Intuicija
+
+* Ako piksel izgleda “sličan” susjedima → rezultat ≈ 0.
+* Ako je piksel jako različit od susjeda → rezultat velik (pozitivan ili negativan) → to je rub.
+
+---
+
+👉 Ukratko: **Laplacian filter je edge detector baziran na drugoj derivaciji, hvata rubove u svim smjerovima i jako se koristi u računalnom vidu.**
+
+
+
 - Pomaže u lokalizaciji objekata (odredimo di su u prostoru pomoću edge detectiona)
 - Bitno je napravit da se broj kalkulacija u oku/mozgu prilagodi broju vanjskih evenata (MOZAK NE PROCESIRA ISTU KOLIČINU PODATAKA AKO GLEDA U BIJELI ZID I AKO -GLEDA U NEŠTO POKRETNO I DINAMIČNO) => dali je to maybe event-based princip??
 - Cilj: više kalkulacija za više evenata; manje kalkulacija za manje evenata
