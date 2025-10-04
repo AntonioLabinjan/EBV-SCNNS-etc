@@ -916,67 +916,68 @@ Slaganjem više TrueNorth brainchipova, mogu nastati superračunala sa stotinama
 Arhitektura -> slika -> svaki node je spojen sa svakim (node = core, edge = neural connection)
 
 #####################################################################################################
-Naša san video SNN in 5 minutes...pa zaš ne hitit oko
-Mozak jako efikasno procesira informacije
-SNNovi su novi tip AI inspiriran komunikacijom mozga
-Obične neuronske baziraju se na kontinuiranim signalima, SNNovi koriste spikeove kao mozak
-Spikes => diskretni eventi koji se javljaju kroz vrijeme
-Realitičniji i efikasniji za obradu temporalnih informacija (informacije koji nisu statične, nego imaju vremensku "dimenziju"...videa, signali, živčani signali, eventi za event kamere i sl.)
-Real time procesiranje, event based vision, robotika, autonomna vozila
+- Naša san video SNN in 5 minutes...pa zaš ne hitit oko
+- Mozak jako efikasno procesira informacije
+- SNNovi su novi tip AI inspiriran komunikacijom mozga
+- Obične neuronske mreže baziraju se na kontinuiranim signalima, SNNovi koriste spikeove kao mozak
+- Spikes => diskretni eventi koji se javljaju kroz vrijeme
+- Realitičniji i efikasniji za obradu temporalnih informacija (informacije koji nisu statične, nego imaju vremensku "dimenziju"...videa, signali, živčani signali, eventi za event kamere i sl.)
+- Real time procesiranje, event based vision, robotika, autonomna vozila
 
 Komponente SNN-ova:
 - međusobno povezani neuroni
 - svaki neuron prima input od drugih
 - inputi su električni impulsi koje zovemo "spikes"
-Kad neuron primi dovoljno spikeova u kratkom periodu, "fire-a" svoj spike
-Tako neuroni komuniciraju
-Timing spikeova je ključan => enkodira informacije o inputu
-Ča je jači input, jači je i spike
-Sinapse - veze između neurona
-Synaptic plasticity - sposobnost da sinapsa jača ili slabi kroz vrijeme => tako se SNN-ovi adaptiraju i uče kroz vrijeme
-Primjer: spečemo se na peć, pain receptori pošalju spikeove mozgu, to pojačava vezu među neuronima zaduženim za točno taj proces (osjet boli zbog vruće peći), idući put kad smo blizu vrućeg objekta, mozak će brže prepoznati opasnost i brže ćemo reagirati => synaptic plasticity IRL
+
+- Kad neuron primi dovoljno spikeova u kratkom periodu, "fire-a" svoj spike
+- Tako neuroni komuniciraju
+- Timing spikeova je ključan => enkodira informacije o inputu
+- Ča je jači input, jači je i spike
+- Sinapse - veze između neurona
+- Synaptic plasticity - sposobnost da sinapsa jača ili slabi kroz vrijeme => tako se SNN-ovi adaptiraju i uče kroz vrijeme
+- Primjer: spečemo se na peć, pain receptori pošalju spikeove mozgu, to pojačava vezu među neuronima zaduženim za točno taj proces (osjet boli zbog vruće peći), idući put kad smo blizu vrućeg objekta, mozak će brže prepoznati opasnost i brže ćemo reagirati => synaptic plasticity IRL
 
 Encoding information => kako pretvorit real-world data u spike patterne?
-Pretvorba našeg jezika u jezik neurona
+- Pretvorba našeg jezika u jezik neurona
 
 
 
-Rate coding -> frequency spikeova predstavlja intenzitet inputa => ča je input jači, to ima više spikeova...tipa...video koji prikazuje high-speed let drona stvara više spikeova nego video bijelega zida na kojemu se niš ne dešava
+- Rate coding -> frequency spikeova predstavlja intenzitet inputa => ča je input jači, to ima više spikeova...tipa...video koji prikazuje high-speed let drona stvara više spikeova nego video bijelega zida na kojemu se niš ne dešava
 
-Najklasičniji i najčešće korišten model.
+- Najklasičniji i najčešće korišten model.
 
-Frekvencija spikeova = intenzitet podražaja.
+- Frekvencija spikeova = intenzitet podražaja.
 
-Tvoj primjer s dronom je savršen — ako kamera “vidi” puno promjena → neuroni će ispucavati puno spikeova. Ako je scena statična (bijeli zid), spikeova gotovo da nema.
+- Tvoj primjer s dronom je savršen — ako kamera “vidi” puno promjena → neuroni će ispucavati puno spikeova. Ako je scena statična (bijeli zid), spikeova gotovo da nema.
 👉 Ograničenje: sporije reagira jer se čeka da se skupi određeni broj spikeova da bi se dobila jasna slika intenziteta.
 
-Temporal coding -> koristi se precizni timing spikeova za prijenos informacija. Točno vrijeme kad se spike dogodi može biti ključno; posebno za taskove gdje je bitno vrijeme i praćenje sekvenci
+- Temporal coding -> koristi se precizni timing spikeova za prijenos informacija. Točno vrijeme kad se spike dogodi može biti ključno; posebno za taskove gdje je bitno vrijeme i praćenje sekvenci
 
-Tu je važan točan trenutak kad spike dođe.
+- Tu je važan točan trenutak kad spike dođe.
 
-Čak i ako je broj spikeova isti, različit raspored u vremenu može nositi različite informacije.
+- Čak i ako je broj spikeova isti, različit raspored u vremenu može nositi različite informacije.
 
-Super za event-based senzore i zadatke gdje redoslijed i precizno vrijeme imaju smisla (npr. prepoznavanje govora, ritma, ili točno kada je objekt ušao u vidno polje).
+- Super za event-based senzore i zadatke gdje redoslijed i precizno vrijeme imaju smisla (npr. prepoznavanje govora, ritma, ili točno kada je objekt ušao u vidno polje).
 👉 Prednost: može biti ekstremno energetski efikasno, jer mali broj spikeova može nositi puno info.
 
-Population coding -> koristi se grupa neurona da predstavlja 1 input. Svaki neuron u populaciji predstavlja specifični feature inputa. Potpuni pattern aktivnosti kroz populaciju predstavlja potpunu informaciju; npr. različiti neuroni mogu "fire-ati" za različite boje unutar slike
+- Population coding -> koristi se grupa neurona da predstavlja 1 input. Svaki neuron u populaciji predstavlja specifični feature inputa. Potpuni pattern aktivnosti kroz populaciju predstavlja potpunu informaciju; npr. različiti neuroni mogu "fire-ati" za različite boje unutar slike
 
-Radi se o skupinama neurona — svaki neuron se “pali” za određeni feature (npr. specifičnu boju, kut linije, smjer kretanja).
+- Radi se o skupinama neurona — svaki neuron se “pali” za određeni feature (npr. specifičnu boju, kut linije, smjer kretanja).
 
-Informacija se dobiva iz kolektivnog uzorka aktivnosti svih neurona.
+- Informacija se dobiva iz kolektivnog uzorka aktivnosti svih neurona.
 
-Primjer: u vidnom korteksu mozga različiti neuroni su specijalizirani za različite orijentacije linija → cijela populacija ti daje kompletnu reprezentaciju slike.
+- Primjer: u vidnom korteksu mozga različiti neuroni su specijalizirani za različite orijentacije linija → cijela populacija ti daje kompletnu reprezentaciju slike.
 👉 Ovo je “robustnije” jer se informacija ne oslanja na jedan neuron nego na distribuciju aktivnosti kroz cijelu populaciju.
 
-Neuron model
-LIFT model => matematički model toga kako neuroni procesiraju spikeove
-Kanta s vodom => neuron
-Kapljice vode => nadolazeći spikeovi
-Svaki spike dodaje malo vode u kantu/napona u neuron
+- Neuron model
+- LIFT model => matematički model toga kako neuroni procesiraju spikeove
+- Kanta s vodom => neuron
+- Kapljice vode => nadolazeći spikeovi
+- Svaki spike dodaje malo vode u kantu/napona u neuron
 
-Kanta ima malu škulju koja uzorkuje da sporo gubi vodu kroz vrijeme => to predstavlja slabljenje napona u neuronu s prolaskom vremena (ono kad na kameri event izblijedi)
-Ako se kanta napuni i prelije, to je ekvivalentno temu kad neuron dobije dovoljno napona da postigne spike i resetira se  da bi mogao obrađivati novu rundu inputa => neuron fireing
+- Kanta ima malu škulju koja uzorkuje da sporo gubi vodu kroz vrijeme => to predstavlja slabljenje napona u neuronu s prolaskom vremena (ono kad na kameri event izblijedi)
+- Ako se kanta napuni i prelije, to je ekvivalentno temu kad neuron dobije dovoljno napona da postigne spike i resetira se  da bi mogao obrađivati novu rundu inputa => neuron fireing
 
-Moremo prilagođavat koliko se voda gubi i potrebnu količinu vode da se kanta napuni (dakle; tunable parametri su threshold za spike i vrijeme slabljenja eventa)
+- Moremo prilagođavat koliko se voda gubi i potrebnu količinu vode da se kanta napuni (dakle; tunable parametri su threshold za spike i vrijeme slabljenja eventa)
 
-Za slaganje SNN-ova => neuroni + sinapse + definiranje kako sinapse uče + layeri neurona + broj neurona u layeru
+- Za slaganje SNN-ova => neuroni + sinapse + definiranje kako sinapse uče + layeri neurona + broj neurona u layeru
