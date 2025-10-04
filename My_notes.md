@@ -981,3 +981,6 @@ Encoding information => kako pretvorit real-world data u spike patterne?
 - Moremo prilagođavat koliko se voda gubi i potrebnu količinu vode da se kanta napuni (dakle; tunable parametri su threshold za spike i vrijeme slabljenja eventa)
 
 - Za slaganje SNN-ova => neuroni + sinapse + definiranje kako sinapse uče + layeri neurona + broj neurona u layeru
+
+RATE VS TEMPORAL: 
+https://github.com/AntonioLabinjan/Simulation-of-rate-and-temporal-coding/tree/master
