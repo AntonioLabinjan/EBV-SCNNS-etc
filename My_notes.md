@@ -117,6 +117,100 @@ i "jača" verzija:
 👉 Ukratko: **Laplacian filter je edge detector baziran na drugoj derivaciji, hvata rubove u svim smjerovima i jako se koristi u računalnom vidu.**
 
 
+PRIMJER PRIMJENE by ChatGPT:
+
+Ajmo brutalno jednostavno da odmah sjedne 🔥
+
+---
+
+### 📌 Primjer matrice (mala “slika” 5×5 piksela)
+
+Zamisli da imaš grayscale sliku, gdje su vrijednosti piksela:
+
+```text
+10  10  10  10  10
+10  10 100  10  10
+10  10 100  10  10
+10  10 100  10  10
+10  10  10  10  10
+```
+
+👉 To ti je slika gdje imaš **vertikalnu bijelu crtu** (100) na sredini crne pozadine (10).
+
+---
+
+### 📌 Laplacian kernel (klasični)
+
+```text
+0  -1   0
+-1  4  -1
+0  -1   0
+```
+
+---
+
+### 📌 Primjena filtera (konvolucija)
+
+1. Uzimamo kernel 3×3 i stavljamo ga iznad piksela u centru (recimo sredina je `100`).
+2. Pomnožimo element po element i zbrojimo:
+
+```
+Kernel:          Dio slike:       Rezultat = sum(kernel * dio_slike)
+
+ 0  -1   0       10  100  10
+-1   4  -1   *   10  100  10   =   (0*10) + (-1*100) + (0*10) +
+ 0  -1   0       10  100  10       (-1*10) + (4*100) + (-1*10) +
+                                    (0*10) + (-1*100) + (0*10)
+
+= -100 -10 +400 -10 -100
+= 180
+```
+
+👉 Dakle u centru bijele crte izlazni piksel je **jako velik (180)** → filter ga označi kao rub.
+
+3. Ako isti kernel stavimo na dio pozadine (gdje su sve vrijednosti 10):
+
+```
+ 0  -1   0       10  10  10
+-1   4  -1   *   10  10  10   = (0*10) + (-1*10) + (0*10) +
+ 0  -1   0       10  10  10      (-1*10) + (4*10) + (-1*10) +
+                                  (0*10) + (-1*10) + (0*10)
+
+= -10 -10 +40 -10 -10
+= 0
+```
+
+👉 Rezultat = **0** → pozadina nema rub, pa filter ništa ne detektira.
+
+---
+
+### 📌 Zaključak
+
+* Na rubu (gdje se vrijednost naglo mijenja) dobiješ **visok rezultat**.
+* Na ravnom dijelu slike → rezultat ≈ **0**.
+
+---
+
+Primjenjuje se na cijelu sliku, dio po dio
+Evo kako to ide u praksi:
+
+Imaš cijelu sliku (npr. 512×512 piksela).
+
+Uzmemo kernel (mala matrica, npr. 3×3 ili 5×5).
+
+Kernel “klizi” po slici – piksel po piksel, red po red (to se zove konvolucija).
+
+Za svaki položaj:
+
+Uzmeš “komadić” slike iste veličine kao kernel.
+
+Pomnožiš element po element (kernel × slika).
+
+Zbrojiš sve rezultate → to je novi izlazni piksel u filtriranoj slici.
+
+Rezultat cijelog procesa = nova slika gdje su naglašeni rubovi (ili što god kernel radi).
+
+👉 Dakle, da, filter se primjenjuje na cijelu sliku, dio po dio, i rezultat je feature map (slika s naglašenim značajkama).
 
 - Pomaže u lokalizaciji objekata (odredimo di su u prostoru pomoću edge detectiona)
 - Bitno je napravit da se broj kalkulacija u oku/mozgu prilagodi broju vanjskih evenata (MOZAK NE PROCESIRA ISTU KOLIČINU PODATAKA AKO GLEDA U BIJELI ZID I AKO -GLEDA U NEŠTO POKRETNO I DINAMIČNO) => dali je to maybe event-based princip??
