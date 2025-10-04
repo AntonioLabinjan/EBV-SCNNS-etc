@@ -15,7 +15,46 @@ Neuromorphic Electronic Systems, Carver Mead, 1990
 - Mozak ima i sustave za dugotrajno učenje i memoriju
 - Dobro izgrađen sustav može simulirati učenje i pamćenje (silicon chips)
 - Neuromorphic sustavi su sustavi koji implementiraju iste operacija poput živčanog sustava
-- Zero-cost addition using Kirchhoff's Law => ISTRAŽIT ČA JE TO
+- Zero-cost addition using Kirchhoff's Law
+
+Kirchhoffov zakon (struja): u jednom čvoru zbroj svih struja koje ulaze = zbroj svih struja koje izlaze.
+
+Ako više izvora struje spojiš na isti čvor → automatski se saberu (nema dodatnih komponenti).
+
+Zero-cost addition = zbrajanje bez dodatnog sklopa → priroda elektronike sama radi računanje.
+
+Kapacitet čvora (parazitski ili namjerni kondenzator) integrira ukupnu struju tijekom vremena → dobiješ napon koji predstavlja zbroj.
+
+U digitalnim sklopovima bi ti za zbrajanje trebao adder (logika, tranzistori, energija).
+
+U neuromorfnim sklopovima: samo spojiš sinaptičke struje na čvor i dobiješ sabiranje “besplatno”.
+
+To je ultra-bitno jer neuron = integrator sinaptičkih ulaza → Kirchhoff + kapacitet daju ti točno tu funkcionalnost prirodno.
+
+Mead je rekao: iskoristi fiziku (Kirchhoffov zakon) umjesto da je “nadograđuješ” kompleksnim digitalnim adderima.
+
+👉 Ukratko: više sinapsi šalje spikeove kao struje → struje se automatski zbroje na membrani neurona → kondenzator integrira → izlaz = ponašanje biološkog neurona, i to praktički bez troška.
+
+Evo kako ide “story” u neuromorfnom hardveru i u mozgu:
+
+Više sinapsi šalje svoje “signale” (u elektronici kao struje, u mozgu kao ionski tokovi).
+
+Te sve struje ulaze u jedan čvor (membrana neurona).
+
+Po Kirchhoffovom zakonu → struje se automatski zbroje (ništa ne moraš posebno računati).
+
+Kondenzator membrane integrira taj ukupni signal kroz vrijeme → to daje membranski potencijal.
+
+Ako potencijal pređe određeni threshold → neuron ispali spike (akcijski potencijal).
+
+👉 Ukratko: Neuron radi kao prirodni zbrajač + integrator.
+
+Sabira ulaze (Kirchhoff).
+
+Pamti ih kroz vrijeme (kapacitor = integracija).
+
+Triggera izlaz kad sve skupa dosegne kritičnu vrijednost (threshold).
+
 - Zjenica oka se, pri direktom osvjetljenju čini svjetlijom/tamnijom u odnosu na okolinu, ovisno o okolini
 - Zjenica stvara napon po primitku inputa (svjetlosti)
 - Računa se prosjek prostorno weighted inputa (ne vrijedi svaki input jednako, ovisno o poziciji)
