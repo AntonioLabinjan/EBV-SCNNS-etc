@@ -2,6 +2,9 @@
 
 ## 🌐 General & Overarching Resources
 
+Vrhunski repo: https://github.com/uzh-rpg/event-based_vision_resources
+
+
 These resources provide a high-level overview and connect the different parts of the brain-inspired computing stack.
 
   * **Websites & Communities:**
