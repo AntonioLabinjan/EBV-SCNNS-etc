@@ -136,4 +136,3 @@ Ako želiš, mogu:
 * napraviti varijantu s drugim polaritetima izvora (da vidiš zamjenu znakova),
 * pokazati isto rješenje koristeći **KCL / nodalnu analizu** da usporedimo rezultate.
 
-Hoćeš li Python snippet odmah da možeš copy-paste i reproducirati rješenje? Idemo nabrijano — totalno je trivijalno za pokrenuti.
