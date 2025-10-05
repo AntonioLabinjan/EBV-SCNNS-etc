@@ -1,6 +1,3 @@
-Savršeno, Antonio! 🔥
-Evo **GitHub-friendly verzije** tvog README-a — bez LaTeX-a, sve formatirano tako da izgleda lijepo i čitljivo direktno na GitHubu (bez potrebe za MathJax/LaTeX renderom).
-Zadržao sam isti sadržaj, ali matrice sam prebacio u ASCII i dodao lagano formatiranje da sve „diše“.
 
 ---
 
