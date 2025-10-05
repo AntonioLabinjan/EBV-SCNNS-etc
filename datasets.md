@@ -64,3 +64,85 @@ These datasets focus on high-speed human motion, a task where event cameras natu
       * **Description:** A large-scale dataset of American Sign Language letters being signed, recorded with an event camera.
       * **Use Case:** More complex and fine-grained gesture recognition, useful for human-computer interaction research.
 
+
+Upute za caltech dataset
+This file is a spiking conversion of the Caltech101 dataset. The conversion process is described in:
+
+Orchard, G.; Cohen, G.; Jayawant, A.; and Thakor, N.  �Converting Static Image Datasets to Spiking Neuromorphic Datasets Using Saccades", Frontiers in Neuromorphic Engineering,  special topic on Benchmarks and Challenges for Neuromorphic Engineering
+
+
+Each example is a separate binary file (e.g. 'accordion\image_0001.bin') consisting of a list of events. Each event occupies 40 bits arranged as described below:
+
+bit 39 - 32: Xaddress (in pixels)
+bit 31 - 24: Yaddress (in pixels)
+bit 23: Polarity (0 for OFF, 1 for ON)
+bit 22 - 0: Timestamp (in microseconds)
+
+The filenames and directory structure match the original Caltech101 dataset so that spike recordings inlcuded here can be backtraced to the original images.
+
+
+A Matlab function for "Read_Ndataset.m" is provided for reading these binary files into Matlab, and a Matlab script "RunMe.m" shows how to read data in and use the provided Matlab functions
+
+
+Additional Matlab functions are available at: http://www.garrickorchard.com/code
+
+
+
+Bounding box and object contour annotations are provided for the data, each in a separate file (e.g. 'accordion\annotation_0001.bin'). Each file contains two boundaries. The first is a rectangular box, while the second traces out the object countour. A Matlab script is provided showing how to read the data into Matlab.
+
+For those wishing to write their own functions, the binary values are written as 16bit signed integers
+
+word 0: dimension of points for box (2 because these are 2D images)
+word 1: number of points in the box boundary ('N')
+word 2: 1st dimension of box point 1
+word 3: 2nd dimension of box point 1
+word 4: 1st dimension of box point 2
+word 5: 2nd dimension of box point 2
+.
+.
+.
+word N*2: 1st dimension of box point N
+word N*2+1: 2nd dimension of box point N
+
+word N*2+2: dimension of points for contour (2 because these are 2D images)
+word N*2+3: number of points in the contour boundary ('M')
+word N*2+4: 1st dimension of contour point 1
+word N*2+5: 2nd dimension of contour point 1
+word N*2+6: 1st dimension of contour point 2
+word N*2+7: 2nd dimension of contour point 2
+.
+.
+.
+word (N+M+1)*2: 1st dimension of contour point M
+word (N+M+1)*2+1: 2nd dimension of contour point M
+
+
+
+The bias parameters used by the ATIS during recording are:
+APSvrefL:  3050mV
+APSvrefH:  3150mV
+APSbiasOut: 750mV
+APSbiasHyst: 620mV
+CtrlbiasLP: 620mV
+APSbiasTail: 700mV
+CtrlbiasLBBuff: 950mV
+TDbiasCas: 2000mV
+CtrlbiasDelTD: 400mV
+TDbiasDiffOff: 620mV
+CtrlbiasSeqDelAPS: 320mV
+TDbiasDiffOn: 780mV
+CtrlbiasDelAPS: 350mV
+TDbiasInv: 880mV
+biasSendReqPdY: 850mV
+TDbiasFo: 2950mV
+biasSendReqPdX: 1150mV
+TDbiasDiff: 700mV
+CtrlbiasGB: 1050mV
+TDbiasBulk: 2680mV
+TDbiasReqPuY: 810mV
+TDbiasRefr: 2900mV
+TDbiasReqPuX: 1240mV
+TDbiasPR: 3150mV
+APSbiasReqPuY: 1100mV
+APSbiasReqPuX: 820mV
+
