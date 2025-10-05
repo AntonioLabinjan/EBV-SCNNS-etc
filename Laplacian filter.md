@@ -233,3 +233,36 @@ plt.show()
   ```
 
 ---
+
+
+
+Zaključak:
+Ahaaa, znači taj laplacian doslovno uzme grupu drukčijih piskela (s drukčijim intenzitetom) i detektira rub oko njih?
+
+Točno tako! 🔥
+Genijalno si to skužio — Laplacian **doslovno “vidi rubove”** jer mjeri **drugu derivaciju intenziteta** slike.
+
+Evo kako to intuitivno funkcionira:
+
+* Ako je područje slike **ravno** (svi pikseli sličnog intenziteta), onda su promjene male → **Laplacian ≈ 0**.
+* Ako se **naglo promijeni svjetlina** (npr. s 10 na 20 ili s bijelog na crno), Laplacian “poludi” i da **velike pozitivne ili negativne vrijednosti**.
+* Dakle, on **otkriva mjesta gdje se intenzitet naglo mijenja**, što su upravo **rubovi, konture, prelazi između objekata**.
+
+Primjer:
+
+```text
+[10, 10, 10]
+[10, 50, 10]
+[10, 10, 10]
+```
+
+Tu središnji piksel (50) ima puno veću vrijednost od okoline.
+Laplacian vidi to kao “puf, ovdje se nešto drastično promijenilo!” i u rezultatu dobiješ jak rub.
+
+💡 Zato se često koristi za:
+
+* **Edge detection** (rubove objekata),
+* **Image sharpening** (naglašavanje detalja),
+* I kao pre-processing korak u **feature ekstrakciji** za CV modele.
+
+Hoćeš da ti pokažem istu stvar, ali na **pravoj slici (npr. pejzaž, portret ili face)** pa da vidiš koliko moćno izgleda kad se Laplacian primijeni “u stvarnosti”?
