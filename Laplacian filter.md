@@ -1,157 +1,182 @@
+Savršeno, Antonio! 🔥
+Evo **GitHub-friendly verzije** tvog README-a — bez LaTeX-a, sve formatirano tako da izgleda lijepo i čitljivo direktno na GitHubu (bez potrebe za MathJax/LaTeX renderom).
+Zadržao sam isti sadržaj, ali matrice sam prebacio u ASCII i dodao lagano formatiranje da sve „diše“.
+
 ---
 
+```markdown
 # 🧮 Zadatak (primjer)
 
-Imamo sliku (grayscale) dimenzija 4×4:
+Imamo grayscale sliku dimenzija 4×4:
 
-$$
+```
+
 I =
-\begin{bmatrix}
-10 & 10 & 10 & 10[4pt]
-10 & 20 & 20 & 10[4pt]
-10 & 20 & 20 & 10[4pt]
-10 & 10 & 10 & 10
-\end{bmatrix}
-$$
+[[10, 10, 10, 10],
+[10, 20, 20, 10],
+[10, 20, 20, 10],
+[10, 10, 10, 10]]
+
+```
 
 Primijeni Laplaceov filter s kernelom (4-neighbour Laplacian):
 
-$$
-K =
-\begin{bmatrix}
-0 & 1 & 0[4pt]
-1 & -4 & 1[4pt]
-0 & 1 & 0
-\end{bmatrix}
-$$
+```
 
-Izračunaj rezultat konvolucije (**valid mode** — samo pozicije gdje kernel u potpunosti stane) i interpretiraj rezultat. Također, pokažimo kako bi isti Laplacian koristio za *sharpening*.
+K =
+[[ 0,  1,  0],
+[ 1, -4,  1],
+[ 0,  1,  0]]
+
+```
+
+Izračunaj rezultat konvolucije (**valid mode** — samo pozicije gdje kernel u potpunosti stane) i interpretiraj rezultat.  
+Također, pokažimo kako bi isti Laplacian koristio za *sharpening*.
 
 ---
 
-# 🧠 Korak-po-korak (ručni izračun)
+## 🧠 Korak-po-korak (ručni izračun)
 
-Za 3×3 kernel i 4×4 sliku, valid (bez paddinga) izlazna mapa ima dimenzije
-$$(4-3+1) \times (4-3+1) = 2 \times 2.$$
+Za 3×3 kernel i 4×4 sliku, izlaz u **valid modu** ima dimenzije:
 
-Centri kernel-prolaza su na pozicijama slike s indeksima (1,1), (1,2), (2,1), (2,2) (0-based indexing).
+```
+
+(4 - 3 + 1) x (4 - 3 + 1) = 2 x 2
+
+```
+
+Centri kernel-prolaza su na pozicijama slike (1,1), (1,2), (2,1), (2,2) (0-based indexing).
 
 ---
 
 ### 1️⃣ Pozicija centra (1,1)
 
-Okolica (redovi 0..2, kolone 0..2):
+Okolica:
 
-$$
-\begin{bmatrix}
-10 & 10 & 10\
-10 & 20 & 20\
-10 & 20 & 20
-\end{bmatrix}
-$$
+```
+
+10  10  10
+10  20  20
+10  20  20
+
+```
 
 Primjena kernela:
 
-* top middle: $1 \cdot 10 = 10$
-* middle left: $1 \cdot 10 = 10$
-* center: $-4 \cdot 20 = -80$
-* middle right: $1 \cdot 20 = 20$
-* bottom middle: $1 \cdot 20 = 20$
+```
 
-Zbroj: $10 + 10 - 80 + 20 + 20 = -20$
+(1*10) + (1*10) + (-4*20) + (1*20) + (1*20)
+= 10 + 10 - 80 + 20 + 20 = -20
+
+```
+
 ➡️ **Izlaz = -20**
 
 ---
 
 ### 2️⃣ Pozicija centra (1,2)
 
-Okolica (redovi 0..2, kolone 1..3):
+Okolica:
 
-$$
-\begin{bmatrix}
-10 & 10 & 10\
-20 & 20 & 10\
-20 & 20 & 10
-\end{bmatrix}
-$$
+```
 
-Zbroj: $10 + 20 - 80 + 10 + 20 = -20$
+10  10  10
+20  20  10
+20  20  10
+
+```
+
+Zbroj: `10 + 20 - 80 + 10 + 20 = -20`  
 ➡️ **Izlaz = -20**
 
 ---
 
 ### 3️⃣ Pozicija centra (2,1)
 
-Okolica (redovi 1..3, kolone 0..2):
+Okolica:
 
-$$
-\begin{bmatrix}
-10 & 20 & 20\
-10 & 20 & 20\
-10 & 10 & 10
-\end{bmatrix}
-$$
+```
 
-Zbroj: $20 + 10 - 80 + 20 + 10 = -20$
+10  20  20
+10  20  20
+10  10  10
+
+```
+
+Zbroj: `20 + 10 - 80 + 20 + 10 = -20`  
 ➡️ **Izlaz = -20**
 
 ---
 
 ### 4️⃣ Pozicija centra (2,2)
 
-Okolica (redovi 1..3, kolone 1..3):
+Okolica:
 
-$$
-\begin{bmatrix}
-20 & 20 & 10\
-20 & 20 & 10\
-10 & 10 & 10
-\end{bmatrix}
-$$
+```
 
-Zbroj: $20 + 20 - 80 + 10 + 10 = -20$
+20  20  10
+20  20  10
+10  10  10
+
+```
+
+Zbroj: `20 + 20 - 80 + 10 + 10 = -20`  
 ➡️ **Izlaz = -20**
 
 ---
 
 ### ✅ Rezultat (valid izlaz 2×2):
 
-$$
+```
+
 L =
-\begin{bmatrix}
--20 & -20\
--20 & -20
-\end{bmatrix}
-$$
+[[-20, -20],
+[-20, -20]]
 
-**Interpretacija:**
-Laplacian daje negativne vrijednosti u centru 2×2 bloka zato što je centar (20) **svjetliji** od svojih susjeda (10).
-Negativna vrijednost znači „konkavna” promjena intenziteta — vrh svjetline.
-Često za detekciju rubova koristimo apsolutnu vrijednost ili thresholdiranje:
-$$|L| \quad \text{ili} \quad L > \text{threshold}.$$
+```
 
----
+**Interpretacija:**  
+Laplacian daje negativne vrijednosti u centru 2×2 bloka zato što je centar (20) svjetliji od svojih susjeda (10).  
+Negativna vrijednost znači **konkavna promjena intenziteta** — vrh svjetline.  
+Za detekciju rubova često uzimamo apsolutnu vrijednost ili thresholdiranje:
 
-# 💡 Kako koristiti rezultat (edge detection i sharpening)
+```
 
-* **Edge detection:**
-  $$\text{edge} = (|L| > \tau)$$
+|L|    ili    L > threshold
 
-* **Sharpening:**
-  Additivno kombiniramo original i (negirani) Laplacian:
-  $$
-  I_{\text{sharp}} = I_{\text{orig}} - \alpha \cdot \text{Laplacian}
-  $$
-
-Ako uzmemo centar originala $20$ i Laplacian $-20$, uz $\alpha = 1$:
-$$
-I_{\text{sharp, center}} = 20 - (-20) = 40
-$$
-Dakle centar postaje svjetliji → povećava kontrast i oštrinu (uz clip u [0,255]).
+```
 
 ---
 
-# 🧩 Python primjer (NumPy + SciPy)
+## 💡 Kako koristiti rezultat (edge detection i sharpening)
+
+**Edge detection:**
+```
+
+edge = (|L| > τ)
+
+```
+
+**Sharpening:**
+Dodamo negirani Laplacian na original:
+
+```
+
+I_sharp = I - α * L
+
+```
+
+Ako uzmemo centar originala 20 i Laplacian -20, uz α=1:
+```
+
+I_sharp_center = 20 - (-20) = 40
+
+````
+Dakle centar postaje svjetliji → povećava kontrast i oštrinu.
+
+---
+
+## 🧩 Python primjer (NumPy + SciPy)
 
 ```python
 import numpy as np
@@ -187,24 +212,27 @@ axs[0].imshow(I, cmap='gray'); axs[0].set_title('Original'); axs[0].axis('off')
 axs[1].imshow(L_same, cmap='bwr'); axs[1].set_title('Laplacian (same)'); axs[1].axis('off')
 axs[2].imshow(I_sharp, cmap='gray'); axs[2].set_title('Sharpened'); axs[2].axis('off')
 plt.show()
-```
+````
 
 ---
 
-# 📘 Sažetak
+## 📘 Sažetak
 
 * **Laplacian** mjeri *drugu derivaciju* intenziteta — detektira mjesta naglih promjena (rubove, vrhove, udubine).
 * Klasični kernel:
-  $$
-  \begin{bmatrix}
-  0 & 1 & 0\
-  1 & -4 & 1\
-  0 & 1 & 0
-  \end{bmatrix}
-  $$
+
+  ```
+  [ 0,  1,  0 ]
+  [ 1, -4,  1 ]
+  [ 0,  1,  0 ]
+  ```
+
   ili varijanta s -8 u centru (8-neighbour).
-* Rezultati mogu biti negativni ili pozitivni → koristi se apsolutna vrijednost ili threshold.
-* Za *sharpening* kombiniramo original i (negirani) Laplacian.
+* Rezultati mogu biti pozitivni ili negativni → koristi se apsolutna vrijednost ili threshold.
+* Za *sharpening* kombiniramo original i negirani Laplacian:
+
+  ```
+  I_sharp = I - α * L
+  ```
 
 ---
-
