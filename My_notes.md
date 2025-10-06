@@ -238,7 +238,87 @@ Rezultat cijelog procesa = nova slika gdje su naglašeni rubovi (ili što god ke
 
 - PROS and CONS FRAME BASED VISIONA
 - PROS: mali i jednostavni pikseli -> visoka rezolucija
-                                   -> viskok fill factor i nizak imager cost (istražit dodatno)
+                                   -> viskok fill factor i nizak imager cost
+---
+
+### 🎯 **Fill Factor**
+
+**Definicija:**
+Fill factor = **udio površine piksela koji stvarno prima svjetlo** u odnosu na **ukupnu površinu piksela**.
+
+Zamisli da svaki piksel ima određenu površinu (npr. 10×10 µm). Dio te površine zauzimaju fotodetektor i elektronički sklopovi (tranzistori, kondenzatori, žice...).
+Samo **fotodetektor** (photo diode) zapravo skuplja svjetlo — i to je efektivna "korisna površina".
+
+👉 Formula:
+[
+\text{Fill Factor} = \frac{\text{Površina osjetljiva na svjetlo}}{\text{Ukupna površina piksela}} \times 100%
+]
+
+---
+
+**Primjer:**
+
+* Ako je piksel 10×10 µm, ali samo 5×5 µm hvata svjetlo → fill factor = 25%.
+* Ako se koristi **mikro-leće** koje fokusiraju svjetlo na aktivni dio → fill factor raste.
+
+---
+
+**Zašto je bitan:**
+
+* **Veći fill factor = bolja osjetljivost na svjetlo (viši SNR)**
+* **Manji fill factor = više šuma, lošiji kontrast u slabom svjetlu**
+
+---
+
+**U kontekstu frame-based senzora:**
+Frame-based senzori imaju **jednostavnije piksele**, pa mogu imati **veći fill factor** i time hvataju više svjetla — to je njihov *PRO*.
+
+**Kod DVS-a (event-based):**
+Pikseli imaju više elektronike (detekcija promjene intenziteta, threshold komparator itd.) — pa često **fill factor pada**.
+Zato se često dodaju **mikroleće** i posebni layouti da se fill factor poboljša.
+
+---
+
+### ⚡ **Imager Noise (šum senzora)**
+
+**Definicija:**
+To je **neželjena varijacija** u električnom signalu piksela koja **nije rezultat stvarne promjene svjetla**.
+
+---
+
+**Glavne vrste šuma u imagerima:**
+
+1. **Photon shot noise** – dolazi od same prirode svjetlosti (nasumičan broj fotona).
+2. **Thermal noise (Johnson noise)** – termičke fluktuacije u elektronici.
+3. **Read noise** – šum koji nastaje pri čitanju signala s piksela (ADC, bufferi...).
+4. **Fixed pattern noise (FPN)** – razlike između piksela zbog proizvodnog procesa.
+
+---
+
+**Zašto je bitan:**
+
+* Visok šum → senzor ne može točno detektirati male promjene svjetla.
+* Kod **DVS-a**, šum direktno utječe na točnost generiranja eventa —
+  ako je noise previsok, senzor može “lažno” detektirati promjenu i emitirati spike event iako svjetlo nije stvarno promijenjeno.
+
+---
+
+**Balans kod DVS-a:**
+
+* Ako se threshold za promjenu intenziteta postavi **prenisko**, šum će stvarati lažne evente.
+* Ako se postavi **previsoko**, senzor će ignorirati male, ali bitne promjene u sceni.
+
+---
+
+### 🔍 Ukratko:
+
+| Pojam            | Objašnjenje                                                               | Posljedica                              |
+| ---------------- | ------------------------------------------------------------------------- | --------------------------------------- |
+| **Fill Factor**  | Postotak površine piksela koji hvata svjetlo                              | Viši = bolja osjetljivost               |
+| **Imager Noise** | Nasumične elektroničke varijacije koje uzrokuju greške u mjerenju svjetla | Viši = više lažnih eventa, niža točnost |
+
+---
+
 - CONS: - baziran na serijama snapshota -> pikseli se ponovno obrađuju čak i ako su nepromijenjeni iz framea u frame -> JAKO BITNO
         - limitirani bandwith (FRAME RATE/2)
         - limitirani dynamic range (ograničen broj piksela po frameu)
