@@ -1090,7 +1090,7 @@ Komponente SNN-ova:
 - Ča je jači input, jači je i spike
 - Sinapse - veze između neurona
 - Synaptic plasticity - sposobnost da sinapsa jača ili slabi kroz vrijeme => tako se SNN-ovi adaptiraju i uče kroz vrijeme
-- Primjer: spečemo se na peć, pain receptori pošalju spikeove mozgu, to pojačava vezu među neuronima zaduženim za točno taj proces (osjet boli zbog vruće peći), idući put kad smo blizu vrućeg objekta, mozak će brže prepoznati opasnost i brže ćemo reagirati => synaptic plasticity IRL
+- Primjer: spečemo se na peć, pain receptori pošalju spikeove mozgu, to pojačava vezu među neuronima zaduženim za točno taj proces (osjet boli zbog vruće peći), idući put kad smo blizu vrućeg objekta, mozak će brže prepoznati opasnost i brže ćemo reagirati => synaptic plasticity IRL - "neurons that fire together, wire together"
 
 Encoding information => kako pretvorit real-world data u spike patterne?
 - Pretvorba našeg jezika u jezik neurona
@@ -1266,7 +1266,6 @@ Trenutno se iz mozga najviše koriste neuroni i sinapse, ali još se istražuje 
 Tehnologije su silicon-based, ali istražuju se novi materijali popur phase-change, ferroelectric, non-filamentary topological insulatora ili chanell-doped biomembrana
 Razni neuromorfni uređaji imaju razne ciljeve i pristupe korištenja tehnologije
 
-Naravno, evo ti **sažetih, jasnih i fokusiranih natuknica** na hrvatskom jeziku — čisto srce teksta, bez suvišnih detalja 💥
 
 ---
 
@@ -1330,8 +1329,6 @@ Naravno, evo ti **sažetih, jasnih i fokusiranih natuknica** na hrvatskom jeziku
 
 Programiranje neuromorfnih računala često uključuje kreiranje spiking neural networka koji se mogu deployati na neuromorfno računalo
 
-Naravno! 💪 Evo ti **sažetih i jasnih natuknica** na hrvatskom jeziku — čisti fokus na bitne ideje iz teksta:
-
 ---
 
 ### ⚡ **Ključne značajke Spiking Neural Networks (SNN-ova):**
@@ -1356,7 +1353,7 @@ Naravno! 💪 Evo ti **sažetih i jasnih natuknica** na hrvatskom jeziku — či
 
 **3. Dvije glavne skupine algoritama u neuromorfnom računanju:**
 1️⃣ **Algoritmi za učenje/trening SNN-a** – optimiziraju mrežu da bi se koristila na neuromorfnom čipu (učeni pristup).
-2️⃣ **Ručno konstruirani SNN-ovi** – dizajnirani bez strojno učenja, već **ručno prilagođeni za određeni zadatak** (heuristički pristup).
+2️⃣ **Ručno konstruirani SNN-ovi** – dizajnirani bez strojnog učenja, već **ručno prilagođeni za određeni zadatak** (heuristički pristup).
 
 ---
 
