@@ -85,3 +85,7 @@ Resources for the algorithms and software frameworks used to build and train SNN
   * **Key Papers on SNN Training:**
 
       * **[Surrogate Gradient Learning in Spiking Neural Networks](https://arxiv.org/abs/1901.09948)** by Neftci et al.: A foundational paper explaining the most popular and effective method for training deep SNNs using tools from traditional deep learning (i.e., backpropagation).
+
+
+Cool video
+https://youtu.be/2tLGNFlS7bM?si=5LXCnkSnPfBkDMV5
