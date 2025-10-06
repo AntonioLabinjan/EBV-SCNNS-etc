@@ -709,8 +709,83 @@ Takva računala 2014. nisu postojalaa
 Von Neumannova arhitektura je neefikasna i neskalabilna te ne može kvalitetno reprezentirati masivne, međusobno povezane neuronske mreže
 Koristi se miks analognih i digitalnih neuromorfnih signala => imitacija neurobioloških procesa korištenjem:
 - silicijskih neurona
-- winner-take-all strujnih krugova (pogledat detaljnije)
+- winner-take-all strujnih krugova 
 - senzorskih strujnih krugova
+
+
+Winner-take-all circuits by Gepetto
+
+Apsolutno brate 💪🔥 — ajmo to sad složit **jasno, sažeto i profesionalno**, ali da ti sjedne odmah u glavu kad čitaš.
+Evo ti **natuknice o Winner-Take-All (WTA)** koje možeš doslovno ubacit i u rad ako želiš:
+
+---
+
+## 🧠 Winner-Take-All (WTA) circuits — natuknice
+
+### 🔹 Osnovna ideja
+
+* WTA (Winner-Take-All) krugovi su **neuromorfni elektronički sustavi** koji oponašaju **konkurenciju među neuronima** u mozgu.
+* Cilj im je da **odaberu samo najaktivniji (najjači) signal** među više ulaznih neurona ili kanala.
+* Samo “pobjednički” neuron ostaje aktivan → ostali se **inhibiraju** (isključe).
+
+---
+
+### 🔹 Biološka inspiracija
+
+* Temeljeni su na principu **lateralne inhibicije** u biološkim neuronskim mrežama.
+* U mozgu aktivni neuron **koči (inhibira)** susjedne neurone → rezultat je **pojačan kontrast i selektivnost percepcije**.
+* Ovaj mehanizam omogućuje **fokus pažnje** i efikasnu obradu informacija (npr. u ljudskoj mrežnici).
+
+---
+
+### 🔹 Kako WTA krug radi
+
+1. **Ulaz:** više analognih signala (npr. struja ili napon iz različitih neurona/piksela).
+2. **Natjecanje:** svi ulazi se natječu u istom krugu.
+3. **Inhibicija:** slabiji ulazi se potiskuju putem inhibicijskog feedbacka.
+4. **Izlaz:** samo najjači signal ostaje aktivan → “winner takes all”.
+
+---
+
+### 🔹 Implementacija u hardveru
+
+* Realizira se korištenjem **MOS tranzistora** i **strujnih zrcala** (current mirrors).
+* Krug se ponaša poput “strujnog tržišta” — ulaz s najvećom strujom **privuče sve resurse** i “pobijedi”.
+* Tipično se koristi u **neuromorfnim procesorima** (npr. Intel Loihi, IBM TrueNorth, DYNAP-SE).
+
+---
+
+### 🔹 Prednosti
+
+* **Smanjuje redundanciju** — aktivan je samo najvažniji neuron.
+* **Povećava kontrast** i selektivnost u prepoznavanju uzoraka.
+* **Štedi energiju** jer se ne obrađuju svi ulazi.
+* Omogućuje **sparse coding** — mali broj neurona aktivan u danom trenutku.
+
+---
+
+### 🔹 Primjene
+
+* **Računalni vid (event-based senzori):** bira piksele s najvećom promjenom kontrasta.
+* **Prepoznavanje uzoraka:** odabir najrelevantnijeg neurona u skupu.
+* **Klasifikacija i clustering:** određuje koji neuron najbolje “predstavlja” ulazni uzorak.
+* **Roboti i edge sustavi:** koristi se za brze odluke uz minimalnu potrošnju energije.
+
+---
+
+### 🔹 Ukratko
+
+| Pojam                     | Objašnjenje                                                         |
+| ------------------------- | ------------------------------------------------------------------- |
+| **Winner-Take-All (WTA)** | Sustav koji aktivira samo najjači ulaz, ostale potiskuje            |
+| **Biološki ekvivalent**   | Lateralna inhibicija među neuronima                                 |
+| **Ključna funkcija**      | Odabir dominantnog signala i smanjenje redundancije                 |
+| **Prednosti**             | Učinkovitost, energetska štednja, bolja selektivnost                |
+| **Upotreba**              | Neuromorfni čipovi, senzori vida, robotski sustavi, AI akceleratori |
+
+---
+
+
 
 - Digitalno implementirani spiking neuroni su efikasniji od svih dosadašnjih dizajna
 - omogućavaju one-to-one correspondence između softvera i hardvera => Ča znači one-to-one?
