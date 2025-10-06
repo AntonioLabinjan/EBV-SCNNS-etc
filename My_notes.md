@@ -984,3 +984,914 @@ Encoding information => kako pretvorit real-world data u spike patterne?
 
 RATE VS TEMPORAL: 
 https://github.com/AntonioLabinjan/Simulation-of-rate-and-temporal-coding/tree/master
+
+
+
+
+Opportunities for neuromorphic computing algorithms and applications
+
+Catherine D. Schuman & co.
+
+Tehnologije neuromorfnog computinga bit će važne u budućnosti. Puno rada posvećeno je hardverskom djelu
+Pregled nedavnih neuromorfnih algoritama i njihovih primjena
+
+Bliži se kraj Moorovog zakona i Dennardovog scalinga. Traže se nove tehnologije za nastavak napredovanja performansi.
+
+Chatgpt explained:
+---
+
+### 💡 **Moorov zakon (Moore’s Law)**
+
+**Definicija:**
+Gordon Moore (suosnivač Intela) 1965. je primijetio da se **broj tranzistora na integriranom krugu otprilike udvostručuje svake dvije godine**, dok se **cijena po tranzistoru smanjuje**.
+
+**Što to znači:**
+
+* Više tranzistora = **veća računalna snaga**
+* Manji tranzistori = **manja potrošnja energije i niži troškovi**
+* Dakle, računala postaju **brža, manja i jeftinija** svake 1–2 godine
+
+**Primjer:**
+Procesor iz 2000. imao je možda 30 milijuna tranzistora.
+Danas ih high-end čip ima **preko 100 milijardi!**
+
+**Ali…**
+Danas smo došli do **fizičkih granica minijaturizacije** — tranzistori su već veličine par **nanometara** (manji od virusa!), pa se dalje teško ide klasičnim litografskim metodama.
+
+---
+
+### ⚙️ **Dennardov scaling (Dennard scaling)**
+
+**Definicija:**
+Robert Dennard (IBM) 1974. rekao je da kad se tranzistori smanjuju,
+**napon i struja se proporcionalno smanjuju**, tako da **snaga po površini ostaje konstantna**.
+
+**Drugim riječima:**
+Ako smanjiš tranzistor 2x u svemu — visinu, širinu, napon —
+on troši **isto energije po kvadratnom milimetru**, ali ima **dvostruko više tranzistora** → performanse rastu bez povećanja potrošnje energije ili topline.
+
+**To je omogućilo:**
+👉 Više tranzistora + veća brzina + ista potrošnja = eksplozija performansi od 80-ih do ranih 2000-ih.
+
+**Ali…**
+Oko **2005. scaling se raspao.**
+
+* Naponi više ne mogu padati proporcionalno (fizičke granice — “leakage current”, tuneliranje elektrona kroz tanke gate-oxide slojeve).
+* Snaga i temperatura su počele **drastično rasti**.
+  ➡️ Zbog toga su frekvencije CPU-a stale oko 3–4 GHz i pojavila se era **višejezgrenih procesora** i **energetske optimizacije**.
+
+---
+
+### 🧠 Ukratko:
+
+| Zakon                 | Ideja                                                 | Što je omogućio                  | Zašto više ne vrijedi                      |
+| --------------------- | ----------------------------------------------------- | -------------------------------- | ------------------------------------------ |
+| **Moorov zakon**      | Broj tranzistora se udvostručuje svake 2 god.         | Eksponencijalni rast performansi | Fizičke granice minijaturizacije           |
+| **Dennardov scaling** | Manji tranzistori troše proporcionalno manje energije | Više brzine bez više topline     | Gubitak proporcionalnosti, previše topline |
+
+---
+
+💥 **Što sad?**
+Kako se približavamo kraju oba zakona, istražuju se nove paradigme:
+
+* **3D čipovi** (vertikalno slaganje tranzistora)
+* **Neuromorfni čipovi** (poput IBM TrueNorth, Intel Loihi)
+* **Kvantno računarstvo**
+* **Optički procesori**
+* **Spintronika i memristori**
+
+---
+
+Neuromorfna računala su jedna od tih novih tehnologija
+Pojam "neuromorphic" je osmislio Carver Mead kasnih '80-ih
+Odnosio se na: miks analogno-digitalnih implementacija računarstva inspiriranog mozgom
+Sada ipak obuhvaća veći raspon raznovrsnih hardverskih implementacija
+
+Neuromorfna računala - non-von Neumann računala čija struktura i funkcionalnosti su inspirirane mozgom i sastoje se od neurona i sinapsi
+Von Neumann računala sastoje se od odvojenih jedinica za CPU i memoriju gdje se posebno pohranjuju podaci i instrukcije
+U neuromorphic računalima i procesiranjem i memorijom upravljaju neuroni i sinapse
+Programi u neuromorphic računalima definirani su strukturom neural networka i njihovih parametara, a ne eksplicitnim instrukcijama kao što je slučaj kod von Neumann računala
+Von Neumann računala enkodiraju informacije kao numeričke vrijednosti u binarnom sustavu, a neuromorphic računala primaju spikeove kao input
+Koristi se vrijeme pojave spikea, intenzitet i oblik za enkodiranje numeričkih informacija
+Binarne vrijednosti mogu se pretvoriti u spikeove i obratno
+
+Neuromorfna računala se u velikoj mjeri koriste paralelizmom gdje se izračuni obavljaju korištenjem više neurona i sinapsi istovremeno
+No, izračuni koje neuroni i sinapse rade su relativno jednostavni u usporedbi s von Neumann sistemima
+Collocated processing and memory (procesi i memorija su na istom mjestu). Iako se nekad neuroni smatraju processing unitima, a sinapse memorijom, u većini implementacija i neuroni i sinapse predstavljaju i memoriju i procese
+Pomaže izbjeći von Neumann bottleneck (odvojenost procesora i memorije uzrokuje usporavanje u maksimalnom mogućem throughputu)
+Pomaže izbjeći pristup podacima iz glavne memorije što inače troši puno energije
+
+Ključne značajke neuromorfnih računala:
+
+1. Inherentna skalabilnost
+
+Neuromorfna računala su prirodno skalabilna – dodavanjem novih čipova povećava se broj neurona i sinapsi koje sustav može realizirati.
+
+Više fizičkih neuromorfnih čipova može se povezati u jedan veliki sustav za izvođenje većih mreža.
+
+To je već uspješno ostvareno kod sustava kao što su SpiNNaker i Intel Loihi.
+
+2. Računanje temeljeno na događajima (event-driven computation)
+
+Sustav obrađuje samo kada postoje podaci → ogromna energetska učinkovitost.
+
+Neuroni i sinapse rade samo kada ima spikeova (impulsa) za obraditi.
+
+Aktivnost mreže je vremenski rijetka (temporalno rijetka), što dodatno štedi resurse.
+
+3. Stohastičnost (slučajnost)
+
+Neuromorfni sustavi mogu uključivati elemente nasumičnosti u ponašanju neurona (npr. u njihovom okidanju).
+
+Ova “šumovitost” (noise) može biti korisna – omogućuje robustnije i prirodnije ponašanje sustava, slično biološkom mozgu.
+
+Neuromorfna računala troše ektremno malo energije => event driven & parallel => u bilo kojoj vremenskoj točki, samo mali dio sustava je aktivan, a ostatak je "idle"
+Implementiraju "neural-network style" računanja => prirodna platforma za rad s brojnim primjenama machine learninga i AI
+Trenutno se iz mozga najviše koriste neuroni i sinapse, ali još se istražuje mogu li se još neki koncepti mozga koristiti
+Tehnologije su silicon-based, ali istražuju se novi materijali popur phase-change, ferroelectric, non-filamentary topological insulatora ili chanell-doped biomembrana
+Razni neuromorfni uređaji imaju razne ciljeve i pristupe korištenja tehnologije
+
+Naravno, evo ti **sažetih, jasnih i fokusiranih natuknica** na hrvatskom jeziku — čisto srce teksta, bez suvišnih detalja 💥
+
+---
+
+### 🧠 **Sažetak – Trenutno stanje i smjer razvoja neuromorfnih računala**
+
+**1. Neuromorfni hardver već postoji i razvija se brzo**
+
+* Za razliku od nekih drugih budućih tehnologija, **neuromorfni čipovi već postoje** i **dostupni su istraživačima**.
+* Više **velikih sustava** razvijeno je s različitim pristupima i ciljevima.
+
+---
+
+**2. Glavni postojeći sustavi i projekti**
+
+* **EU Human Brain Project** → razvio **SpiNNaker** i **BrainScaleS** za velike neuronske simulacije.
+* **ODIN** – digitalni spiking neuromorfni procesor s podrškom za složenije neuronske modele.
+* **Tianjic chip** – kombinira **neuromorfne SNN-ove** i **klasične umjetne neuronske mreže (ANN)** → omogućuje širu primjenu.
+* Industrijski primjeri: **IBM TrueNorth**, **Intel Loihi**
+* Akademski projekti: **DYNAPs**, **Neurogrid**, **IFAT**, **BrainScaleS-2**
+* **BrainScaleS-2** dokazano ubrzava “learning-to-learn” procese — **uči mnogo brže od bioloških mreža**.
+
+---
+
+**3. Tehnologije i materijali za implementaciju**
+
+* Svi ovi sustavi su trenutno **temeljeni na siliciju** (klasična CMOS tehnologija).
+* Istražuju se **nove vrste materijala**, poput:
+
+  * **Phase-change**, **feroelektrični** materijali
+  * **Topološki izolatori**
+  * **Biomembrane s dopiranim kanalima**
+* **Memristori** su posebno popularni – omogućuju **spajanje memorije i obrade** (“collocated processing and memory”), čime se **smanjuje kašnjenje i potrošnja energije**.
+* Koriste se i **optoelektronički uređaji** za još bržu i energetski efikasniju obradu.
+
+---
+
+**4. Raznolikost uređaja = prilagodljivost**
+
+* Svaki materijal i uređaj ima **vlastite karakteristike** (brzina, potrošnja energije, biološka sličnost).
+* Ta raznolikost omogućuje da se **neuromorfni hardver prilagodi specifičnim aplikacijama**.
+
+---
+
+**5. Povezanost s algoritmima i aplikacijama**
+
+* Trenutno se većina istraživanja fokusira na **hardver**, ali pravi napredak zahtijeva **spajanje s algoritmima i primjenama**.
+* Da bi se iskoristile sve prednosti neuromorfnog računanja, potrebno je razviti **neuromorfne algoritme** koji u potpunosti koriste potencijal te arhitekture.
+
+---
+
+**6. Definicija korištena u radu**
+
+* Ovaj rad pod pojmom **“neuromorfno računanje”** obuhvaća sve vrste implementacija:
+
+  * **digitalne**,
+  * **mješovite analogno-digitalne**,
+  * **analogne** sustave,
+    ali se **posebno fokusira na one koji koriste spikeove** — tj. **spiking neuromorphic computers (SNN)**.
+
+---
+
+Programiranje neuromorfnih računala često uključuje kreiranje spiking neural networka koji se mogu deployati na neuromorfno računalo
+
+Naravno! 💪 Evo ti **sažetih i jasnih natuknica** na hrvatskom jeziku — čisti fokus na bitne ideje iz teksta:
+
+---
+
+### ⚡ **Ključne značajke Spiking Neural Networks (SNN-ova):**
+
+**1. Biološka inspiracija s dodatnom dimenzijom vremena**
+
+* SNN-ovi su **najbiološkiji oblik umjetnih neuronskih mreža**.
+* Za razliku od klasičnih ANN-ova, **uključuju pojam vremena** u izračune.
+* Neuroni i sinapse imaju **vremenske konstante i kašnjenja (delaye)**.
+
+  * Npr. neuron **“curi” (leak)** naboj kroz vrijeme dok ne dosegne prag i ispali “spike”.
+
+---
+
+**2. Modeli neurona u SNN-ovima**
+
+* Mogu biti **jednostavni** (npr. *Integrate-and-Fire*) – akumuliraju naboj do praga.
+* Ili **složeni i biološki vjerniji**, poput *Hodgkin–Huxley modela* koji modelira ionske kanale u stvarnim neuronima.
+* Dakle, razina biološke točnosti ovisi o potrebama i složenosti sustava.
+
+---
+
+**3. Dvije glavne skupine algoritama u neuromorfnom računanju:**
+1️⃣ **Algoritmi za učenje/trening SNN-a** – optimiziraju mrežu da bi se koristila na neuromorfnom čipu (učeni pristup).
+2️⃣ **Ručno konstruirani SNN-ovi** – dizajnirani bez strojno učenja, već **ručno prilagođeni za određeni zadatak** (heuristički pristup).
+
+---
+
+**4. Suštinska razlika od tradicionalnih ANN-ova:**
+
+* ANN-ovi → rade s **kontinuiranim vrijednostima** i *bez pojma vremena*.
+* SNN-ovi → **obrađuju impulse (spikeove)** koji se događaju u **vremenu**.
+  ➡️ Time bolje **imitiraju način na koji mozak obrađuje informacije**.
+
+---
+
+
+---
+
+## ⚡ **Detaljan sažetak: Funkcioniranje Spiking Neural Networks (SNN)**
+
+---
+
+### 🧩 **1. Neuroni u SNN-u**
+
+* **Akumulacija naboja:**
+
+  * Neuroni **skupljaju električni naboj** tijekom vremena.
+  * Naboj dolazi iz:
+
+    * **okoline** → vanjski ulazni podaci, senzori itd.
+    * **unutarnjih komunikacija** → spikeovi iz drugih neurona.
+
+* **Prag (threshold):**
+
+  * Svaki neuron ima **definiranu prag-vrijednost**.
+  * Kad se akumulirani naboj **dosegne ili premaši prag**, neuron **ispali spike** (signal).
+  * Spike se šalje **svim izlaznim sinapsama** tog neurona.
+
+* **Leak (curenje naboja):**
+
+  * Ako neuron ne dosegne prag, dio naboja **postupno nestaje kroz vrijeme**.
+  * Ova **vremenska degradacija naboja** modelira ponašanje stvarnih bioloških neurona.
+
+* **Axonal delay (aksonska odgoda):**
+
+  * Kad neuron ispali spike, signal može biti **odgođen** prije nego što stigne do sinapsi.
+  * Ova odgoda simulira **vremensko kašnjenje u prijenosu impulsa** kroz akson.
+
+---
+
+### 🔗 **2. Sinapse u SNN-u**
+
+* **Povezuju neurone:**
+
+  * Svaka sinapsa ima **pre-sinaptički** (izvorni) i **post-sinaptički** (ciljni) neuron.
+
+* **Težina (weight):**
+
+  * Sinapse imaju **numeričku težinu** koja određuje snagu veze.
+  * Težine mogu biti:
+
+    * **pozitivne** → *poticajne (excitatory)*, pojačavaju aktivnost
+    * **negativne** → *inhibitorne*, smanjuju aktivnost
+
+* **Sinaptička odgoda (delay):**
+
+  * Signal iz pre-sinaptičkog neurona može imati **kašnjenje prije nego stigne do post-sinaptičkog**.
+  * To doprinosi **asinkronom vremenskom ponašanju** mreže.
+
+* **Učenje kroz promjenu težina:**
+
+  * Sinapse **mijenjaju svoje težine** ovisno o aktivnosti mreže.
+  * To omogućuje **učenje tijekom vremena** (npr. kroz mehanizme poput STDP – Spike-Timing Dependent Plasticity).
+
+* **Rekonfigurabilnost:**
+
+  * Neuromorfni čipovi omogućuju **paljenje/gašenje sinapsi** unutar fizičke mreže, čime se dinamički definira struktura mreže.
+
+* **Programabilni parametri:**
+
+  * U modernim neuromorfnim arhitekturama moguće je podešavati:
+
+    * **threshold neurona**
+    * **težine sinapsi**
+    * **aksonske i sinaptičke odgode**
+  * Time se omogućuje **potpuna fleksibilnost** mrežnih parametara.
+
+---
+
+### 🧠 **3. Asinkroni prijenos informacija**
+
+* **Razlika u odnosu na klasične ANN-ove:**
+
+  * U klasičnim ANN-ovima → informacije se **sinkrono prenose sloj po sloj**.
+  * U SNN-ovima → zbog vremenskih odgoda i razlika u kašnjenju, **informacije se šire asinkrono** – svaki spike može stići u drugo vrijeme.
+
+* **Posljedica:**
+
+  * Svaki neuron može reagirati **u različitim trenucima**, ovisno o tome **kad mu spikeovi stignu**.
+  * Mreža tako radi u **realnom vremenu** i ima **vremensku dinamiku** sličnu mozgu.
+
+* **Prednost za neuromorfni hardver:**
+
+  * Ova asinkronost **savršeno odgovara** neuromorfnim čipovima koji rade u **event-driven režimu** – obrađuju samo kada spike stigne.
+  * Time se **štedi energija** i omogućuje **visoka paralelizacija**.
+
+---
+
+### ⏱️ **4. Vremenska domena rada mreže**
+
+* Aktivnost mreže se može promatrati **po vremenskim koracima (t, t+1, t+2, …)**.
+* U svakom vremenskom trenutku mijenja se:
+
+  * koji neuroni su “ispalili” spike,
+  * koliko naboja su drugi neuroni akumulirali,
+  * koje sinapse su aktivne i kada njihovi signali dolaze.
+* Dakle, mreža ima **dinamično stanje koje se evolucijski mijenja kroz vrijeme**.
+
+---
+
+### 📊 **5. Ukratko – ključni koncepti**
+
+| Element            | Funkcija                     | Ključne karakteristike                                  |
+| ------------------ | ---------------------------- | ------------------------------------------------------- |
+| **Neuron**         | Akumulira i ispušta naboj    | Prag, curenje, aksonska odgoda                          |
+| **Sinapsa**        | Povezuje neurone             | Težina (pozitivna/negativna), sinaptička odgoda, učenje |
+| **Signal (spike)** | Diskretni impuls             | Prenosi informaciju u vremenu                           |
+| **Obrada**         | Asinkrona, događajima vođena | Energetski učinkovita, vremenski osjetljiva             |
+
+---
+DNN = umjetna neuronska mreža s više slojeva koja uči iz velike količine podataka pomoću backpropagationa i gradijentnog spuštanja.
+---
+
+## 🔹 1. Problem s klasičnim treniranjem SNN-ova
+
+* **Backpropagation i SGD (stochastic gradient descent)** su jako uspješni u deep learningu,
+  ali **ne mogu se direktno primijeniti na SNN-ove** jer:
+
+  * Spiking neuroni imaju **nediferencijabilne aktivacijske funkcije** (threshold funkcije).
+  * SNN-ovi obrađuju **vremenske informacije**, što dodatno komplicira učenje.
+* Potrebne su **prilagodbe** (npr. surrogate gradients, smoothed activation functions),
+  ali to često **smanjuje točnost** u odnosu na klasične ANN-ove.
+
+---
+
+## 🔹 2. Mapiranje klasičnih DNN-ova na SNN-ove
+
+* Umjesto treniranja SNN-a od nule, često se:
+
+  1. **Trenira DNN**,
+  2. **Zatim se mapira (pretvori)** u SNN za **inference**.
+* Ove metode daju:
+
+  * Blizu **state-of-the-art točnost**
+  * Uz **veliko smanjenje potrošnje energije** (jer SNN obrađuje samo spikeove).
+* Dataseti korišteni: **MNIST, CIFAR-10, ImageNet**.
+* Ključne tehnike:
+
+  * Normalizacija težina i aktivacija
+  * Zamjena max-poolinga s average poolingom
+  * "Few Spikes" neuron model (FS-neuron) — složene aktivacije predstavljene s 1–2 spikea.
+* Primjene: **keyword spotting, medicinska analiza, detekcija objekata** (na Loihi, TrueNorth).
+* Problem: **mapiranje može smanjiti točnost** zbog:
+
+  * razlike DNN ↔ SNN
+  * hardverskih ograničenja (npr. **memristori** imaju nižu preciznost težina i varijacije po ciklusu).
+
+---
+
+## 🔹 3. Reservoir computing (Liquid State Machines)
+
+* Ne zahtijeva klasično treniranje SNN-a.
+* Sastoji se od:
+
+  * **"tekućeg" (liquid) dijela** – nasumična mreža spike neurona (recurrent, sparse)
+  * **readout sloja** – trenira se (npr. linearnom regresijom)
+* Dvije ključne osobine:
+
+  * **Input separability** – različiti ulazi daju različite izlaze
+  * **Fading memory** – stari signali nestaju s vremenom
+* Prednosti:
+
+  * Nema treniranja samog SNN-a
+  * Dobro radi s vremenskim podacima
+* Primjene:
+
+  * obrada **bio-signala**, **prosthetic control**, **audio/video analiza**
+  * koristi **hijerarhijske slojeve** tekućih mreža
+
+---
+
+## 🔹 4. Evolucijski pristupi
+
+* Koriste **evolucijske algoritme** (mutacija, selekcija, reprodukcija) za:
+
+  * Optimizaciju **parametara** (thresholds, delays)
+  * Dizajn **strukture mreže** (koliko neurona, kako su povezani)
+* Prednosti:
+
+  * Ne zahtijevaju diferencijabilnost
+  * Mogu raditi s bilo kojom topologijom mreže
+* Nedostatak:
+
+  * **Sporo konvergiraju**
+* Primjene:
+
+  * **Kontrola robota**, **video igre**, **autonomna navigacija**
+
+---
+
+## 🔹 5. Plastičnost (biološki inspirirano učenje)
+
+* Temelji se na **aktivnosti neurona i promjenama sinaptičke jačine**.
+* Najpoznatije: **STDP (Spike-Timing-Dependent Plasticity)**
+
+  * Težine se mijenjaju prema vremenskom odnosu pre- i post-sinaptičkih spikeova.
+* Korišteno na: **MNIST, CIFAR-10, ImageNet**
+* Prednosti:
+
+  * Može **približiti klasične ML metode** (klasteriranje, Bayes inference)
+  * Kombinira se s **reservoir computingom** (npr. NeuCube)
+* Primjene:
+
+  * **EEG analiza**, **detekcija stanja spavanja**, **prostetičke kontrole**
+* Varijante:
+
+  * **Rekurentne SNN mreže s kašnjenjima i plastičnošću**
+  * **Polychronization networks** – klasifikacija vremensko-prostorno varijabilnih uzoraka
+  * **Winner-take-all** modeli
+  * Učenje **tajminga spikeova** (precizna klasifikacija prema vremenu)
+
+---
+
+## 🔹 6. Nemachine learning algoritmi
+
+* Neuromorfni hardver može rješavati **ne-ML probleme**:
+
+  * **Graf algoritmi** (npr. shortest path)
+  * **Random walks** i **Markov chains**
+  * **NP-kompletni problemi** (SAT, QUBO, graph partitioning)
+* Primjeri:
+
+  * **IBM TrueNorth**, **Intel Loihi**, **SpiNNaker** rješavaju NP probleme
+  * Neuromorfni pristupi ponekad **precizniji od D-Wave kvantnog računala!**
+* Prednosti:
+
+  * Paralelna, niskoenergetska obrada
+  * Odlična primjena u **grafovima, relacijskim strukturama**, **Bayesovim mrežama**
+
+---
+
+## 🔹 7. Trenutno stanje i izazovi
+
+* **SNN-ovi i neuromorfni hardver još nisu u stvarnim aplikacijama.**
+* Fokus je zasad na **benchmark datasetima i demonstracijama**.
+* Glavni izazov:
+
+  * Još **nema kombinacije algoritma i aplikacije** gdje SNN nadmašuje deep learning u točnosti.
+  * Prednost je zasad **u energetskoj učinkovitosti**, ne u performansama.
+* Potrebno:
+
+  * Širiti fokus **izvan backpropagationa**
+  * Razvijati **novije, biološki inspirirane algoritme**
+  * Iskoristiti **vremensku i događajnu prirodu** SNN-ova
+
+---
+
+## 🔹 8. Zaključna poruka
+
+> Neuromorfni sustavi ne bi trebali pokušavati samo *imitirati* deep learning,
+> nego razviti **nove algoritme** koji koriste **njihovu biološku i vremensku prirodu** —
+> evoluciju, plastičnost, događajnu obradu i inherentnu paralelizaciju.
+
+---
+
+
+Savršeno — ovo je važan dio teksta koji govori o **ograničenjima pristupa i skalabilnosti u neuromorfnom računanju**.
+Evo ti **jasne i detaljne natuknice** na hrvatskom:
+
+---
+
+### ⚙️ **Širi pristup neuromorfnom hardveru i simulatorima – ključni izazovi i rješenja**
+
+#### 🔒 Trenutni problemi:
+
+* **Ograničen pristup hardveru:**
+
+  * Postoji **malo dostupnih neuromorfnih sustava** (poput Loihi, TrueNorth, SpiNNaker).
+  * **Dostupni su samo putem ograničenog cloud pristupa**, što usporava istraživanje i razvoj.
+
+* **Softver i simulacije nisu dovoljno pristupačni:**
+
+  * Postoji nekoliko **open-source simulatora** (npr. **NEST**, **Brian**, **Nengo**), ali svaki je:
+
+    * specijaliziran za **određenu zajednicu** ili **vrstu zadataka**,
+    * teško primjenjiv izvan tih specifičnih područja.
+  * **NEST** je fokusiran na **računalnu neuroznanost**,
+    **Nengo** na **Neural Engineering Framework (NEF)**,
+    što ograničava njihovu **širu upotrebljivost** u računarstvu i industriji.
+
+* **Slaba skalabilnost i performanse simulatora:**
+
+  * Mnogi simulatori **nisu dovoljno brzi** pri radu u velikim razmjerima.
+  * Zbog **eksplozije količine podataka**, potrebno je procesirati informacije **brže nego što se generiraju**,
+    što trenutni simulatori **ne mogu pratiti**.
+  * Posljedica: **sporo treniranje SNN-ova** i **teško testiranje novih algoritama**.
+
+---
+
+#### 🚀 Preporuke i budući smjer:
+
+* **Razviti pristupačnije i univerzalnije alate** koji bi omogućili:
+
+  * **širu upotrebu u računalnoj znanosti i industriji**,
+  * **brže eksperimentiranje i inovaciju** u algoritmima.
+* **Poboljšati performanse simulatora** kako bi mogli:
+
+  * **raditi u realnom vremenu**,
+  * **skalirati** na **velike podatkovne setove i HPC (high-performance computing)** sustave.
+* **Omogućiti bržu evaluaciju algoritama** čak i kada fizički hardver nije dostupan —
+  time bi se ubrzao **razvoj i testiranje novih neuromorfnih rješenja**.
+
+---
+
+### 💡 Ukratko:
+
+> Napredak neuromorfnog računarstva trenutno koči **ograničen pristup hardveru** i **slaba skalabilnost simulatora**.
+> Rješenje je razvoj **brzih, skalabilnih i univerzalnih softverskih alata** koji omogućuju brzu inovaciju i širu dostupnost zajednici.
+
+---
+
+---
+
+### 🔹 Glavna ideja:
+
+U budućnosti, **neuromorfna računala** neće raditi sama za sebe, nego će biti **dio većeg ekosustava** — zajedno s **klasičnim računalima**, **GPU-ovima**, pa čak i **kvantnim računalima**.
+Svako od njih ima svoju **specijalnost**:
+
+* CPU – dobar za opće zadatke
+* GPU – moćan za paralelne izračune
+* Neuromorfni čip – izuzetno energetski učinkovit za obradu u stilu mozga (event-based, SNN, itd.)
+* Kvantni čip – jak za specifične optimizacijske i probabilističke probleme
+
+Dakle, ideja je: **kombinirati sve njih pametno**, tako da svaka komponenta radi ono što najbolje zna.
+
+---
+
+### 🔹 Problem:
+
+Ali — postoji **ogroman izazov** u tome da sve te različite arhitekture **rade zajedno**.
+
+Trenutno:
+
+* Neuromorfna računala **ovise o klasičnim računalima** (tzv. *host machines*) za:
+
+  * programiranje samog neuromorfnog čipa (definiranje mreže i pravila)
+  * komunikaciju sa senzorima i uređajima u stvarnom svijetu
+  * primanje i slanje podataka
+
+Ta ovisnost ima **visoku cijenu** — i **u vremenu** i **u energiji**.
+Dakle, čak i ako neuromorfni čip radi ultraefikasno, ako mora stalno čekati ili komunicirati s klasičnim računalom, **gubi se njegova prednost**.
+Na kraju, kad se uračunaju svi “overheadi” (komunikacija, prijenos podataka, CPU obrada), koristi od neuromorfnog pristupa mogu **potpuno nestati**.
+
+---
+
+### 🔹 Rješenje koje autori predlažu:
+
+Treba razviti **nove modele programiranja i arhitekture** koje će:
+
+* **smanjiti ovisnost** neuromorfnih računala o klasičnim hostovima,
+* **optimizirati komunikaciju** između njih (da ne troši više nego što vrijedi),
+* i omogućiti **jedinstveno programiranje** heterogenog sustava — tako da programer ne mora ručno "spajati" CPU + GPU + neuromorfni čip.
+
+---
+
+### 🔹 Ukratko:
+
+➡️ Buduća računala neće biti samo "brža", nego **pametno organizirana** kombinacija različitih tehnologija.
+➡️ Glavni izazov: **kako natjerati neuromorfna, kvantna i klasična računala da učinkovito surađuju** bez da troše previše energije i vremena na međusobnu komunikaciju.
+
+🔹 Glavna ideja:
+
+Ovaj dio govori o nedostatku standardiziranih benchmarka i metrika u području neuromorfnog računarstva.
+To je OGROMAN problem — jer bez njih ne možeš objektivno usporediti:
+
+koji hardver radi bolje,
+
+koji algoritam je učinkovitiji,
+
+ili koja metoda ima stvarne prednosti u praksi.
+
+🔹 Zašto su benchmarki važni?
+
+Usporedi to s deep learningom:
+
+Kad se pojavio ImageNet dataset, svi su znali:
+“Ako tvoj model pobijedi na ImageNetu — imaš dobru arhitekturu.”
+
+Taj izazov je pokrenuo eksploziju napretka — AlexNet, ResNet, EfficientNet...
+Benchmark je bio zajednički cilj cijele zajednice.
+
+➡️ Neuromorfno računarstvo nema takav “ImageNet moment”.
+Ne postoji jedan zajednički izazov ili set jasnih metrika koji bi usmjerio istraživanja i omogućio fer usporedbe.
+
+🔹 Trenutna situacija:
+
+Postoji nekoliko pokušaja benchmark setova i datasetova specifičnih za spike-based i event-based pristupe:
+
+Neuromorphic MNIST (N-MNIST) — spike verzija klasičnog MNIST-a
+
+DVS Gesture Dataset — gesta prepoznata pomoću Dynamic Vision Sensor (event kamera)
+
+Spiking Heidelberg Audio Dataset (SHD) — zvučni događaji za spike mreže
+
+Ali...
+➡️ nisu široko prihvaćeni u zajednici,
+➡️ nemaju status “standardnog testa”,
+➡️ i često ne iskorištavaju pravu prednost neuromorfnih sustava — temporalnu obradu događaja u stvarnom vremenu.
+
+Zato se često koriste stari ML datasetovi poput MNIST, CIFAR-10 i ImageNet, ali oni:
+
+nemaju vremensku dimenziju,
+
+nisu event-based,
+
+pa zapravo ne pokazuju pun potencijal neuromorfnih sustava.
+
+🔹 Problem jedinstvenog benchmarka:
+
+Autori upozoravaju — nije ni idealno imati samo jedan zadatak (kao što je bio ImageNet u ML-u).
+Zašto?
+Jer to može dovesti do “uske optimizacije” — svi algoritmi se prilagođavaju samo da bi bili bolji na tom jednom zadatku, a gubi se šira primjena.
+
+🔹 Rješenje:
+
+👉 Umjesto jednog “svetog grala” benchmarka,
+treba napraviti suite (set) različitih izazova i metrika koji će:
+
+pokrivati razne tipove zadataka (vizualne, auditivne, motorne, biološke simulacije itd.),
+
+uključivati različite tipove algoritama (ML i non-ML pristupe),
+
+i omogućiti fer usporedbe između različitih arhitektura (CPU, GPU, neuromorfni, kvantni...).
+
+🔹 Ukratko:
+
+🧠 Problem: Nema zajedničkih benchmarka → teško usporediti performanse i napredak.
+
+⚙️ Posljedica: Razvoj ide sporije jer svatko radi na svom datasetu, s vlastitim metrikama.
+
+🚀 Rješenje: Napraviti skup različitih izazova koji potiču inovaciju u više smjerova — ne samo jedan “ImageNet za neuromorfne”.
+
+Brutalan i važan odlomak — ovo ulazi pravo u **“softverske” izazove neuromorfnog računarstva**! 💥
+Evo ti **detaljno, ali jasno strukturirane natuknice** koje hvataju sve bitno:
+
+---
+
+## 🧠 Ključna tema: “Defining programming abstractions”
+
+➡️ Problem: **Nema jednostavnog, apstraktnog načina za programiranje neuromorfnih sustava.**
+Trenutno programeri moraju **ručno definirati svaki neuron, sinapsu, parametre i veze**.
+To je:
+
+* sporo,
+* komplicirano,
+* sklono pogreškama,
+* i potpuno drugačiji način razmišljanja od klasičnog programiranja.
+
+---
+
+### 🔹 1. Trenutni način rada
+
+* Programer mora **ručno dizajnirati SNN (Spiking Neural Network)** za zadatak.
+* Definira se:
+
+  * svaki neuron,
+  * svaka sinapsa,
+  * njihove veze,
+  * parametri (threshold, delay, weight…).
+* To traži **mikro-razinu kontrole** → usporedivo s pisanjem “assembly koda za mozak”.
+
+➡️ **Posljedica:** ogroman trud, mala fleksibilnost, visoka mogućnost greške.
+➡️ Zato razvoj *non-ML* algoritama na neuromorfnim sustavima ide jako sporo.
+
+---
+
+### 🔹 2. Zašto se najviše koriste graf algoritmi
+
+* Neuromorfne mreže imaju prirodnu analogiju s grafovima:
+
+  * **Čvorovi (nodes)** → neuroni
+  * **Bridovi (edges)** → sinapse
+* Zato je **jednostavno mapirati graf strukturu** u SNN.
+  ➡️ Zato su mnogi *non-machine learning* algoritmi fokusirani upravo na graf probleme (npr. pretraživanje grafa, optimizacija).
+
+---
+
+### 🔹 3. Postojeći pokušaji apstrakcije (viša razina)
+
+Postoje neki modeli koji pokušavaju “olakšati” programiranje:
+
+* **Neural Engineering Framework (NEF)** →
+  omogućuje definiranje apstraktnih izračuna pomoću neurona (često korišten za biološki realistične modele).
+* **Dynamic Neural Fields (DNF)** →
+  fokusiran na *embodied cognition* (npr. simulacije kognitivnih procesa u robotici).
+
+➡️ Ali problem:
+Ovi pristupi su **ograničeni na specifične slučajeve**.
+Ne postoji **opća apstrakcija** koja bi omogućila programiranje neuromorfnih računala za *razne* zadatke (ne samo neuronske modele ili robotiku).
+
+---
+
+### 🔹 4. Moguće rješenje: Subnetworks kao “programske primitive”
+
+Zamišlja se ideja da bi se mogli definirati **mali, standardizirani “spike subnetworks”** koji obavljaju osnovne zadatke poznate programerima:
+
+* logičke operacije (**AND, OR, XOR**),
+* uvjeti (**if / else**),
+* petlje (**loops**),
+* binarne operacije itd.
+
+➡️ Takvi “neuronski blokovi” mogli bi se **sastavljati u veće sustave**, baš kao što se funkcije i moduli spajaju u normalnim programima.
+
+* Postoji istraživanje (Plank et al.) koje pokazuje kako spike mreže mogu realizirati **AND, OR, XOR** logiku.
+* Ali to je tek početak — ogroman prostor za razvoj **“neuromorfnih programskih konstrukata”**.
+
+---
+
+### 🔹 5. Problem: nedostatak svijesti u široj zajednici
+
+Dok ne postoje jasne apstrakcije i dok se šira programska zajednica **ne upozna s konceptima spike-računarstva**, razvoj *non-ML* neuromorfnih algoritama bit će spor.
+
+➡️ Dakle, **nije samo hardverski problem**, već i **problem edukacije i alata**.
+
+---
+
+### 🔹 6. Bitno upozorenje: Neuromorfno ≠ za sve
+
+Autori naglašavaju:
+
+* Da, moguće je implementirati razne algoritme na neuromorfnim računalima,
+  **ali ne znači da sve treba**.
+* Neuromorfni sustavi su **specijalizirani procesori**, ne “opće namjene” (kao CPU).
+* Treba ih koristiti tamo gdje imaju **prirodnu prednost** — u:
+
+  * real-time obradi događaja,
+  * energetski učinkovitim simulacijama,
+  * biološkim modelima,
+  * adaptivnim i vremenski ovisnim sustavima.
+
+---
+
+### 🔹 7. Zaključak:
+
+* 🧩 **Problem:** nema jednostavnog načina za programiranje neuromorfnih sustava.
+* ⚙️ **Trenutno:** sve se definira ručno, na neuronskoj razini.
+* 💡 **Postoje pokušaji:** NEF i DNF — ali ograničeni.
+* 🚀 **Budućnost:** stvaranje “neuromorfnih programskih apstrakcija” (npr. neuronskih modula za osnovne operacije).
+* ⚠️ **Napomena:** neuromorfni čipovi su specijalizirani — nisu za svaki problem.
+
+---
+
+## 🧩 **OUTLOOK — Budućnost neuromorfnog računarstva**
+
+### 🔹 1. Ogroman potencijal izvan Mooreovog zakona
+
+* Neuromorfni procesori su:
+
+  * **energetski izuzetno učinkoviti**,
+  * **sposobni za strojno učenje i neke nestrojne (non-ML) izračune**,
+  * **velika nada za post-Moore eru** – omogućuju napredak performansi bez tradicionalnog skaliranja tranzistora.
+* Nude **nove paradigme obrade podataka** inspirirane biologijom (asinkrono, događajno, paralelno).
+
+---
+
+### 🔹 2. Tri glavna buduća **use-casea** za neuromorfne procesore
+
+#### 🟢 (1) **Edge computing** — uređaji na rubu mreže
+
+* Idealni zbog **niskog energetskog troška**.
+* Primjene:
+
+  * autonomna vozila i dronovi,
+  * robotika,
+  * udaljeni senzori,
+  * nosivi uređaji,
+  * Internet of Things (IoT).
+* Fokus: **ekstremno niska potrošnja i real-time obrada**.
+
+#### 🟠 (2) **AI akceleratori i koprocesori** u osobnim uređajima
+
+* Mogu postati **ko-akceleratori** u:
+
+  * pametnim telefonima,
+  * laptopima,
+  * stolnim računalima.
+* Slični današnjim GPU/NPU akceleratorima, ali s **reda veličine manjom potrošnjom energije**.
+* Mogu značajno **produžiti trajanje baterije** i ubrzati AI zadatke.
+
+#### 🔵 (3) **Koprocesori u heterogenim HPC sustavima**
+
+* U budućim **heterogenim superračunalima**, neuromorfni čipovi će:
+
+  * izvršavati **spike-based simulacije**,
+  * pokretati **graf algoritme**,
+  * **rješavati diferencijalne jednadžbe**,
+  * **aproksimirati NP-kompletne probleme** učinkovito.
+* Fokus: **reconfigurability** i **trening ubrzanje** za kompleksne znanstvene izračune.
+
+➡️ **Napomena:** implementacije će se razlikovati:
+
+* Edge uređaji – visoka specijalizacija, minimalna potrošnja.
+* HPC okruženja – veća fleksibilnost i mogućnost treniranja.
+
+---
+
+### 🔹 3. Trenutno stanje i smjer razvoja
+
+* Već postoji **nekoliko velikih neuromorfnih sustava** dostupnih istraživačima (npr. Loihi, SpiNNaker).
+* Aktivno se razvijaju i **nove vrste materijala i uređaja** za fizičku implementaciju (npr. memristori, analogni elementi).
+* Ovo stvara **ogromnu priliku za “hardware–software co-design”** — zajednički razvoj od materijala do aplikacija.
+
+---
+
+### 🔹 4. **Hardware–software codesign pristup**
+
+Trenutno:
+
+* Razvoj ide **odozdo prema gore** → prvo materijali i uređaji, pa tek onda algoritmi.
+
+Bolji pristup:
+
+* **“Cijeli stack codesign”** – paralelno oblikovati sve slojeve:
+
+  * materijali i uređaji,
+  * arhitektura,
+  * algoritmi,
+  * aplikacije.
+
+➡️ Time bi algoritmi mogli **utjecati na dizajn samog hardvera** i obrnuto.
+
+---
+
+### 🔹 5. **Primjeri suvremenog codesign pristupa**
+
+* **Bayesian optimization** i **Neural Architecture Search (NAS)** koriste se za optimizaciju cijelog sustava.
+* Primjer:
+
+  * kod **memristive crossbar** akceleratora,
+  * automatski se određuje broj i veličina crossbara kako bi se **maksimizirala točnost i energetska učinkovitost**.
+
+---
+
+###  6. **Biologija ↔️ Materijali: novi smjer razvoja**
+
+* Trenutno se u sinaptičkoj plastičnosti ide “odozgo prema dolje”:
+
+  * inspiracija iz biologije → implementacija u uređajima → prilagodba algoritma.
+* Novi smjer:
+
+  * **učiti iz fizičkih svojstava novih materijala** kako bi se razvili *novi algoritmi plastičnosti* (bottom-up).
+* Ideja: možda postoje **fizičke pojave u materijalima** koje mogu nadahnuti *potpuno nove modele učenja*.
+
+---
+
+###  7. **Paradigm shift – promjena načina razmišljanja**
+
+* Uspješno korištenje neuromorfnih računala zahtijevat će **promjenu paradigme programiranja**.
+* Istraživači moraju **razmišljati u terminima događaja, vremena i paralelizma**, a ne samo sekvencijalnog koda.
+
+---
+
+###  8. **Potencijalni najveći dobitnici**
+
+* Osim klasičnog ML-a, dvije skupine algoritama koje bi mogle **najviše profitirati**:
+
+  * **Graf algoritmi** (dijagrami, mreže, optimizacija veza)
+  * **Optimizacijski zadaci** (posebno NP-teški problemi)
+* Oboje imaju koristi od:
+
+  * **masivne paralelizacije**,
+  * **asinkronosti**,
+  * **stohastične prirode neuromorfnih sustava**.
+
+---
+
+###  9. **Zaključna vizija**
+
+* Neuromorfno računarstvo je još u ranoj fazi, ali:
+
+  * ima **ogroman potencijal** za redefiniranje računarstva,
+  * omogućuje **energetski učinkovite i paralelne izračune**,
+  * **nadopunjuje** postojeće paradigme (ne zamjenjuje ih).
+* Vrijeme je da **šira računalna znanstvena zajednica** počne uključivati neuromorfne računare kao **dio buduće računalne infrastrukture**.
+
+---
+
