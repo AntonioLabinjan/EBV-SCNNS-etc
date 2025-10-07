@@ -1,4 +1,4 @@
-# Tjedni izvještaj
+# Report
 
 | Datum       | Područje istraživanja | Opis provedenih mjerenja / eksperimenata | Rezultat | Zaključak | Slike / Reference | Sljedeći koraci | Napomene |
 |-------------|------------------------|------------------------------------------|----------|------------|-------------------|-----------------|----------|
