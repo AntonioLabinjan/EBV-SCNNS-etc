@@ -2185,3 +2185,249 @@ Kvantizacija temporalnog kontrasta je proces kojim DVS senzor pretvara kontinuir
 Nove metode trebaju uzeti u obzir: space-time, photometričku i stohastičku prirodu podataka
 Kako najefikasnije izvući info iz evenata da bude relevantno za task koji se riješava?
 Kako se noisy i neidealni efekti mogu modificirati da se lakše izvlače korisne informacije
+
+
+
+---
+
+## 🔹 Osnovni koncept
+
+Event-based kamera (DVS) ima piksele koji **ne snimaju frameove**, nego reagiraju *neovisno i asinkrono* na **promjene u logaritmu svjetlosnog toka** (fotostruke).
+
+Definicija:
+[
+L = \log(I)
+]
+gdje je ( I ) – fotostruja (intenzitet svjetlosti), a ( L ) logaritamska svjetlina (“brightness”).
+
+---
+
+## 🔹 Kada se generira event
+
+Svaki piksel ima svoju zadnju pohranjenu vrijednost svjetline.
+Event se generira kad promjena svjetline **od zadnjeg eventa** prijeđe određeni prag ( C ):
+
+[
+L(x_k, t_k) - L(x_k, t_k - \Delta t_k) = p_k C \quad (1)
+]
+
+* ( x_k ): koordinate piksela koji je ispalio event
+* ( t_k ): trenutak događaja
+* ( p_k \in {+1, -1} ): **polarnost** eventa
+
+  * ( +1 ) = porast svjetline (**ON event**)
+  * ( -1 ) = pad svjetline (**OFF event**)
+* ( C ): **temporalni kontrastni prag** (threshold) — minimalna promjena log-svjetline potrebna da piksel reagira
+
+Dakle:
+svaki piksel *pamti zadnju vrijednost L* i *emitira event* kad se promijeni za ±C.
+
+---
+
+## 🔹 Značenje praga C
+
+* Prag ( C ) postavljaju **bias struje** u tranzistorima piksela.
+* Te struje definiraju **osjetljivost** i **brzinu detekcije**.
+* Prag se može softverski podesiti (tipično 10–50% promjene osvjetljenja).
+* Niži prag → veća osjetljivost, ali i više šuma.
+* Donja granica (~1%) postiže se samo pri jakom svjetlu i niskom šumu.
+
+---
+
+## 🔹 Povezanost s derivacijom svjetline
+
+Ako su promjene male (tj. kratko vrijeme između dva eventa), promjenu svjetline možeš aproksimirati derivacijom (Taylorova ekspanzija):
+
+[
+L(x_k, t_k) - L(x_k, t_k - \Delta t_k) \approx \frac{\partial L}{\partial t}(x_k, t_k) , \Delta t_k
+]
+
+Ubacimo to u prethodnu formulu (1):
+
+[
+\frac{\partial L}{\partial t}(x_k, t_k) \approx \frac{p_k C}{\Delta t_k} \quad (3)
+]
+
+To znači da **frekvencija eventova (1/Δt)** indirektno kodira **brzinu promjene svjetline**.
+Drugim riječima: više eventova u jedinici vremena = brža promjena u sceni.
+
+---
+
+## 🔹 Fizikalno značenje
+
+* DVS ne mjeri **apsolutnu svjetlinu**, nego **promjene** u njoj.
+* Klasična kamera daje “kadrove svjetline”, dok DVS daje “spikeove kontrasta”.
+* To je *asinkrono mjerenje derivacije u vremenu*.
+
+---
+
+## 🔹 Povezanost s gibajućim rubovima
+
+Ako pretpostavimo da je ukupna svjetlina scene konstantna, promjene svjetline proizlaze iz **kretanja rubova**.
+Linearizacijom i primjenom *brightness constancy assumption* dobiješ:
+
+[
+\frac{\partial L}{\partial t} = -\nabla L \cdot v
+]
+
+* ( \nabla L = (\partial_x L, \partial_y L) ) je **gradijent svjetline** (smjer ruba).
+* ( v = (v_x, v_y) ) je **brzina kretanja točke na slici**.
+
+Dakle:
+
+* Ako je gibanje **paralelno s rubom** ((v \perp \nabla L)) → nema promjene → nema eventa.
+* Ako je gibanje **okomito na rub** ((v \parallel \nabla L)) → maksimalna promjena → mnogo eventova.
+
+To objašnjava zašto DVS detektira **ruba u pokretu**, a ne teksture koje miruju.
+
+---
+
+## 🔹 Probabilistički model generiranja eventa
+
+Idealna jednadžba (1) pretpostavlja savršen senzor bez šuma.
+U stvarnosti postoje:
+
+* **Slučajni šum** (shot noise u fotostruji)
+* **mismatch** između tranzistora
+* **varijacije praga** između piksela
+
+Zbog toga je prag **stohastičan**, tj. nije uvijek točno C, nego varira oko njega prema **normalnoj raspodjeli**:
+
+[
+P(C) \sim \mathcal{N}(C, \sigma_C)
+]
+gdje je tipična širina distribucije (σ) oko 2–4% kontrasta.
+
+---
+
+## 🔹 Dodatni efekti
+
+* **Refraktorni period:** kratko vrijeme nakon emitiranja eventa u kojem piksel *ignorira nove promjene* (ograničava brzinu).
+* **Bus congestion:** kad previše piksela istovremeno šalje evente, nastaje “zagušenje” na sabirnici.
+* **Fixed Pattern Noise (FPN):** varijacija praga i odziva između piksela (standardna devijacija 2–4%).
+
+---
+
+## 🔹 Zaključak
+
+Event-based kamera:
+
+1. Radi u log-svjetlosnoj domeni.
+2. Generira event kad promjena svjetline prijeđe prag ( C ).
+3. ( p_k ) označava polaritet (ON/OFF).
+4. Derivacija svjetline ( \frac{\partial L}{\partial t} ) povezana je s frekvencijom eventova.
+5. Eventi nastaju najviše na pokretnim rubovima, kad je ( v \parallel \nabla L ).
+6. Prag ( C ) je stohastičan zbog šuma, a fizički ga ograničavaju bias struje, shot noise i osvjetljenje.
+
+---
+
+
+
+---
+
+### **Napredne event kamere – sažetak ključnih točaka**
+
+**1. Opći kontekst**
+
+* Trenutno su dostupne samo kroz **znanstvene suradnje** s razvojnim timovima.
+* Fokus istraživanja je na **proširenju funkcionalnosti**: boja, osjetljivost, dinamički raspon.
+
+---
+
+**2. Event kamere s bojom (Color event cameras)**
+
+* Cilj: omogućiti *color vision* u event kamerama (kao kod ljudi i običnih kamera).
+* **Rani pokušaji** koristili “*vertacolor principle*” (različite valne duljine svjetla različito prodiru u silicij).
+
+  * Pionir: **Foveon senzori**.
+  * Problem: **slaba separacija boja** (nema čiste razlike između R, G, B kanala).
+* **Noviji pristupi:**
+
+  * **Color Filter Arrays (CFA)** – integrirani RGB filteri iznad piksela.
+  * **Color-splitter prizme** – optički razdvajaju boje na odvojene senzore.
+
+    * Prednost: bolja separacija boja.
+    * Mana: **veća cijena** i složenost.
+
+---
+
+**3. Povećana kontrastna osjetljivost (Higher Contrast Sensitivity)**
+
+* Cilj: **detektirati manje promjene svjetline** (veća osjetljivost).
+* Eksperimentalni senzori postigli osjetljivost do **~1% promjene osvjetljenja** (u laboratorijskim uvjetima).
+* Tehnika:
+
+  * Temeljeno na ideji **bolometra** – pojačanje signala *prije detektora promjene*.
+  * To smanjuje **Fixed Pattern Noise (FPN)** i povećava preciznost detekcije.
+* Problem: preamplifikacija zahtijeva **aktivnu kontrolu pojačanja** da se izbjegne zasićenje (“clipping”).
+* Kompromis: **veća osjetljivost → manji dinamički raspon**.
+
+---
+
+**4. Ključna ograničenja**
+
+* Trenutni napredni modeli su **eksperimentalni**, nisu komercijalno dostupni.
+* Balans između **osjetljivosti, dinamičkog raspona i troška** još nije optimalno riješen.
+
+---
+
+
+---
+
+### **Ekstrakcija informacija iz event podataka – sažetak ključnih točaka**
+
+**1. Ključno pitanje:**
+Kako izvući *značajne informacije* iz asinkronih, rijetkih i vremenski preciznih event podataka — ovisi o konkretnoj **aplikaciji** (npr. praćenje, rekonstrukcija, prepoznavanje).
+To pitanje određuje **dizajn algoritma**.
+
+---
+
+**2. Svojstva event podataka:**
+
+* **Asinkroni** – svaki piksel šalje event neovisno.
+* **Sparse** – većina piksela u datom trenutku ne generira event.
+* **Visoka vremenska rezolucija** i **niska latencija**.
+
+---
+
+**3. Dvije osnovne kategorije algoritama:**
+
+| Kategorija                            | Opis                                                  | Latencija | Napomena                                  |
+| ------------------------------------- | ----------------------------------------------------- | --------- | ----------------------------------------- |
+| **(i) Event-by-event**                | Svaki dolazni event odmah ažurira stanje sustava      | Minimalna | Najniža latencija, ali veća složenost     |
+| **(ii) Event-packet (grupne metode)** | Obrada blokova (paketa) događaja u vremenskom prozoru | Viša      | Uvodi kašnjenje, ali stabilniji rezultati |
+
+*Napomena:*
+Granica između kategorija nije stroga – prozori mogu “kliziti” po jedan event, pa se stanje može ažurirati i kontinuirano.
+
+---
+
+**4. Ključna spoznaja:**
+Jedan event sam po sebi **nije dovoljan** za pouzdanu procjenu —
+potrebno je dodatno znanje ili povijest prošlih događaja.
+
+---
+
+**5. Orijentacijska (ortogonalna) klasifikacija algoritama:**
+Prema **načinu obrade događaja:**
+
+| Tip pristupa                 | Opis                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| **Model-based**              | Koristi fizikalne ili geometrijske modele (npr. optički tok, geometriju kamere) |
+| **Model-free / Data-driven** | Uči reprezentacije iz podataka (npr. deep learning, ML pristupi)                |
+
+---
+
+**6. Prema tipu funkcije cilja (loss function):**
+
+* **Geometrijska** – temelji se na položaju i pokretu točaka u prostoru.
+* **Vremenska (temporal)** – koristi vremenski slijed i kašnjenja između eventova.
+* **Fotometrijska** – temelji se na polaritetu i aktivnosti događaja (ON/OFF).
+
+---
+
+**7. Trenutni fokus istraživanja:**
+Istražuju se prednosti i mane svake kategorije (event-by-event vs. group, model-based vs. ML) te kombinacije koje optimiziraju balans između **točnosti, brzine i robusnosti**.
+
+---
+
