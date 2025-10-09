@@ -2047,3 +2047,41 @@ Bolji pristup:
 
 ---
 
+Event-based vision: A Survey, Guillermo Gallego & co.
+- Event kamere - bio-inspired senzori koji, za razliku od standarnih frame-based kamera, asinkrono mjere per-pixel promjene svjetline i kao output izbacuju stream evenata (svaki se sastoji od: vremena, lokacija i oznake promjene svjetline)
+- Features: high temporal resolution, high dynamic range, low power consumption, high pixel bandwith, reduced motion blur, low latency, high speed
+- Koriste se za sve levele CV-a (od feature detectiona i trackinga, optical flowa do rekonstrukcije, segmentacije i recognitiona)
+- Postoje posebne tehnologije za to (npr. SCNNs)
+
+
+- Započelo 1986. - Carver Mead => spoj inženjerske i bioliške perspektive
+- 1991. - Silicijska zjenica => oponašanje prirodne arhitekture oka
+- Cilj: shvatiti kako mozak radi i složiti ga na računalnom čipu
+- Bio-inspired tehnologija silikonskih zjenica/event kamera
+- Vid je najdominantniji ljudski osjet => najjači signali
+- Event based senzori riješavaju neke probleme frame-based visiona (high speed motion estimation; high dynamic range)
+- Asinkroni senzori => sampling scene na temelju dinamike u istoj, a ne na temelju internog clocka koji nema veze s događajima na sceni (kao kod frame based di se koristi sampling u k fps)
+- Visok temporal resolution; niska latencija; visok dynamic range, niska potrošnja energije
+- Robotika, wearable uređaji + situacije di standarnde kamere ne delaju dobro (high speed&dynamic range)...nekontrolirano osvjetljenje, latencija + područja di je važno očuvanje električne energije
+- AR/VR, video igre
+
+- Rade znatno drukčije nego standarne kamere (asinkrono mjere promjene u intenzitetu svjetlosti by-pixel) pa su potrebne nove metode za procesiranje outputa
+
+- Object tracking, surveillance and monitoring, object/gesture recognition, depth estimation, structured light 3d scanning, optical flow estimation, image reonstruction, localization&mapping, image deblurring, star tracking
+
+Glavna razlika u odnosu na standardne frame based kamere:
+- standardne kamere koriste full images at a rate specified by external clock (npr. 30fps)
+- event kamere reagiraju na promjene svjetlosti u sceni asinkrono i neovisno za svaki piksel
+- output event kamere je varijabilna data-rate sekvenca digitalnih evenata (spikeova)
+
+- Svaki spike predstavlja promjenu osjvetljenja u određenom pikselu u određenom vremenskom trenutku => spiking nature biološkog vida
+- Svaki piksel pamti log intenziteta za svaki eent i kontinuirano prati promjenu intenziteta u odnosu na upamćenu vrijednost
+- Kada promjena pređe threshold, kamera šalje event koji se šalje (x,y koordinate lokacije, t timestamp, 1-bitni polaritet promjene (ON ako se svjetlost povećala, OFF ako se smanjila)
+- Eventi se šalju od pixel arraya prema periferiji i onda van iz kamere koristeći shared digital output bus (Address-event representation; AER)
+- Rate od 2 MHz do 1200 Mhz ovisno o čipu i hardveru
+
+- Event kamere su data-driven senzori (output im ovisi o količini kretanja ili promjeni svjetlosti u sceni)
+- Ča je kretanje brže/češće/intenzivnije, više evenata po sekundi se generira
+- Svaki piksel ima vlastiti sampling rate i prati intenzitet evenata koji signalizira
+- Eventi imaju timestampove na razini mikrosekunde => šalju se s latencijom manjom od milisekunde
+- Senzori brzo reagiraju na stimulans 
