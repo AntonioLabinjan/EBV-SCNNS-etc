@@ -2430,4 +2430,9 @@ Prema **načinu obrade događaja:**
 Istražuju se prednosti i mane svake kategorije (event-by-event vs. group, model-based vs. ML) te kombinacije koje optimiziraju balans između **točnosti, brzine i robusnosti**.
 
 ---
+KONCEPT POSITIVE I NEGATIVE EVENATA:
+| Type           | Meaning            | Triggered when  | Color in visualization |
+| -------------- | ------------------ | --------------- | ---------------------- |
+| Positive Event | Pixel got brighter | ΔL ≥ +threshold | Green                  |
+| Negative Event | Pixel got darker   | ΔL ≤ -threshold | Red                    |
 
