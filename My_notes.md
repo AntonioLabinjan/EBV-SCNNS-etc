@@ -2085,3 +2085,31 @@ Glavna razlika u odnosu na standardne frame based kamere:
 - Svaki piksel ima vlastiti sampling rate i prati intenzitet evenata koji signalizira
 - Eventi imaju timestampove na razini mikrosekunde => šalju se s latencijom manjom od milisekunde
 - Senzori brzo reagiraju na stimulans 
+
+- Incident light => produkt osvjetljenja scene i odsjaja površine koja se "snima"
+- Ako je osvjetljenje otprilike konstantno, incident light je minimalan i nastaje samo kada se ovjekt gledanja pomiče
+- DVS pikesli imaju konačan bandwith; ako su nadolazeće promjene u intenzitetu prečeste, photoreceptor "filtrira" varijacije u njima i ne registrira ih => ukratko; dvs pikseli imaju fizički limit maksimalne brzine kojom reagiraju na promjene
+- Ako su eventi prebrzi; senzor praktički lovi manje evenata nego ako su u "normalnoj brzini"
+
+- Najčešći event camera dizajni:
+- first silicon retina: Mahowald&Mead (1986-1992)
+- logaritamski pikesli => output spike eventi nastaju koristeći AER protokol
+- Problem: treba precizno ušzimavati svaku pojedinu žicu (bias parametri); mismatch u responsevima za različite piksele; pikseli su preveliki
+
+- DVS event camera => utemeljena na frame-based silicon mrežnici (continous-time fotoreceptor + redout circle koji se resetira svaki put kad se pixel samplira)
+- Uviđeno je da je potreban i neki oblik statičkog outputa ("absoulute brightness")
+- Ideja: kamera koje concurrently daju i statički i dinamički output)
+
+- ATIS => asinkroni time based image sensor => pikesli sa DVS subpikselima
+- Okidač resetira kondenzator na visoki napon; sturja se odvodi iz kondenzatora pomoću diode; što je input svjetliji, to se kondenzator brže prazni
+- Samo pikseli koji se stvarno mijenjaju imaju utjecaj na napon
+- Ča je svjetliji event; to su promjene češće
+- Neodostatak: jako veliki pikesli; u mraku je jako sporo i novi eventi mogu prekinuti očitavanje starih...nepraktično
+
+- DAVIS => spoj aktivnog pixel senzora (APS) i DVS-a
+- puno manji pikseli
+- dijeljena fotodioda
+- frameovi se obrađuju u konstantom rateu
+- problem: ograničeni dynamic range; redundancija ako se pikseli ne promjene
+
+  Prednosti event kamera
