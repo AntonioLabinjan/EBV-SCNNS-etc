@@ -2112,4 +2112,76 @@ Glavna razlika u odnosu na standardne frame based kamere:
 - frameovi se obrađuju u konstantom rateu
 - problem: ograničeni dynamic range; redundancija ako se pikseli ne promjene
 
-  Prednosti event kamera
+Prednosti event kamera
+High temporal resolution:
+ - praćenje promjena osvjetljenja je brzo
+ - iščitavanje evenata je digitalno, s 1MHz clockom (eventi su detektirani i timestampirani u roku mikrosekunde)
+ - mogu snimati jako brze pokrete, bez da dolazi do blura koji je standardan za frame-based kamere
+
+Low latency:
+ - svaki piksel radi zasebno; ne treba se čekati global exposure za cijeli frame
+ - čim se event detektira, transmitted je (latencija ispod milisekunde u realnom okruženju)
+
+Low power:
+ - transmitaju se samo promjene u osvjetljenju; nema redundantnih podataka
+ - struja se troši samo za procesiranje piksela koji se mijenjaju
+
+High dynamic range:
+ - i više nego duplo bolje nego kod najkvalitetnijih frame-based kamera
+ - mogu captureati informacije u svim uvjetima..od mjesečine do sunca
+ - fotoreceptori rade logaritamski i svaki piksel radi zasebno, bez da čeka "zatvarač" kamere
+ - poput zjenice, prilagodljivi su i jakom mraku i jakoj svjetlosti
+
+Izazovi:
+- dizajn novih korisnih softverskih algoritama i hardverskih metoda
+1) space-time output
+   Output event kamera je fundamenatalno drukčiji od outputa standardnih kamera; eventi su asinkroni i prostorno sparse (rijetki), dok su frameovi sinkroni i dense (frame točno prati tijek onoga ispred kamere)
+2) different photometric sensing
+   Standardne kamere daju grayscale info, dok eventi u sebi sadrže binarni (increase/decrease) info o promjeni svjetlosti. Promjene svjetlosti ne ovise samo o trenutnom osvjetljenju scene nego i o trenutnim i prošlim kretnjama u sceni
+3) noise and dynamics
+   Svi vision senzori su noisy jer postoji neizbježan noise u česticama sjvetlosti i u samim el. krugovima u tranzistorima. Problem ze event based kamere: kako kvantizirati temporal contrast
+
+---
+
+### **Kvantizacija temporalnog kontrasta – sažetak**
+
+**1. Temporalni kontrast (C):**
+
+* Mjeri promjenu svjetline kroz vrijeme:
+  [
+  C(t) = \frac{I(t) - I(t - Δt)}{I(t - Δt)}
+  ]
+* DVS piksel reagira samo kad ta promjena prijeđe određeni prag (θ).
+
+**2. Generiranje eventa:**
+
+* Ako |C(t)| > θ → generira se event (ON za porast, OFF za pad svjetline).
+* Male promjene ispod praga se ignoriraju.
+
+**3. Problem kvantizacije:**
+
+* Potrebno je definirati kako pretvoriti kontinuirane promjene svjetline u diskretne događaje.
+* Ključno je odabrati prag koji daje dovoljno informacija, ali bez previše šuma.
+
+**4. Izazovi:**
+
+* **Previsok prag:** gube se male, ali važne promjene.
+* **Prenizak prag:** nastaje previše šuma (previše eventova).
+* **Fizičko ograničenje:** pikseli imaju ograničen odziv (RC krug → bandwidth limit), pa ne mogu detektirati ekstremno brze promjene.
+
+**5. Logaritamska kvantizacija:**
+
+* U praksi se koristi logaritamska razina svjetline:
+  [
+  \log(I(t)) - \log(I(t - Δt))
+  ]
+* Time se postiže bolja stabilnost u različitim uvjetima osvjetljenja.
+
+**6. Zaključak:**
+Kvantizacija temporalnog kontrasta je proces kojim DVS senzor pretvara kontinuirane promjene svjetline u diskretne, informativne događaje pomoću praga i logaritamske transformacije, uz fizičko ograničenje brzine odziva piksela.
+
+---
+
+Nove metode trebaju uzeti u obzir: space-time, photometričku i stohastičku prirodu podataka
+Kako najefikasnije izvući info iz evenata da bude relevantno za task koji se riješava?
+Kako se noisy i neidealni efekti mogu modificirati da se lakše izvlače korisne informacije
