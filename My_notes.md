@@ -2436,3 +2436,322 @@ KONCEPT POSITIVE I NEGATIVE EVENATA:
 | Positive Event | Pixel got brighter | ΔL ≥ +threshold | Green                  |
 | Negative Event | Pixel got darker   | ΔL ≤ -threshold | Red                    |
 
+
+Eventi se procesiraju i često se transformiraju u alternativne reprezentacije (npr. events in space time, event frames, time surface s timestampovima po pikselu, voxel grid, motion compensated event image, reconstrcted intensity image itd.)
+
+---
+
+### **1. Events in space–time (prostorno-vremenski događaji)**
+
+* Svaki event se predstavlja trojkom *(x, y, t, p)* → pozicija, vrijeme i polaritet.
+* Vizualno: “točkice” u 3D prostoru gdje je Z-os vrijeme.
+* Koristi se za analizu *temporalne dinamike* (kretanje objekata, optical flow).
+* To je najosnovnija forma — ništa agregirano, čista sirova temporalna informacija.
+
+---
+
+### **2. Event frame (akumulirani događaji u sliku)**
+
+* Najjednostavnije: “broji” koliko se pozitivnih i negativnih događaja dogodilo u određenom vremenskom prozoru.
+* Dobiješ 2D sliku (kao frame) gdje intenzitet piksela = broj događaja.
+* Gubiš preciznu vremensku informaciju, ali možeš koristiti standardne CNN-ove.
+* Korisno za vizualizaciju ili klasične detekcijske mreže.
+
+---
+
+### **3. Time surface**
+
+* Svaki piksel sadrži **vrijeme posljednjeg događaja**.
+* Dobiješ “mapu svježine” — noviji eventi imaju veće vrijednosti.
+* Koristi se za *motion detection* i *feature tracking*, jer pokazuje gdje se *nedavno* nešto promijenilo.
+* Može se eksponencijalno “zaboravljati” starije evente → time decay.
+
+---
+
+### **4. Voxel grid**
+
+* Događaje rasporediš u 3D mrežu (x, y, vrijeme).
+* Vremenska dimenzija se diskretizira u N binova (npr. 5–10 vremenskih slojeva).
+* Dobiješ “3D tensor” koji CNN ili transformer može direktno obrađivati.
+* Zlatni standard u deep-learning pristupima za event kamere (npr. EV-FlowNet, E2VID).
+
+---
+
+### **5. Motion-compensated event image**
+
+* Pokušava “poravnati” događaje tako da izgleda kao da su snimljeni istovremeno.
+* Radi *kompenzaciju gibanja* objekata ili kamere na temelju pretpostavljenog optic flow-a.
+* Kad to ispravno napraviš, svi eventi od istog ruba poravnaju se → oštra rekonstruirana slika.
+* Koristi se kod rekonstrukcije scene i odvajanja pozadine/predmeta u pokretu.
+
+---
+
+### **6. Reconstructed intensity image**
+
+* Koristi sve događaje (često + početni “key frame”) da rekonstruira standardnu RGB ili grayscale sliku.
+* Ideja: integrira promjene svjetline tijekom vremena.
+* Koristi se u **E2VID** i sličnim mrežama koje rade “frame-like output” iz event streama.
+* Super za situacije s visokim dinamičkim rasponom ili slabim osvjetljenjem.
+
+
+Metode za event processing
+
+Preprocessing (input adaptation)
+Core processing (feature extraction and analysis)
+Postprocessing (output creation)
+
+U preprocessingu koristi se event packet
+Motion-compensated event images se koriste u core processingu
+
+Metoda obrade ovisi o tome kako su eventi reprezentirani i koji je hardver dostupan
+
+| **Aspekt**                 | **Event-by-Event obrada**                                                | **Event-Packet obrada**                                                       |
+| -------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| **Opis**                   | Svaki događaj se procesira individualno, odmah po dolasku.               | Događaji se grupiraju u vremenske pakete i procesiraju zajedno.               |
+| **Tipične reprezentacije** | Sparse (rijetke) reprezentacije, vremenski točne (x, y, t, p).           | Dense reprezentacije poput event framea, voxel grida, time surfacea.          |
+| **Hardverska platforma**   | Neuromorfni čipovi i SNN arhitekture.                                    | Standardni CPU/GPU procesori.                                                 |
+| **Tipični algoritmi**      | Spiking neuronske mreže (SNN), deterministički i probabilistički filtri. | DNN-ovi, CNN-ovi, ručno dizajnirani feature extractori.                       |
+| **Prednosti**              | Vrlo niska latencija, energetska učinkovitost, prirodno asinkrono.       | Jednostavnije za implementaciju, kompatibilno s postojećim ML frameworkovima. |
+| **Nedostaci**              | Zahtijeva specijalizirani hardver i kompleksniju arhitekturu.            | Gubi vremensku preciznost i povećava latenciju.                               |
+| **Tipične primjene**       | Real-time kontrola, robotika, edge sustavi, ultra-brzi odziv.            | Analiza scene, rekonstrukcija slike, učenje iz događajnih podataka.           |
+
+---
+
+
+---
+
+## 🧠 Event-by-Event metode
+
+### 🔹 1. Deterministički filteri
+
+* **Primjeri:** prostorno-vremenske konvolucije, activity filteri.
+* **Koriste se za:**
+
+  * Redukciju šuma
+  * Ekstrakciju značajki (feature extraction)
+  * Rekonstrukciju slike
+  * Filtriranje svjetline
+* **Prednost:** savršeno prirodni za asinkrone podatke — omogućuju minimalnu latenciju i iskorištavaju svojstva senzora.
+
+---
+
+### 🔹 2. Probabilistički (Bayesovski) filteri
+
+* **Primjeri:** Kalman filter, particle filter.
+* **Koriste se za:**
+
+  * Praćenje položaja i orijentacije (pose tracking) u SLAM sustavima.
+* **Zahtijevaju dodatne informacije:**
+
+  * Npr. grayscale slike, mapu scene ili povijesne evente.
+* **Način rada:** svaki novi event uspoređuje se s postojećom "appearance" informacijom → razlika (innovation) ažurira stanje filtra.
+* **Prednosti:** mogu kombinirati podatke iz više izvora i raditi s djelomičnim informacijama.
+
+---
+
+### 🔹 3. Višeslojni neuronski modeli (ANN / SNN)
+
+* **Dvije glavne grane:**
+
+  * **SNN (Spiking Neural Networks)** – prirodno procesiraju evente jedan po jedan.
+  * **Klasične DNN mreže** – često trenirane na event-paketima, kasnije konvertirane u SNN.
+
+---
+
+### 🔹 4. Učenje i treniranje
+
+* **Nesupervizirano učenje:**
+
+  * Koristi se za ekstrakciju značajki (feature extraction).
+  * Rezultat se često šalje u klasični klasifikator (npr. SVM).
+  * Ipak, i dalje je potrebna određena količina označenih podataka (labeled data).
+
+* **Supervizirano učenje:**
+
+  * Ako ima dovoljno označenih podataka, može se direktno trenirati ANN/SNN bez dodatnog klasifikatora.
+  * **Rezultat:** viša točnost nego kod nesuperviziranog pristupa.
+
+---
+
+### 🔹 5. Kombinirani pristupi
+
+* Tijekom treniranja: koriste **pakete eventa** (frame-based deep learning).
+* Nakon treniranja: model se pretvara u **SNN koji procesira evente jedan po jedan**.
+* Ova kombinacija koristi prednosti i klasičnih GPU mreža i neuromorfnih sustava.
+
+---
+
+### 🔹 6. Glavne primjene
+
+* **Klasifikacija objekata**
+* **Prepoznavanje akcija / pokreta**
+* **Embedded sustavi** – optimizirani za efikasnost i nisku latenciju, često koriste **custom SNN hardver**.
+
+---
+
+### 🔹 7. Trendovi i budući razvoj
+
+* Povećan interes za:
+
+  * **Supervizirano učenje direktno u SNN-ovima**
+  * **Ugradnju takvih sustava u embedded uređaje** radi brzine i energetske učinkovitosti.
+
+---
+
+Naravno — ovo je jako bogat odlomak, pa sam ti izvukao **sve ključne koncepte i ideje** u pregledne, tematski grupirane natuknice u **markdown formatu**.
+Sve bitno o **"Methods for Groups of Events"** (tj. grupnom procesiranju eventa) je ovdje sažeto i jasno 👇
+
+---
+
+## ⚙️ Methods for Groups of Events
+
+*(Metode koje procesiraju više događaja zajedno — grupno, a ne pojedinačno)*
+
+---
+
+### 🔹 1. Osnovna ideja
+
+* **Razlog:** pojedinačni eventi nose premalo informacija i puno šuma.
+* **Rješenje:** grupiranjem više eventa postiže se bolji **signal-to-noise ratio**.
+* **Proces:** više eventa se kombinira u **reprezentacije** poput:
+
+  * event packet
+  * event frame
+  * time surface (TS)
+  * voxel grid
+* Takve reprezentacije omogućuju korištenje klasičnih CV (computer vision) metoda.
+
+---
+
+### 🔹 2. Event Frames
+
+* Vrlo praktična reprezentacija jer omogućuje ponovnu upotrebu klasičnih CV alata.
+* **Koristi se za:**
+
+  * stereo viziju (dobri, ali skromni rezultati)
+  * estimaciju položaja kamere (pose estimation)
+  * optical flow (block matching)
+  * input za DNN, SVM, Random Forest klasifikatore
+* **Posebna prednost:** adaptivni frame rate (ovisno o sceni).
+* **Napomena:** rijetki radovi uzimaju u obzir fotometrijsko značenje eventa (npr. promjenu svjetline).
+
+---
+
+### 🔹 3. Intensity Increment Images
+
+* Koriste **inkremente svjetline** između događaja.
+* **Primjene:**
+
+  * praćenje značajki (feature tracking)
+  * deblurring (odstranjivanje zamućenja slike)
+  * praćenje kamere (camera tracking)
+
+---
+
+### 🔹 4. Time Surfaces (TS)
+
+* **Opis:** mapa koja bilježi *vrijeme zadnjeg eventa po pikselu*.
+* **Osjetljive su na:** rubove i smjer gibanja objekta.
+* **Primjene:**
+
+  * analiza gibanja i prepoznavanje oblika
+  * iz TS-a se može izvesti **optical flow** (fitanjem ravnina kroz prostor-vrijeme)
+  * ulaz za **CNN-e** koji računaju optical flow i brzinu
+  * **corner detection** (Harris, FAST, ili noviji ML pristupi)
+  * stereo vizija pomoću **temporalnog podudaranja** (event concurrence & timestamp similarity)
+* **Problem:** degradacija performansi u teksturiranim scenama → **motion overwriting** (novi eventi brišu tragove starih).
+
+---
+
+### 🔹 5. Voxel Grids
+
+* **Opis:** 3D volumetrijska reprezentacija (x, y, t).
+* **Prednosti:** bolje čuva vremensku informaciju.
+* **Nedostatak:** troši više memorije i računske snage.
+* **Koristi se za:**
+
+  * optical flow (varijacijska optimizacija)
+  * DNN ulaze/izlaze s više kanala (multi-channel input/output)
+* **Način obrade:**
+
+  * konvolucije nad voxelima
+  * optimizacija po kriteriju minimalne greške (objective function)
+
+---
+
+### 🔹 6. Korištenje konvencionalnih CV alata
+
+* Kad se eventi pretvore u grid/frame formu — mogu se koristiti svi klasični alati:
+
+  * **CNN feature extractori**
+  * **Sličnosne metrike (cross-correlation, event alignment)** za:
+
+    * klasifikaciju (SVM, CNN)
+    * klasteriranje
+    * detekciju pokreta (motion estimation)
+* U **neuroscience** zajednici postoje i metrički pristupi koji rade direktno na *spikeovima* — bez konverzije u slike.
+
+---
+
+### 🔹 7. Deep Learning pristupi
+
+* Koriste **DNN** nad različitim reprezentacijama:
+
+  * event images
+  * time surfaces (TS)
+  * voxel grids
+  * point sets
+* **Primjene:**
+
+  * klasifikacija
+  * rekonstrukcija slike
+  * predikcija kuta upravljanja (steering angle)
+  * optical flow, depth, ego-motion estimacija
+* **Supervizirano učenje:**
+
+  * koriste *ground truth* (npr. pozu kamere, grayscale sliku)
+  * mjere *photoconsistency*
+* **Nesupervizirano učenje:**
+
+  * koristi samo input evente (nema oznaka)
+  * loss funkcije za to su istražene u [99]
+* **Arhitektura:**
+
+  * najčešće *encoder-decoder*
+  * koristi samo konvolucije (manje parametara)
+  * gubitak (loss) se može primijeniti na svaku razinu dekodera.
+
+---
+
+### 🔹 8. Motion Compensation
+
+* **Ideja:** pronaći parametre gibanja koji najbolje "poravnaju" skup eventa u vremenu.
+* **Prednost:** koristi *kontinuirani vremenski model* — iskorištava visoku temporalnu rezoluciju senzora.
+* **Primjene:**
+
+  * ego-motion estimacija
+  * optical flow
+  * procjena dubine
+  * segmentacija pokreta
+  * feature motion za VIO (Visual-Inertial Odometry)
+* **Algoritmi:** koriste optimizacijske metode kao što su **Gauss-Newton** i **Conjugate Gradient**.
+
+---
+
+### 🔹 9. Odabir veličine grupe eventa
+
+* Ključni **hiperparametar** – koliko eventa ulazi u jednu grupu.
+* **Strategije odabira:**
+
+  1. **Fiksni broj eventa**
+  2. **Fiksno vrijeme promatranja** (konstantni frame rate)
+  3. **Adaptivni pristupi** — npr. threshold prema gustoći eventa u regiji.
+* **Trade-off:**
+
+  * Fiksni broj eventa = jednostavno, ali ne uzima u obzir varijacije po slici.
+  * Fiksno vrijeme = broj eventa se mijenja (nekad premalo, nekad previše).
+  * Adaptivno = najbolje rješenje, ali složenije za dizajnirati.
+
+---
+
+
