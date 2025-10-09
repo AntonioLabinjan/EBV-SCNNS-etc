@@ -385,6 +385,7 @@ ON i OFF eventi -> circuit ih emitira u periferiju
 - Pixel more emitat ili ON ili OFF event (NIKAD OBA ISTOVREMENO) prema periferiji
 - Proces "komunikacije" kreće kad event trigerira piksel, a završava kada se piksel resetira na 0 (vrati u početno stanje)
 - Prijevod na glupo: ON event -> nešto se miče i pikseli reagiraju; OFF event -> niš se više ne miče, pikseli miruju
+- Bitna napomena: ON event označava da je piksel posvjetlio, OFF event da je potamnio
 
 - ograničava se "fire-rate" za piksele kako pojedini pikseli ne bi zauzeli sve resurse za obradu
 - omogućava da se više resursa posveti aktivnijim područjima (procesiraš ono di se nešto dešava; di ima evenata)
