@@ -2755,4 +2755,45 @@ Sve bitno o **"Methods for Groups of Events"** (tj. grupnom procesiranju eventa)
 
 ---
 
+* Dizajn event kamera temelji se na biološkim principima i računalnim primitivima, poput Spiking Neural Networks (SNN).
+* DVS (Dynamic Vision Sensor) je inspiriran biološkim vizualnim putevima, posebno “transient” (privremenim) putevima koji obrađuju dinamičke vizualne informacije u “where” (gdje) putu.
+* Transient put postoji kod mnogih životinja, uključujući ljude, i čini oko 30% ljudskog vizualnog sustava.
+* Počinje s transient ganglijskim stanicama u retini (izvan fovee), zatim prolazi kroz magno slojeve talamusa i pod-slojeve područja V1, te završava u područjima MT i MST (dio dorzalnog puta, povezanog s prepoznavanjem pokreta).
+* DVS senzor odgovara dijelu tog transient puta do razine retinalnih ganglijskih stanica.
+* ATIS (senor koji bilježi i svjetlinu) generira grayscale događaje koji odgovaraju “sustained” ili “what” (što) putu kroz parvo slojeve mozga.
+
+Transient - dio vizualnog sustava koji reagira na brze promjene i pokret u vidnom polju; obrađuje dinamičke informacije poput gibanja ili promjene kontrasta; brza, ali kratkotrajna reakcija.
+Fovea - središnji dio mrežnice oka gdje je vidna oštrina najveća; sadrži gusto raspoređene čunjiće koji detektiraju boje; odgovorna za detaljno i precizno gledanje.
+Magno slojevi talamusa - dio lateralnog genikulatnog tijela (LGN) u talamusu; obrađuju informacije o pokretu, kontrastu i svjetlini; povezani su s transient putem (gdje put).
+V1 - primarno vidno područje u okcipitalnom režnju mozga; prvi korak obrade vizualnih informacija iz oka; analizira osnovne značajke slike kao što su rubovi, orijentacija i smjer kretanja.
+MT - područje srednjeg temporalnog režnja (Middle Temporal area); specijalizirano za percepciju kretanja; sadrži stanice osjetljive na smjer i brzinu gibanja.
+MST - područje medijalno od MT (Medial Superior Temporal area); obrađuje složenije oblike kretanja poput rotacije, ekspanzije i optičkog toka (npr. kretanje kroz prostor).
+Ganglijske stanice - stanice mrežnice koje primaju signale od fotoreceptora (čunjića i štapića) i prosljeđuju ih mozgu putem vidnog živca; postoje različiti tipovi (npr. transient i sustained).
+What put - ventralni (što) vizualni put; obrađuje informacije o obliku, boji i identitetu objekata; odgovoran za prepoznavanje i kategorizaciju onoga što vidimo.
+Parvo slojevi mozga - parvocelularni slojevi LGN-a u talamusu; prenose informacije o boji i finim detaljima slike; povezani s what putem i sporijom, ali preciznijom obradom.
+
+Umjetni neuroni, poput Leaky-Integrate and Fire ili Adaptivnih Eksponencijalnih su inspirirani neuronima pronađenima u vizualnom kortexu sisavaca
+Oni su osnovne gradivne jedinice SNN-ova
+Neuron prima input spikeove (evente) iz malog područja vidokruga (receptive field)
+Spikeovi modificiraju membranski potencijal i stvaraju output spike (action potencijal) kada napon nadmaši threshold
+Neuroni su povezani hijerarhijski i stvaraju SNN-ove
+Spikeove mogu stvarati ili pikseli event kamere ili neuroni SNN-a
+
+* Prvi slojevi vizualnih modela koriste receptive fields temeljene na **Difference of Gaussians** (osjetljivost na kontrast između središta i okoline), **Gabor filterima** (osjetljivost na orijentirane rubove) ili njihovim kombinacijama.
+* Kako informacija prolazi dublje kroz mrežu, receptive fields postaju **sve složeniji**.
+* U umjetnim neuronskim mrežama (ANN), obrada u unutarnjim slojevima često se **aproksimira konvolucijom**.
+* U umjetnim spiking neuronskim mrežama (SNN), često se pretpostavlja da neuron **ne generira izlazne spikeove** ako nije primio ulazne spikeove iz prethodnog sloja.
+* Ta pretpostavka omogućuje **preskakanje izračuna** za neaktivne neurone, čime se povećava učinkovitost.
+* Rezultat vizualne obrade u takvim sustavima pojavljuje se **gotovo istovremeno s podražajem**, za razliku od klasičnih CNN-ova gdje se konvolucije računaju istodobno u svim točkama i u fiksnim vremenskim intervalima.
+
+* Bio-inspirirani modeli koriste se za **niz niskorazinskih vizualnih zadataka**.
+* **Event-based optical flow** može se izračunati pomoću **spatio-temporalno orijentiranih filtera** koji oponašaju rad receptive fields u primarnom vidnom korteksu.
+* Ti isti filteri koriste se i za **spike-based modele selektivne pažnje**, temeljene na biološkim principima.
+* **Modeli inspirirani binokularnim vidom** (s rekurzivnim lateralnim vezama te ekscitacijsko-inhibicijskim neuronskim vezama) primijenjeni su za **event-based stereo korespondenciju** i **kontrolu konvergencije očiju kod humanoidnih robota**.
+* Vizualni korteks poslužio je kao inspiracija za **hijerarhijski model ekstrakcije značajki**, implementiran u SNN-ovima i korišten za **prepoznavanje objekata**.
+* Učinkovitost takvih mreža raste ako **bolje iskorištavaju precizno vremensko usklađivanje spikeova**.
+* Rani modeli bili su **ručno dizajnirani** (npr. pomoću Gabor filtera), dok noviji koriste **učenje temeljeno na STDP-u (Spike-Timing Dependent Plasticity)** za samostalno formiranje receptive fields, što daje bolje rezultate.
+* Novija istraživanja uključuju i **supervizirane metode učenja** poput **backpropagationa** za implementaciju **spiking dubokih konvolucijskih mreža**.
+* Prednosti bio-inspiriranih metoda u odnosu na klasične: **niža latencija** i **veća učinkovitost**.
+* **Vid kukaca** također je izvor inspiracije — razvijeni su **event-based sustavi za izbjegavanje prepreka i brzo prepoznavanje meta** u malim robotima, temeljeni na neuronima koji reagiraju na nadolazeće objekte i pokreću **reflekse izbjegavanja**.
 
