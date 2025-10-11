@@ -2797,3 +2797,81 @@ Spikeove mogu stvarati ili pikseli event kamere ili neuroni SNN-a
 * Prednosti bio-inspiriranih metoda u odnosu na klasične: **niža latencija** i **veća učinkovitost**.
 * **Vid kukaca** također je izvor inspiracije — razvijeni su **event-based sustavi za izbjegavanje prepreka i brzo prepoznavanje meta** u malim robotima, temeljeni na neuronima koji reagiraju na nadolazeće objekte i pokreću **reflekse izbjegavanja**.
 
+
+Primjene:
+	Low-level:
+		- detekcija značajki
+		- praćenje objekata
+		- optical flow estimation
+	3d scene structure related:
+		- procjena dubine
+		- vizualna odometrija
+		- intensity image reconstruction
+	Higher-level:
+		- segmentacija gibanja
+		- prepoznavanje i povezivanje percepcije s kontrolom pokreta
+		
+* **Detekcija i praćenje značajki** ključni su elementi mnogih vizualnih zadataka poput **vizualne odometrije** (Odometrija je metoda za **mjerenje prijeđenog puta i položaja u prostoru** na temelju informacija o **kretanju senzora ili kamere**.
+
+U kontekstu **vizualne odometrije**, to znači da se **računa koliko se kamera (ili robot) pomaknula** analizom promjena u slikama — dakle, prati se kako se točke u okolini pomiču između kadrova ili događaja, pa se iz toga procijeni **putanja i orijentacija**.
+), **segmentacije objekata** i **razumijevanja scene**.
+* **Event kamere** omogućuju **asinkrono praćenje** koje se prilagođava dinamici scene, uz **nisku latenciju**, **velik dinamički raspon** i **malu potrošnju energije**.
+* Time se omogućuje **praćenje i tijekom “slijepog vremena”** između okvira standardne kamere.
+* Za to je potrebno razviti metode koje uzimaju u obzir **prostorno-vremenske** i **fotometrijske** karakteristike event podataka, jer oni bilježe samo **promjene svjetline**.
+* **Glavni izazovi:**
+
+  * Promjene u izgledu scene uzrokovane **ovisnošću o smjeru gibanja**, što otežava detekciju i praćenje značajki.
+  * Potreba za **povezivanjem događaja kroz vrijeme** (data association) unatoč promjenama izgleda.
+  * **Šum senzora** i **event clutter** (višak događaja) uzrokovan **pokretom kamere**.
+
+* **Rani event-based algoritmi** za detekciju značajki bili su vrlo jednostavni i služili su za demonstraciju **niske latencije** i **male računske složenosti** event sustava.
+* Pretpostavljali su **statičnu kameru** i pratili **pokretne objekte** kao skupove događaja (blobs), **krugove** ili **linije**.
+* Obrada se radila samo na pikselima koji su generirali događaje.
+* **Gaussian filteri** i **mješavine Gaussovih funkcija** koristili su se za detekciju i praćenje takvih blobova.
+* Svaki novi događaj bio je **povezan s najbližim postojećim blobom** i asinkrono je **ažurirao njegove parametre** (poziciju, veličinu, itd.).
+* Ovi pristupi korišteni su u **nadzoru prometa**, **praćenju robota visoke brzine** i **praćenju čestica u tekućinama ili mikrorobotici**, ali su **ograničeni na jednostavne oblike**.
+* Kasnije su razvijene metode za **praćenje složenijih, visokokontrastnih oblika**, temeljene na algoritmima kao što su **ICP (Iterative Closest Point)**, **gradient descent**, **Mean-Shift**, **Monte Carlo metode** i **particle filtering**.
+* **Iterativne metode** (npr. ICP) koristile su **najbližeg susjeda** za povezivanje događaja s ciljanim oblikom i ažuriranje njegove transformacije, omogućujući **vrlo brzo praćenje (do 200 kHz)**.
+* Drugi radovi koristili su **rotirane i skalirane verzije oblika (kernels)** s ugrađenim mehanizmom **odbijanja** kako se ne bi preklapali.
+* **Složeni objekti** poput lica ili tijela praćeni su pomoću **modela sastavljenih od više dijelova** povezanih elastičnim “opružnim” vezama koje simuliraju fizički sustav.
+* Većina metoda tretira događaje kao **pojedinačne točke bez polariteta** i ažurira stanje sustava **asinkrono**, s vrlo **malom latencijom**.
+* Uspješnost metoda ovisi o **finoj prilagodbi parametara**, koji se obično podešavaju **eksperimentalno** za određeni objekt.
+* Ove metode traže **prethodno znanje ili korisnički unos** o tome što se prati, što je pogodno za specifične zadatke (npr. automobili ili lopte), ali nije praktično za općenite scene.
+* Noviji pristupi definiraju **realističnije značajke** temeljene na **lokalnim rubnim uzorcima** (edge patterns), predstavljene kao skupovi točaka.
+* Dolazni događaji se s njima **usklađuju pomoću ICP-a**.
+* Neki pristupi koriste **klasične detektore i trackere** na **motion-compensated event slikama**, što daje dobre rezultate u prirodnim scenama i omogućuje **procjenu vlastitog gibanja (ego-motion)**.
+* Značajke izvedene iz **motion-compensated događaja** pružaju dobru reprezentaciju rubova, ali su **ovisne o smjeru kretanja**, pa s vremenom dolazi do **drifta (odmicanja praćenja)**.
+* Za **praćenje bez drifta** potrebne su **motion-invariant značajke** koje nisu osjetljive na promjenu smjera kretanja.
+
+
+
+* **Kombinacija događaja i frameova** (npr. kod senzora poput **DAVIS-a**) omogućuje **jednostavnije povezivanje podataka (data association)**, jer su dostupne **apsolutne vrijednosti svjetline** — dakle, “mapa” značajke ne ovisi o smjeru kretanja.
+* Ovi pristupi koriste **prednosti oba svijeta**: stabilnost i kontekst frameova + brzinu i nisku latenciju event podataka.
+* Algoritmi automatski **detektiraju rubne uzorke (edge patterns)** na frameovima, a zatim ih **asinkrono prate događajima**.
+* **Pozicija značajke** dobiva se pomoću **Harris corner detektora**, a **deskriptor značajke** temelji se na **rubovima oko tog kuta**.
+* U nekim metodama (npr. [125], [126]) **Canny rubovi** se pretvaraju u **skupove točaka (templates)** koje se koriste za **ICP praćenje** — pretpostavlja se da se događaji javljaju **na jakim rubovima**.
+* U radu [64], rubni uzorci se temelje izravno na **intenzitetima framea**, a praćenje se provodi tako da se traže **parametri gibanja** koji **minimiziraju fotometrijsku pogrešku** između događaja i predviđene slike iz generativnog modela.
+* Usporedba pet metoda praćenja (iz [64]) pokazuje da **generativni model** daje **najveću točnost (čak i sub-pikselnu)**, ali je **računski zahtjevan**.
+* Ključno otkriće: **frameovi nisu nužni** — mogu se **rekonstruirati iz samih događaja**, a rezultati detekcije i praćenja ostaju **gotovo jednako dobri**.
+
+Ukratko:
+→ **Spajanje event + frame podataka** daje točno, robusno i brzo praćenje značajki.
+→ **Generativni pristupi** nude najbolju preciznost.
+→ **Event-only sustavi** mogu postići slične rezultate rekonstrukcijom frameova iz događaja — što otvara put potpuno **frame-free sustavima**.
+
+* **Event kamere** prirodno reagiraju na **rubove** u sceni, što ubrzava **detekciju nižerazinskih značajki** poput **ključnih točaka (keypoints)** ili **kutova (corners)**.
+* Takve točke omogućuju **pouzdano praćenje** jer ne pate od **aperture problema** i služe kao lokalni orijentiri za ekstrakciju značajki.
+* Metoda iz [186] detektira kutove kao **sjecišta dvaju pokretnih rubova**, dobivenih **aproksimacijom ravnina** u **prostorno-vremenskom toku događaja**.
+
+  * Za ublažavanje šuma koristi se **least-squares + RANSAC-slična metoda uzorkovanja**.
+  * Ta lokalna aproksimacija ravnina korisna je i za **procjenu optičkog toka** i **trajanja događaja** (event lifetime).
+* Razvijene su i **event inačice poznatih detektora kutova**, poput **Harris** i **FAST**, koje rade nad **time surface (TS)** reprezentacijom događaja.
+
+  * U [114] se **TS binarizira**, pa se na nju primjenjuju **derivacijski filtri Harris detektora**.
+  * U [115] se derivacijski filtri zamjenjuju **piksel-po-piksel usporedbama** na **dvije koncentrične kružnice** oko događaja; kutovi se detektiraju tamo gdje **TS pokazuje dvije odvojene regije** (nova vs. stara događanja).
+* **[111]** poboljšava ovaj pristup i uvodi **praćenje kutova** — pretpostavlja da kutovi prate **kontinuirane putanje**, a povezuju se po **blizini** pomoću **grafova hipoteza**.
+* Glavni problem TS-baziranih metoda: **ovisnost o smjeru gibanja**, jer promjena smjera mijenja izgled TS-a.
+* **[112]** uvodi **data-driven pristup** — uči izgled TS-a za kutove koristeći **nadzirano učenje** (labeliranje prema sivim slikama iz DAVIS/ATIS kamere).
+
+  * Kao kompromis između točnosti i brzine koristi se **random forest klasifikator**.
+* **Kutovi iz događaja** imaju praktične primjene u **vizualnoj odometriji** i **segmentaciji vlastitog gibanja (ego-motion segmentation)**, iako ih je zasad **relativno malo primijenjenih rješenja**.
