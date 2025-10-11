@@ -2877,4 +2877,182 @@ Ukratko:
 * **Kutovi iz događaja** imaju praktične primjene u **vizualnoj odometriji** i **segmentaciji vlastitog gibanja (ego-motion segmentation)**, iako ih je zasad **relativno malo primijenjenih rješenja**.
 
 * Opisane metode zahtjevaju da točno znamo ča pratimo + još se traži neki standardni način evaluacije performansi
-* 
+
+Optical flow estimation
+Izračun brzine objekata na image planeu bez da znamo išta o geometriji scene ili samom kretanju objekta
+Pokušava izračunati brzinu kretanja piksela između 2 framea (kako se svjetlina piksela mijenja)
+Problem: samo iz promjene svjetline ne možemo znati kako se objekt stvarno kreće
+Ne znamo stvarnu brzinu ni smjer (aperture problem)
+Treba nam neka regularizacija (npr. pretpostavka da se susjedni pikseli miču sličnu, da se brzina glatko mijenja, da se svjetlina ne mijenja tijekom kretanja itd.)
+
+Kod standardnih frame based kamera optical flow saznajemo iz analize 2 uzastopna framea (dobijemo prostorne (promjena svjetline u prostoru) i vremenske derivacije(promjena svjetline u vremenu))
+U kombinaciji s:
+
+Pretpostavkom konstantne svjetline (brightness constancy assumption - piksel zadržava istu svjetlinu dok se kreće)
+
+Pretpostavkom glatkoće (susjedni pikseli imaju sličan flow)
+
+Daje dovoljno jednadžbi za izračun flowa u svakoj točki slike.
+
+Event kamere:
+
+Ne daju apsolutnu svjetlinu — samo događaje (evente) kad se promijeni svjetlina.
+
+Podaci nisu kontinuirani u prostoru — samo diskretni eventi (x, y, t, polaritet).
+
+Jedan event sam po sebi ne nosi dovoljno informacija da se izračuna flow.
+Moraš grupirati više evenata (u vremenu i prostoru) da dobiješ procjenu smjera i brzine.
+
+Postavlja se pitanje:
+“Gdje u x-y-t prostoru uopće računati flow?”
+
+Idealno: flow polje kroz cijeli prostor (skupo!).
+
+U praksi: računa se na lokacijama evenata ili na umjetno odabranim vremenskim presjecima.
+
+Prednosti event-based flowa:
+
+Eventi predstavljaju rubove (edges) — mjesta gdje je kretanje najmanje dvosmisleno.
+
+Imaju vrlo precizno vremensko označavanje (timestamp) → mogu mjeriti vrlo brze pokrete.
+
+Cilj istraživanja:
+Napraviti biološki plauzibilan algoritam, tj. da imitira obradu pokreta u vizualnom korteksu primata (V1, MT) i da se može efikasno izvesti na neuromorfnom hardveru.
+
+Raniji radovi pokušavali su primjeniti klasične CV pristupe na event based podatke
+Utemeljeno na pretpostavci o konstantnom osvjetljenju
+Diskusija o tome imaju li pojedini eventi u sebi dovoljno info. za procjenu flowa
+
+---
+
+##  **Optical Flow u event-based viziji — sažetak ključnih ideja**
+
+---
+
+###  **1. Osnovni problem**
+
+* Cilj: Izračunati **brzinu kretanja objekata** u ravnini slike — **bez poznavanja geometrije scene**.
+* Problem je **ill-posed** → nema dovoljno informacija, pa se mora **regularizirati** (dodati pretpostavke).
+
+---
+
+###  **2. Razlike naspram klasičnih metoda**
+
+* Klasične metode koriste **prostorne i vremenske derivacije svjetline (Lx, Ly, Lt)** i **pretpostavku konstantne svjetline**.
+* Kod **event kamera**, nema apsolutne svjetline ni kontinuiranih podataka → teško je dobiti stabilne derivacije.
+* Rješenje: **agregirati više evenata** kroz prostor i vrijeme da bi se procijenio pokret.
+
+---
+
+###  **3. Geometrijski pristupi — timesurface & plane fitting (npr. metoda [21])**
+
+* Promatra se **lokalna distribucija evenata** u 3D prostoru (x, y, t).
+* Kako se rub (edge) miče, generira **timesurface** (površinu u prostoru-vremenu).
+* **Nagib površine (slope)** u x-t i y-t presjecima daje smjer i brzinu kretanja.
+* Flow se računa **fittingom ravnine (plane fitting)** na lokalni skup evenata → koeficijenti ravnine = komponente brzine.
+* Dobiva se **normalni flow** (okomit na rub).
+* Kvaliteta ovisi o veličini lokalne regije:
+
+  * premala → nepouzdan fit
+  * prevelika → gubi se lokalnost.
+
+---
+
+###  **4. Biološki inspirirani pristupi**
+
+* Metoda inspirirana **vizualnim sustavom primata** (V1–MT).
+* Koristi **spatio-temporalne filtre** (poput **Gabor filtera**) za detekciju:
+
+  * različitih **brzina** i **smjerova** gibanja
+  * uz **rijetku (sparse)** reprezentaciju evenata.
+* Filtri djeluju kao **korelacijski detektori pokreta**.
+* Primjeri:
+
+  * SNN s **odgodom signala** kroz sinapse → neuroni kao **coincidence detektori**
+
+    * osjetljivi na **8 brzina × 8 smjerova = 64 vektora brzina**
+    * receptive field: 5×5 piksela
+    * moguće implementirati na **neuromorfnom hardveru** (low-power, real-time)
+  * postoji i metoda koja koristi **STDP (Spike-Timing-Dependent Plasticity)** za *učenje filtera iz event podataka*
+  * u drugim metodama postoje ručno dizajnirani filteri, ali konceptualno jednaki princip.
+
+---
+
+###  **5. Gabor + Event frame pristupi (klasična signalna obrada)**
+
+* Metoda:
+
+  * Pretvara evente u **event frame** (projekciju događaja).
+  * Primjenjuje **Gabor filter bank** → dobiva **fazu**.
+  * Optical flow = **gradijent faze** filter banke.
+  * Ograničenje: može izračunati samo **komponentu brzine u smjeru gradijenta** (zbog aperture problema).
+
+---
+
+###  **6. Kombinirani pristupi — optical flow + druge veličine**
+
+* metode procjenjuju optical flow **zajedno s intenzitetom slike** (brightness).
+
+  * Koriste više jednadžbi (brightness constancy, smoothness, penalizacija, varijacijski pristup).
+  * Cilj: pronaći **flow + intenzitet** koji **najbolje objašnjava distribuciju evenata**.
+  * Rezultat: **gusto (dense)** flow polje (vrijednost za svaki piksel).
+  * Flow u zonama bez evenata je **manje pouzdan** (jer proizlazi samo iz glatkoće).
+
+---
+
+###  **7. Block-matching pristupi (video encoding analogija)**
+
+* računa optical flow uspoređujući **dva skupa evenata (“blokove”)**.
+
+  * Pretvara ih u **event frameove** na adaptivnoj stopi.
+  * Mjeri sličnost blokova (npr. suma apsolutnih razlika).
+  * Radi u stvarnom vremenu, može se implementirati na **FPGA-u** (velika efikasnost, manja preciznost).
+
+---
+
+###  **8. Motion compensation i “sharpness maximization”**
+
+
+  * Warpaju (transformiraju) *cuboid* evenata tako da budu oštriji (motion-compensated images).
+  * Maksimiziraju **oštrinu slike** → time pronalaze pravilan smjer gibanja.
+  * Ponašaju se kao **adaptivni filteri** koji uče optimalnu spatio-temporalnu orijentaciju.
+
+---
+
+###  **9. Deep learning pristupi**
+
+* Pojavom većih datasetova + DAVIS senzora:
+
+  *  **Encoder-decoder CNN**, treniran **self-supervised**, koristi **time surfaces + event frames**.
+
+    * Loss = greška između grayscale frameova poravnatih pomoću predviđenog flowa.
+    * Može predvidjeti gusti flow samo iz evenata.
+  * prva **monokularna ANN arhitektura** koja istodobno uči:
+
+    * **gusti optical flow**,
+    * **dubinu (depth)** i
+    * **ego-motion** (vlastito gibanje kamere).
+    * Ulaz: višeslojni eventi (frames + TS s prosječnim timestampovima).
+    * Trenirano **unsupervised**, koristi **motion compensation loss**.
+  *  postoje i metode koje su također unsupervised, ali koriste **time-surface loss**.
+
+---
+
+###  **10. Evaluacija & izazovi**
+
+* Optical flow = **računski skup zadatak**:
+
+  * Deep metode → zahtijevaju **GPU**.
+  * Lakše metode → **manje točne**, ali real-time.
+* Nekoliko metoda je implementirano u **hardverskoj logici** za **minimalnu latenciju**.
+* Nedostatak:
+
+  * **Nema dovoljno datasetova s točnim ground truth flowom** u različitim uvjetima (tekstura, brzina, parallax, svjetlo itd.).
+  * Teško dobiti **realne ground truth podatke** — pogotovo za pokretne objekte koji se ne kreću istim smjerom kao kamera.
+* Zaključak:
+
+  * Potrebna **standardizacija evaluacijskih metoda** i **kvantitativna usporedba** postojećih pristupa.
+  * Cilj: pronaći ključne ideje koje vode prema **efikasnijem i točnijem optical flowu iz evenata**.
+
+---
+
