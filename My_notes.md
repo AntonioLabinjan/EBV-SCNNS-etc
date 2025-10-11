@@ -3056,3 +3056,272 @@ Diskusija o tome imaju li pojedini eventi u sebi dovoljno info. za procjenu flow
 
 ---
 
+3D rekonstrukcija (MONO I STEREO)
+Firstly, zabija san koja je razlika između mono i stereo, pa ću pitat Gepetta
+
+Monocular ANN (npr. [153]) → koristi samo jedan event senzor, ali uči dubinu i pokret kroz vrijeme.
+
+Stereo event kamera (npr. DVS stereo setup) → koristi dva event senzora i može direktno dobiti disparity + depth iz sinkroniziranih evenata.
+
+ Mono vs. Stereo u kontekstu kamera i vizije
+ Monokularni sustav (mono)
+
+Koristi jednu kameru.
+
+Gleda svijet iz jedne perspektive → nema direktnu informaciju o dubini (koliko je nešto daleko).
+
+Sve što može vidjeti su projekcije 3D točaka na 2D sliku.
+
+Da bi procijenio dubinu, mora “nagađati” pomoću:
+
+gibanja kamere (motion parallax),
+
+perspektive (veličine objekata),
+
+naučenih uzoraka (deep learning).
+
+Tipično koristi se kod:
+
+ego-motion estimacije (koliko se kamera sama pomaknula),
+
+monokularne depth estimacije (predviđa dubinu “naučeno” iz podataka),
+
+SLAM (monokularni varijant koristi samo jednu kameru i temporalne tragove).
+
+ Ukratko: jeftinije, jednostavnije, ali dubina nije direktno mjerljiva — mora se procjenjivati.
+
+ Stereoskopski sustav (stereo)
+
+Koristi dvije kamere postavljene jedna pored druge (poput naših očiju 👀).
+
+Obje vide istu scenu iz malo različitih kutova.
+
+Time se može izračunati paralaksna razlika (disparity) → razlika u poziciji iste točke na dvije slike.
+
+Iz disparityja se izravno dobiva dubina (Z-koordinata) pomoću jednostavne geometrije.
+
+Stereo sustavi su idealni za:
+
+depth map rekonstrukciju,
+
+3D scene understanding,
+
+autonomnu vožnju, robote itd.
+
+ Ukratko: skuplje i složenije za kalibraciju, ali daju preciznu 3D dubinu u realnom vremenu.
+
+ Sažetak razlika
+Značajka	Monokularni	Stereoskopski
+Broj kamera	1	2 (ili više)
+Dubina	Neizravno, procjenjuje se	Izravno, iz geometrije
+Kalibracija	Jednostavna	Potrebna precizna stereo kalibracija
+Trošak	Manji	Veći
+Primjeri upotrebe	Mobilni telefoni, monokularni SLAM	Autonomna vozila, 3D rekonstrukcija, industrijski roboti
+
+Stereo direktno more skužit dubinu, mono ne more nikako
+
+
+---
+
+###  **Instantaneous Stereo (s event kamerama)**
+
+* Cilj: **Procjena dubine (3D rekonstrukcija)** pomoću **dva ili više sinkroniziranih event kamera**.
+* Rekonstrukcija se radi u **vrlo kratkom vremenu** — idealno **po svakom eventu**.
+* Kamere su **rigidno spojene** i **sinkronizirane** → dijele **zajednički sat (clock)**.
+
+---
+
+### **Klasična dvostupanjska stereo metoda:**
+
+1. **Event correspondence problem** — pronaći koji event s jedne kamere odgovara eventu s druge (tzv. **epipolar matching**).
+2. **Triangulacija** — iz tih parova izračunati 3D položaj točke.
+
+---
+
+###  **Glavni izazov:**
+
+* **Pronalaženje korespondencija** između eventova → vrlo **računalno zahtjevno**.
+
+---
+
+###  **Načini podudaranja (matching):**
+
+* (i) Korištenje **klasičnih stereo metrika** poput:
+
+  * *Normalized Cross-Correlation (NCC)*
+  * primijenjeno na **event frameove** ili **time surfaces**.
+* (ii) **Iskorištavanje vremenske simultanosti i korelacija** između senzora.
+
+---
+
+###  **Dodatne značajke metoda:**
+
+* Pristup je **lokalan** — uspoređuju se **susjedstva eventova**, jer pojedini timestamp nije dovoljan za podudaranje.
+* Dodaju se **ograničenja** kako bi se smanjila dvosmislenost:
+
+  * **Epipolarno ograničenje**
+  * **Redoslijed događaja (ordering)**
+  * **Jedinstvenost (uniqueness)**
+  * **Orijentacija rubova (edge orientation)**
+  * **Polarnost (polarity)**
+
+---
+
+###  **Poboljšanja:**
+
+* Radi se i **usporedba lokalnih deskriptora** koji opisuju **prostornu raspodjelu eventova** na obje slike.
+
+---
+Global Approaches for Event-Based Stereo Depth Estimation
+Osnovna ideja:
+
+Globalni pristupi daju točnije i manje dvosmislene procjene dubine od lokalnih.
+
+To postižu dodavanjem regularizacijskih ograničenja (regularity constraints).
+
+ Ključne metode i inspiracija:
+
+Temelje se na proširenju Marr & Poggio cooperative stereo algoritma za event kamere.
+
+Uključuju mrežu neurona osjetljivih na disparitet koji:
+
+primaju evente s obje kamere
+
+provode operacije poput pojačanja (amplification) i inhibicije (inhibition)
+
+implementiraju ograničenja podudaranja:
+
+jedinstvenost (uniqueness)
+
+kontinuitet (continuity)
+
+rezultat je globalno optimalno rješenje nakon iterativnih nelinearnih operacija.
+
+ Ostale globalne metode:
+
+Korištenje Belief Propagation na Markov Random Field (MRF) modelima.
+
+Semi-global matching tehnike.
+
+Sve se temelje na optimizaciji — definiranju energetske funkcije čiji je minimum ispravna mapa korespondencija.
+
+ Prednosti i kompromisi:
+
+Veća robusnost i manja osjetljivost na dvosmislenosti od lokalnih metoda.
+
+Cijena: veća računalna složenost (više resursa i vremena).
+
+ Ostali doprinosi i eksperimenti:
+
+U [214] predložen je brute-force space-sweeping pristup na GPU-u:
+
+Dubina se očituje kao “in-focus” voxeli u Disparity Space Image.
+
+Drugi pristupi koriste neuromorfne procesore → niska potrošnja (100 mW), visoka brzina (1 kHz).
+
+Još nije kvantificiran trade-off između točnosti i efikasnosti.
+
+ Ograničenja eksperimentalnih radova:
+
+Testovi uglavnom na statičnim kamerama i jednostavnim scenama (malo pokretnih objekata).
+
+Time se olakšava traženje korespondencija zbog manje “šuma” u eventima.
+
+ Zaključak:
+
+Event kamere omogućuju brze (1 kHz), energetski učinkovite i precizne 3D rekonstrukcije,
+posebno pogodne za pokretne objekte i nezačepljene (uncluttered) scene.
+
+Multi-perspective panoramas:
+Cilj: Instantaneous stereo → dobivanje dubinskih mapa (depth maps) u vrlo kratkim vremenskim intervalima.
+
+Razlika od standardnog instant stereo: kamere nisu sinkronizirane, tj. događaji se ne bilježe u isto vrijeme.
+
+Metoda koristi kontrolirani hardverski setup: dvije rotirajuće event kamere s poznatom putanjom/motion.
+
+Takav setup omogućuje:
+
+(i) Rekonstrukciju intenzitetskih slika (brightness images)
+
+Na tim slikama se zatim može primijeniti klasični stereo algoritam.
+
+Ukratko:
+Umjesto dvije paralelne, sinkronizirane kamere, koristi se konfiguracija s rotacijom i poznatom putanjom kamera da bi se dobile dubinske informacije čak i kad kamere ne snimaju u isto vrijeme. Ovo omogućuje panoramske i multi-perspektivne dubinske rekonstrukcije.
+
+Monocular depth estimation
+Koristi se 1 event kamera
+Ne može se uočiti temporal correlation između evenata kroz više image planesa
+Potrebna je semi-dense 3d rekonstrukcija scene (3D edge map) => intergracija informacija iz evenata dobivenih iz kamere koja se micala kroz vrijeme (zato nam treba info o tome kako se kamera micala)
+Kombinacija: pozicija event kamere + 3d mapa scene + intenzitet slike
+
+Intenzitet slike (brightness image) nije nešto što event kamera izravno bilježi u obliku “klasične slike” (jer ona registrira samo promjene svjetline, tj. evente).
+
+Ovdje intenzitet slike znači aproksimaciju ili rekonstruiranu sliku svjetline scene u tom trenutku, koju se može koristiti za klasične stereo algoritme.
+
+Drugim riječima:
+
+Eventi daju samo promjene svjetline (delta),
+
+Pozicija kamere + prethodni eventi + model scene → može se “napuniti” slika s intenzitetom piksela koja je najbliža onome što bi obična kamera snimila.
+
+Ta rekonstruirana slika ne prikazuje pokrete kao događaje, već apsolutnu svjetlinu svakog piksela, što omogućuje primjenu klasičnih stereo metoda (poput epipolar matching, block matching).
+
+Ukratko: intenzitet slike = rekonstruirana “klasična” slika iz event streama, koja sadrži apsolutnu svjetlinu piksela za trenutni snapshot scene.
+
+* **Stereo Depth za SLAM:**
+
+  * Nova metoda inspirirana **small-baseline multi-view stereo**.
+  * Dobiva **semi-dense 3D rekonstrukciju scene** optimiziranjem **lokalne spatio-temporalne konzistentnosti eventa** preko slika (time surfaces).
+  * Ne koristi klasični pristup **event matching + triangulacija**, već **forward-projection** za procjenu dubine bez eksplicitnih korespondencija eventa.
+  * Omogućuje primjenu prednosti **event kamera u stereo SLAM** sustavima, npr. autonomna vozila.
+
+* **Procjena dubine koristeći strukturirano svjetlo (Structured Light):**
+
+  * Aktivne metode: emitiraju svjetlo i mjere refleksiju event kamerom.
+  * Primjer: **DVS + pulsni laserski linijski skener** → brza 3D rekonstrukcija terena (3D line scanner).
+  * **Motion Contrast 3D scanning:** visoka rezolucija, brzina i robusnost u izazovnim uvjetima (jako osvjetljenje, reflektivne ili pokretne površine).
+  * Aktivni sustavi koriste **visoku vremensku rezoluciju i suppression redundancije** event kamera.
+  * Ograničenje: specifične primjene i moguće sigurnosne zabrane (ovisno o laserskoj snazi).
+
+* **Opportunities / izazovi:**
+
+  * Teško je usporediti metode jer nisu evaluirane na istim datasetovima.
+  * Potrebno:
+
+    * Sveobuhvatan **dataset i testbed** za event-based depth evaluaciju.
+    * Benchmarking postojećih metoda radi usporedbe performansi.
+
+
+* **Izazov:**
+
+  * Konvencionalne metode za kamere (feature detection, matching, iterative alignment) **ne rade** s event kamerama.
+  * Potrebno je razviti **nove SLAM tehnike** koje koriste prednosti event kamera: **niska latencija, asinkrono ažuriranje stanja** po svakom eventu.
+
+* **Karakteristike event-based SLAM:**
+
+  * Svaki event **ne sadrži dovoljno informacija** za procjenu stanja od nule (npr. 6-DOF kamera).
+  * Cilj: svaki event **asinkrono ažurira stanje sustava**.
+  * Popularni pristupi: **probabilistički/Bayesian filtri**, prilagođeni event generation procesu.
+
+* **Mapiranje scene:**
+
+  * Većina mapa iz event-based SLAM sustava su **semi-dense maps** → samo rubovi scene.
+  * Event kamera mjeri **temporalne promjene**, ne direktno intenzitet.
+  * Potrebno je **procijeniti prisutnost, orijentaciju i jačinu rubova** zajedno s kretanjem kamere.
+  * Jačina intenziteta rubova korelira s **firing rate** eventa → pouzdano praćenje.
+
+* **Kompleksnost problema:**
+
+  * Tri osi kompleksnosti:
+
+    1. **Dimenzionalnost problema** (3-DOF vs. 6-DOF)
+    2. **Tip kretanja** (rotacija, planarno, slobodno 6-DOF)
+    3. **Tip scene** (umjetna vs. prirodna, photometry i struktura)
+  * Literaturu dominiraju metode koje prvo rješavaju **lokalizaciju/motion estimation**, jer je jednostavnija.
+  * Neke metode zahtijevaju dodatne senzore (RGB-D), ali to uvodi **latenciju i motion blur**.
+
+* **Cilj istraživanja:**
+
+  * Postepeno rješavanje problema s **rastom kompleksnosti** scena i kretanja.
+  * Razvoj metoda koje omogućuju **full 6-DOF SLAM u prirodnim 3D scenama** koristeći event kamere.
+
