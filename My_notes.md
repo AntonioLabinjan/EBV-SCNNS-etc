@@ -2875,3 +2875,6 @@ Ukratko:
 
   * Kao kompromis između točnosti i brzine koristi se **random forest klasifikator**.
 * **Kutovi iz događaja** imaju praktične primjene u **vizualnoj odometriji** i **segmentaciji vlastitog gibanja (ego-motion segmentation)**, iako ih je zasad **relativno malo primijenjenih rješenja**.
+
+* Opisane metode zahtjevaju da točno znamo ča pratimo + još se traži neki standardni način evaluacije performansi
+* 
