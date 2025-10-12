@@ -3325,3 +3325,321 @@ Ukratko: intenzitet slike = rekonstruirana “klasična” slika iz event stream
   * Postepeno rješavanje problema s **rastom kompleksnosti** scena i kretanja.
   * Razvoj metoda koje omogućuju **full 6-DOF SLAM u prirodnim 3D scenama** koristeći event kamere.
 
+Radi se o **praćenju položaja (pose tracking)** pomoću **event kamera**.
+Cilj je znati **kako se kamera (ili robot) kreće kroz prostor**, koristeći samo događaje (events) umjesto običnih frameova.
+
+---
+
+### 📘 Glavne metode iz teksta
+
+1. **Prva metoda ([101])**
+
+   * Koristi **particle filter** (statistički model) za praćenje kretanja robota.
+   * Scena je **plosnata (planarna)** i sadrži **crno-bijele linije**.
+   * Glavna inovacija: **likelihood funkcija** računa vjerojatnost da su detektirani eventi u skladu s trenutnim položajem robota.
+   * To radi usporedbom između **mjesta eventa i najbližeg ruba** u mapiranoj sceni (reprojection error).
+
+2. **Druga metoda ([75])**
+
+   * Kombinira **standardnu grayscale kameru** i **DVS (event kameru)**.
+   * Koristi **Bayesov filter** za procjenu malih pomaka između događaja i prethodnog framea s obične kamere.
+   * Ograničeno na **planarno kretanje** i **crno-bijele scene**.
+   * Likelihood funkcija proporcionalna je **jačini gradijenta slike** na lokaciji eventa → što je jači rub, veća vjerojatnost da event ima smisla.
+
+3. **Treća metoda ([227])**
+
+   * Radi **pose tracking** pod **planarnim i ne-holonomnim kretanjem** (znači kretanje s ograničenjima, kao auto ili robot s kotačima).
+   * Podržava **loop closure** (zatvaranje petlje) i **topološki točne trajektorije**.
+   * Pretvara **evente u frameove** i onda koristi klasični **SeqSLAM** algoritam (poznat iz vizualne navigacije) da prepozna poznate lokacije.
+
+---
+
+### 🧠 Ukratko u 3 natuknice:
+
+* Sve metode pokušavaju **procijeniti položaj kamere (pose)** koristeći **evente umjesto klasičnih frameova**.
+* Koriste **statističke filtre (particle / Bayesian)** i pametno dizajnirane **likelihood funkcije** koje procjenjuju koliko su eventi konzistentni s mapom.
+* Neke metode čak **kombiniraju event kameru s običnom kamerom** ili **pretvaraju evente u frameove** da iskoriste postojeće SLAM tehnike (npr. SeqSLAM).
+
+---
+
+znači mi imamo k događaja i njihove pozicije i cilj je skužiti kako se objekt kretao na temelju promjene položaja događaja?
+
+Bravo! 💥 Točno to!
+Pogodio si srž cijelog koncepta **pose trackinga s event kamerama**.
+
+Event kamera ti ne daje frameove kao klasična kamera, nego niz **događaja (events)**:
+👉 svaki event = `(x, y, t, polarity)` → lokacija piksela, vrijeme, i smjer promjene svjetline.
+
+---
+
+### 🔍 Cilj:
+
+Na temelju **tih događaja kroz vrijeme** želiš **procijeniti kako se kamera (ili objekt) pomicala**.
+Drugim riječima, gledaš **kako se uzorak događaja “pomaknuo”** između trenutaka → to ti otkriva **translaciju, rotaciju i orijentaciju** kamere.
+
+---
+
+### 🧩 Kako to funkcionira (intuicija):
+
+1. **Eventi nastaju kad se nešto pomakne** → znači događaji već implicitno sadrže info o pokretu.
+2. Ako imaš **mapu scene** (npr. gdje su rubovi, linije, kontrasti), možeš izračunati:
+
+   * Ako je kamera bila na poziciji A i sada vidi događaje na poziciji B → pomak je Δpose.
+3. Koristiš **matematički model** (npr. particle filter, Kalman filter ili Bayesian filter) da testiraš:
+
+   * "Ako pretpostavimo da se kamera pomaknula ovako, koliko bi vjerojatno generirala baš ove evente?"
+   * To je tzv. **likelihood funkcija**.
+4. Na temelju toga se **ažurira procjena položaja (pose)**.
+
+---
+
+### ⚙️ U praktičnim terminima:
+
+* Imaš niz događaja `[(x1, y1, t1), (x2, y2, t2), ..., (xk, yk, tk)]`.
+* Cilj je pronaći **trajektoriju kamere** koja **najbolje objašnjava** gdje i kada su ti događaji nastali.
+
+---
+
+### 🚁 Primjena (npr. u dronu):
+
+* Dron leti iznad tla s uzorkom (npr. crne linije).
+* Kamera bilježi događaje svaki put kad linija prođe ispod nekog pixela.
+* Iz pomaka tih događaja kroz vrijeme, dron može **procijeniti vlastitu brzinu, smjer i rotaciju** – bez klasične kamere i frameova!
+
+---
+
+Pokušavaju procijeniti orijentaciju (rotaciju) kamere samo iz događaja, bez frameova.
+
+Koriste particle filter, minimizaciju photometric errora i motion compensation optimizaciju.
+
+Ograničeni su na rotacijsko gibanje, ali su važni jer otvaraju put prema punim 3D motion estimation metodama.
+
+---
+
+### 🔹 1. **Particle filter**
+
+* Radi se o **probabilističkom pristupu** — umjesto da izračunaš točno rješenje, generiraš **više mogućih hipoteza** (tzv. čestice = “particles”) o položaju/orijentaciji kamere.
+* Svaka čestica ima svoju “vjerojatnost” da predstavlja stvarni položaj kamere.
+* Likelihood funkcija govori koliko se dobro *trenutni događaji* slažu s mapom scene — tj. ako kamera u toj orijentaciji “vidi” iste rubove gdje su eventi nastali → velika vjerojatnost.
+* Na kraju se prosječno (ili najvjerojatnije) stanje čestica uzima kao rezultat.
+  ➡️ Ukratko: koristi **nasumično uzorkovanje i vjerojatnosti** da procijeni rotaciju kamere.
+
+---
+
+### 🔹 2. **Minimizacija photometric errora**
+
+* Ovdje se radi o **determinističkom optimizacijskom pristupu** — tražiš onu rotaciju kamere kod koje je **razlika između očekivane i stvarne svjetline (intenziteta)** najmanja.
+* Koristi se **mapa vjerojatnosti rubova** scene, a eventi (koji nastaju kod promjena svjetline) se uspoređuju s tim mapiranim rubovima.
+* Ako je event tamo gdje bi, prema pretpostavljenoj rotaciji, trebao biti jaki rub → mala greška, dobra orijentacija.
+  ➡️ Ukratko: traži **rotaciju koja minimizira fotometrijsku pogrešku** između događaja i modela scene.
+
+---
+
+### 🔹 3. **Motion compensation optimizacija**
+
+* Ovaj pristup ne procjenjuje izravno rotaciju, nego **kutnu brzinu** (tj. kako se orijentacija mijenja u vremenu).
+* Ideja: ako znaš kutnu brzinu, možeš “kompenzirati” kretanje — tj. pomaknuti događaje unatrag u vremenu tako da bi se svi poravnali ako je model točan.
+* Ako su svi događaji poravnati u istu strukturu (rubovi izgledaju “oštri”) → pronašao si dobru kutnu brzinu.
+  ➡️ Ukratko: traži **brzinu rotacije** koja najbolje “poravnava” događaje kroz vrijeme.
+
+---
+
+💡 **Razlika ukratko:**
+
+| Pristup             | Što traži    | Kako radi                         |
+| ------------------- | ------------ | --------------------------------- |
+| Particle filter     | Rotaciju     | Probabilistički, s mnogo hipoteza |
+| Photometric error   | Rotaciju     | Optimizacija greške svjetline     |
+| Motion compensation | Kutnu brzinu | Poravnava događaje kroz vrijeme   |
+
+---
+
+---
+
+## 🔹 Što znači **6-DOF**?
+
+“6 Degrees of Freedom” = kamera se može kretati:
+
+* **3 translacije:** naprijed–nazad (x), gore–dolje (y), lijevo–desno (z)
+* **3 rotacije:** pitch (nagib), yaw (okretanje lijevo-desno), roll (kotrljanje osi)
+
+Znači, **puno praćenje poze (pose tracking)** = znamo *i gdje je kamera u prostoru* + *kako je okrenuta* u svakom trenutku.
+To je daleko teže nego samo rotacija jer uključuje i **dubinu i perspektivu**.
+
+---
+
+## 🔹 Ukratko što rade pojedini pristupi iz odlomka:
+
+### 🧩 [226] – *Hand-crafted metoda, B&W linije*
+
+* Radi s **umjetnim crno-bijelim mapama s linijama** (nema probabilistike, sve ručno podešeno).
+* Pretpostavlja da **svaki event dolazi s najbliže linije** u mapi.
+* Te linije se **prate i njihovi presjeci daju 3D točke**.
+* Zatim se koristi **PnP (Perspective-n-Point)** algoritam za računanje **poze kamere** iz poznatih točaka.
+  ➡️ Ukratko: *ručno izrađena metoda* koja koristi geometriju linija da prati kameru kroz 3D prostor.
+
+---
+
+### 🧠 [228] – *Continuous-time nadogradnja prethodne*
+
+* Umjesto da računa svaku pozu posebno, modelira **kontinuiranu putanju** kamere kroz vrijeme.
+* Optimizira **event-to-line reprojection error** → znači: prilagođava cijelu putanju da bi svaki event “sjeo” što bliže svojoj liniji u mapi.
+  ➡️ Ukratko: *kontinuirana optimizacija putanje kamere*, preciznija i glađa od frame-by-frame pristupa.
+
+---
+
+### ⚙️ [7] i [65] – *Realni 6-DOF tracking u prirodnim scenama*
+
+* Ovi su već **real deal** — rade s **prirodnim scenama**, ne samo crno-bijelim linijama.
+* [7] koristi **generativni probabilistički filter** (kao particle filter, ali robusniji):
+
+  * Likelihood funkcija je **mješavina gustoća (mixture densities)** → bolje hvata nesigurnost i šum eventa.
+* [65] koristi **nelinearnu optimizaciju photometric errora** između:
+
+  * “Brightness increment images” (sinteza događaja u slike svjetline)
+  * i njihove predikcije prema mapi scene.
+* [65] daje malo bolje rezultate jer photometric optimizacija bolje hvata fine detalje svjetline.
+  ➡️ Ukratko: *moderni 6-DOF trackeri* koji kombiniraju fiziku eventa + optimizaciju slike za full 3D tracking.
+
+---
+
+## 🔸 Ukratko sve skupa:
+
+| Pristup | Tip                                 | Ključna ideja                                                  | Ograničenje                  |
+| ------- | ----------------------------------- | -------------------------------------------------------------- | ---------------------------- |
+| [226]   | Hand-crafted                        | Pretpostavlja da eventi dolaze s najbliže linije i koristi PnP | Radi samo za B&W linije      |
+| [228]   | Continuous optimization             | Optimizira cijelu trajektoriju pomoću reprojekcije događaja    | Još uvijek jednostavne scene |
+| [7]     | Probabilistički model               | Filter s mješavinom gustoća za robustnost                      | Zahtjevan za implementaciju  |
+| [65]    | Nelinearna photometric optimizacija | Usklađuje svjetlosne promjene s mapom scene                    | Zahtjeva mapu scene          |
+
+---
+
+6 DOF ima određene izazove:
+- promjena orijentacije mijenja kut gledanja,
+
+- promjena pozicije mijenja paralaksu i dubinu,
+
+- sve to moraš povezati s asinkronim eventima koji ne dolaze u “frameovima” nego neprekidno.
+
+---
+
+
+Ovaj tekst pokriva **evoluciju SLAM algoritama** za **event kamere** – od jednostavnih 2D verzija (samo rotacija, crno-bijele mape) do **pravih 3D 6-DOF sustava** koji rade u **realnim scenama bez pomoći dodatnih senzora** (RGB-D, IMU itd.).
+
+Cilj svih:
+👉 Istovremeno **pratiti pozu kamere** (tracking)
+👉 I **graditi mapu scene** (mapping)
+s pomoću *samo događaja* umjesto frameova.
+
+---
+
+## 🔹 Rani radovi (2D SLAM i rotacijski modeli)
+
+### 🧠 Cook et al. [23]
+
+* Koristili **message-passing algoritam** za zajedničku procjenu:
+
+  * kretanja kamere (ego-motion),
+  * slike (intensity),
+  * i optical flowa.
+* Ali: ograničeno samo na **rotacije**.
+  ➡️ Ideja: simultana procjena više povezanih veličina → više jednadžbi = bolja stabilnost.
+
+---
+
+### 📏 [224] – 2D Event-based SLAM
+
+* Baziran na [101], ali sad **gradi mapu scene dok prati kameru**.
+* Koristi **particle filter** za praćenje poze.
+* Likelihood = obrnuto proporcionalan **reprojection erroru** događaja prema mapi.
+* Mapa = **occupancy map** (vjerojatnost da je pixel aktivan/edge).
+  ➡️ Prvi pravi “SLAM” korak za event kamere, ali još **planarni (2D)** i za **visoki kontrast** scene.
+
+---
+
+### 🧍‍♂️ [225] – 3D SLAM, ali uz pomoć RGB-D senzora
+
+* Nadogradnja [224], ali sad s **3D mapom** (dubina iz RGB-D senzora).
+* Problem: RGB-D **ubija prednost event kamere** (sporo, visoka latencija).
+  ➡️ Dakle, radi, ali *više nije pravi event-based sistem* jer se oslanja na vanjski senzor.
+
+---
+
+## 🔹 Bolji modeli za rotaciju i panorame
+
+### 🌀 [24] – Filter-based pristup
+
+* Dva **probabilistička filtera** rade paralelno:
+
+  1. Praćenje orijentacije kamere.
+  2. Gradnja panoramske mape.
+* Koristi **Kalman filter po pixelu** → svaka točka ima svoju procjenu orijentacije i jačine edgea.
+* Zatim se ta panorama pretvara u **HDR intenzitetnu mapu** (Poisson integracija).
+  ➡️ Ultra-pametno: koristi evente da izgradi **super-resolution HDR panoramu** i orijentaciju istovremeno!
+
+---
+
+### 🧭 [103] – Photometric error pristup
+
+* Koristi **minimizaciju photometric errora** između eventa i probabilističke edge mape.
+* I mapa i praćenje rade zajedno (SLAM).
+  ➡️ Stvara **panoramsku occupancy mapu** — svaki “map point” ima vjerojatnost stvaranja događaja (koliko je jaka ivica).
+
+---
+
+## 🔹 Pravi 3D Event-based SLAM (6-DOF napokon!)
+
+### 💥 [25] – Full probabilistic 6-DOF SLAM
+
+* Proširenje [24], sad s **tri filtera** koji istovremeno rade:
+
+  1. Praćenje poze (pose tracking).
+  2. Procjena dubine.
+  3. Procjena svjetline (intensity).
+* Problem: slabija robusnost kod inicijalizacije.
+* Pretpostavlja da su dubina, intenzitet i gibanje **nekorelirani**, što nije točno.
+* Radi u realnom vremenu, ali traži **GPU**.
+  ➡️ Prvi “all-in-one” SLAM koji radi sve — ali skup i osjetljiv.
+
+---
+
+### ⚙️ [26] – Geometrijski (semi-dense) SLAM
+
+* Dokazuje da **nije nužno rekonstruirati intenzitet slike** da bi se dobila dubina i poza.
+* Koristi:
+
+  * **Space sweeping** za 3D rekonstrukciju (čista geometrija).
+  * **Edge-map alignment** (nelinearna optimizacija između događaja i mapa).
+* Radi **u realnom vremenu na CPU-u!**
+  ➡️ Učinkovit, precizan i jednostavniji — *vjerojatno najpraktičniji pristup za dronove*.
+
+---
+
+## 🔹 Zaključci i izazovi
+
+* Još uvijek **nema loop-closurea** (popravljanje pogreške kad se kamera vrati na istu lokaciju).
+* Radi samo na **malim scenama** (za sada).
+* Ali! Cilj nije nužno zamijeniti frame-based SLAM, nego **biti komplementaran**:
+
+  * Event kamera = visoka brzina, bez zamućenja, velika dinamika.
+  * Frame kamera = precizni detalji i teksture.
+* **Stereo event SLAM** još je neistraženo područje.
+* **Fusion s IMU-om** (žiroskop, akcelerometar) značajno bi povećao robusnost.
+
+---
+
+## ⚡ TL;DR – Mega sažetak
+
+| Pristup | Glavna ideja                                 | Prednosti               | Ograničenja                 |
+| ------- | -------------------------------------------- | ----------------------- | --------------------------- |
+| [23]    | Joint estimation (motion + flow + intensity) | Teoretski elegantno     | Samo rotacija               |
+| [224]   | 2D particle filter SLAM                      | Simple i efektno        | Samo 2D, visoki kontrast    |
+| [225]   | 3D SLAM + RGB-D                              | Radi u 3D               | Spor i kompleksan           |
+| [24]    | Probabilistički filter + panorame            | HDR mapa i orijentacija | Samo rotacija               |
+| [103]   | Photometric error + edge mapa                | Učinkovito mapiranje    | Nema translaciju            |
+| [25]    | 6-DOF probabilistički SLAM                   | Full SLAM               | GPU heavy, nestabilan start |
+| [26]    | Geometrijski semi-dense SLAM                 | Brz i robustan          | Još nema loop closure       |
+
+---
+
+
