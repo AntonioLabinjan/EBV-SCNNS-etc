@@ -3994,3 +3994,121 @@ Zaključak:
 Segmentacija je ključna u frame-based vision, ali je još nedovoljno istražena u event-based vision.
 
 Kako se razvijaju napredniji event-based algoritmi, očekuje se rast radova na ovom izazovnom problemu.
+
+
+
+Recognition (4.8)
+
+
+* **Algoritmi prepoznavanja** za event kamere postaju sve složeniji.
+* Razvili su se od **jednostavnog template matchinga** (prepoznavanje osnovnih oblika) do **klasifikacije složenih uzoraka rubova**.
+* U početku su se koristili **klasični ML pristupi** s ručno definiranim značajkama (hand-crafted features).
+* Danas se sve više koriste **deep learning metode** za automatsko učenje reprezentacija.
+* Glavni cilj tog razvoja je **povećati izražajnost (expressibility)** sustava prepoznavanja i **otpornost na izobličenja podataka (robustness to distortions)**.
+
+Rana istraživanja event based senzora -> praćenje moving objecta pomoću statičnog senzora
+Praćenje pozicije i oblika objekta (usporedba s poznatim jednostavnim oblicima...blob, circle, line)
+Opcija je i matching s predefiniranim templateima (onda nam ne treba da znamo geometriju objekta, nego samo matching)
+Korištenje konvolucija u ranim hardverima
+
+Za kompleksnije objekte, templates se kroiste za povezivanje low-level featurea, a ne cijelih objekata
+Nakon toga, klasifikator donosi odluke na temelju distribucije promatranih featurea
+Koriste se nearest neighbor klasifikatori => udaljenosti u feature spaceu
+Preciznost se može povećati s dodavanjem feature invariancea (hijerarhijski model gdje se kompleksnost featurea diže u svakom layeru)
+Uz dobre featurese, treba trenirati samo finalni klasifikator pri promjeni zadataka
+Problem: koje featurese odabrati
+U ranim radovima koriste se hand-crafted features, ali bolje je učiti featurese iz samih podataka
+U najboljem slučaju, svaki template može nastati iz pojedinog samplea, ali takav pristup je osjetljiv na noise u podacima
+Moguće je učiti featurese pomoću unsupervised učenja, clusteringa event podataka i korištenjem centra svakog clustera kao featurea
+Svaki novi event povezuje se s najbližim featureom
+Koristi se back propagation 
+Prednost: ne treba nam poseban klasifikator za output
+Nedostatak: potrebno je jako puno labeliranih podataka za treniranje
+Problem je i nedostatak spremnih labeliranih podataka za trening (većinom treba raditi custom dataset)
+
+Wormhole learning:
+Problem: nedostatak kvalitetnih trening podataka u event domenu otežava učenje modela.
+
+Rješenje: koristi se wormhole learning, semi-supervised metoda koja povezuje RGB i event domenu.
+
+Prvi korak: model treniran na RGB slikama (teacher) uči detektor za event podatke.
+
+Drugi korak: event model postaje učitelj — dio robustnosti na promjene osvjetljenja (illumination invariance) prenosi se natrag na RGB model.
+
+Na taj način se iskorištava snaga oba senzora — bogatstvo podataka iz RGB i otpornost event kamere.
+
+Većinom se u learning-based pristupima eventi/spikeovi konvertiraju u dense vektore => mogu se koristiti u hijerarhijskim modelima (npr. ANN)
+
+Različiti načini evaluacije vektora (tensora)
+
+Summary:
+
+---
+
+###  **1. Metode za pretvaranje event podataka**
+
+* Najjednostavnije metode koriste **time surfaces** (karte vremena događaja) ili **event histograme**.
+* Naprednije varijante dodaju **eksponencijalni decay** [109] ili **prosječne vremenske oznake** [113] za bolju robusnost.
+* Alternativa: koristiti **rekonstrukciju slike** (Section 4.6) za dobivanje klasične slike iz event streama.
+* Neki pristupi **pretvaraju spikeove u frameove** tijekom inferencije [150], [235].
+* Drugi konvertiraju **trenirani ANN** u **spiking neural network (SNN)** koji direktno radi s eventima [137].
+* Slične ideje koriste se i za druge zadatke osim prepoznavanja [22], [108].
+
+---
+
+###  **2. Uloga neuromorfičkog hardvera**
+
+* Razvijaju se **SNN-ovi** koji mogu **učiti izravno** iz event podataka [143].
+* Neki eksperimenti čak **treniraju modele direktno na neuromorfičkom čipu** [144].
+* Ovaj pristup otvara vrata **super brzim, energetski učinkovitim** sustavima prepoznavanja.
+
+---
+
+###  **3. Razvoj zadataka prepoznavanja**
+
+* Prvi radovi: prepoznavanje **jednostavnih oblika** (krug, kvadrat) sa statičnom kamerom.
+* Kasnije: **kompleksniji objekti** — znakovi na kartama (card pips), **slova**, **lica**, itd.
+* **Najpopularniji test**: event-verzije **MNIST** dataset-a (rukom pisane znamenke).
+* Moderni modeli postižu **>98% točnosti**, ali to nije pravi pokazatelj snage event kamera — ti zadaci su prejednostavni.
+
+---
+
+###  **4. Napredniji i realniji zadaci**
+
+* Teži datasetovi: **Caltech-101**, **Caltech-256** (još uvijek “lagani” za CV, ali teži za event kamere).
+* **Recognition s pokretne kamere** (npr. na vozilu) — rijetko istraženo područje.
+* Većina metoda ipak koristi **pretvaranje u frameove** i klasične **deep learning modele**.
+
+---
+
+###  **5. Ključni izazovi**
+
+* Event kamere **reagiraju samo na promjenu** → trebaju **pokret** (objekta ili kamere).
+* To znači da **ne mogu učinkovito prepoznati statične objekte**.
+* Izgled event slike **ovisi o relativnom gibanju**, pa bi **kontrolirano gibanje kamere** moglo pomoći u stabilnijem prepoznavanju [242].
+
+---
+
+###  **6. Pogodne aplikacije**
+
+* Idealne za **prepoznavanje prema načinu gibanja** (gesture, action recognition).
+* Odlične za **dinamične scene** i **brze pokrete**, gdje klasične kamere zamućuju sliku.
+* Posebno korisne na **mobilnim platformama** (npr. dronovi, roboti) gdje su uvjeti svjetla i brzine izazovni.
+
+---
+
+###  **7. Ograničenja trenutnog stanja**
+
+* Iako event kamere imaju sjajne karakteristike, **još su daleko od konkurencije s frame-based metodama**.
+* Moraju pronaći **nišne zadatke** koji **maksimalno koriste njihove prednosti** — a ne kopirati frame-based pristupe.
+
+---
+
+###  **8. Dataseti i anotacije**
+
+* Kvaliteta event-based dataseta **se poboljšava**, ali **anotacije su i dalje veliki problem**.
+* Nema **standardnog alata ni formata** za označavanje event podataka.
+* Većina postojećih dataseta dolazi iz **frame-based videa**, što **nije optimalno** jer ne iskorištava pravu prirodu event kamera.
+* Velika prilika: napraviti **alat/pipeline za lako prikupljanje i označavanje event podataka**, čak i od strane laika.
+
+---
