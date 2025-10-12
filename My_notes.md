@@ -3641,5 +3641,179 @@ s pomoću *samo događaja* umjesto frameova.
 | [26]    | Geometrijski semi-dense SLAM                 | Brz i robustan          | Još nema loop closure       |
 
 ---
+---
 
+### 💡 Što je Visual-Inertial Odometry (VIO)?
+
+VIO = **fuzija kamere i IMU-a (akcelerometar + žiroskop)** → zajedno daju **pouzdaniju procjenu kretanja u 6-DOF-u**.
+
+---
+
+### 1️⃣ Visual Odometry (VO) sama po sebi...
+
+* Koristi samo kameru da procijeni **kako se kamera pomaknula** između frameova.
+* Dobra je kad ima dovoljno teksture, svjetla i stabilnog videa.
+* Ali ako kamera brzo rotira, ako je scena monotona ili zamagljena → *VO gubi tracking*.
+
+---
+
+### 2️⃣ A Visual-Inertial Odometry (VIO)…
+
+* Dodaje **IMU podatke (akceleracije, brzine rotacije)**.
+* Kad kamera “oslijepi” (npr. u mraku ili pri velikim brzinama), **IMU i dalje zna da se tijelo kreće**.
+* Zato **VIO nikad ne padne potpuno** — uvijek ima izlaz, iako s vremenom može **driftati** (lagano odlutati od stvarne pozicije).
+
+---
+
+### 3️⃣ Ključni izazov → *Temporalna fuzija*
+
+Event kamera daje **asinkrone evente** (svaki pixel ima svoj timestamp),
+dok IMU daje **sinkrone uzorke** npr. svakih 1 ms (1000 Hz).
+👉 Problem: *kako spojiti ta dva izvora vremena u zajednički model?*
+
+---
+
+### 4️⃣ Tri pristupa koja koriste znanstvenici:
+
+#### (i) **Asinkroni probabilistički filter**
+
+* Koristi se **Bayesov filter (npr. EKF)** koji asinkrono prima evente i IMU mjerenja.
+* Svaki novi podatak ažurira procjenu stanja → *state = pozicija, brzina, orijentacija*.
+* Super precizan, ali računalno zahtjevan.
+
+#### (ii) **Pre-integracija IMU-a**
+
+* IMU podatke integriraš unaprijed između dva eventa ili framea → dobiješ “kompaktne” podatke.
+* Time se smanji učestalost IMU updatea i lakše ih sinkroniziraš s eventima.
+* Koristi se u većini modernih VIO sustava (npr. VINS-Mono, OKVIS, Basalt).
+
+#### (iii) **Continuous-time model**
+
+* Umjesto da imaš diskretne frameove, modeliraš poziciju kamere kao **kontinuiranu funkciju vremena**.
+* Svi senzori (kamera, IMU, event kamera) se referenciraju na tu zajedničku vremensku os.
+* Idealno za event kamere, jer i one rade kontinuirano.
+* Ali zahtjeva napredne nelinearne optimizacije (spline modeli, Gaussian Processes itd.).
+
+---
+
+### 5️⃣ Zaključak
+
+* VO = brza, ali može “puknuti”.
+* VIO = otpornija, radi i bez slike, ali lagano drift-a.
+* U event-based kamerama VIO je **game changer**, jer:
+
+  * Eventi su brzi (mikrosekunde)
+  * IMU je brz (1 kHz)
+  * Kombinacijom dobivaš **precizno praćenje i pri ludim brzinama, bez zamućenja!** ⚡
+
+
+
+
+---
+
+### 🚀 1️⃣ Što znači *feature-based* VIO
+
+* Umjesto da se koristi svaki pojedinačni event (što bi bilo kaotično), sustav **detektira i prati feature točke** kroz vrijeme.
+* Te točke su “sidra” — stabilni detalji u slici (rubovi, kutovi, uzorci) koji se mogu pratiti kroz sekvence eventa.
+
+---
+
+### ⚙️ 2️⃣ Dvije glavne faze
+
+1. **Frontend** → iz eventa se izvuku i prate feature točke (npr. Harris corneri ili FAST featurei).
+2. **Backend (VIO fuzija)** → te trajektorije featurea se kombiniraju s IMU podacima da bi se procijenila 6-DOF putanja kamere i mapa okoline.
+
+---
+
+### 📸 3️⃣ Frontend: pretvaranje eventa u “feature trakove”
+
+* Event kamera ne daje frameove, nego samo promjene osvjetljenja (x, y, t, polaritet).
+* Sustavi poput [130] koriste algoritme za praćenje tih promjena kroz vrijeme → dobivaš **feature tracks** (trajektorije točaka kroz frameove).
+* To je kao kad u običnom videu gledaš kako se kut zgrade miče kroz frameove — samo što se ovdje to radi *event po event*.
+
+---
+
+### 🧠 4️⃣ Backend: spajanje s IMU-om pomoću Kalman filtera
+
+* Svaki track ima svoju procijenjenu poziciju i brzinu → to se kombinira s IMU mjerenjima (ubrzanje, rotacija).
+* Kalman filter ili njegova varijanta (Extended/Unscented KF) koristi oba izvora informacija da bi “ispeglao” šum i procijenio precizniji položaj.
+  👉 Ovo je kao kad kombiniraš *oči (kamera)* i *unutarnji osjet ravnoteže (IMU)* da znaš gdje si u prostoru.
+
+---
+
+### 🔄 5️⃣ Motion-compensated event images (spominje se u [129])
+
+* Umjesto da koristi “raw” evente, metoda ih **kompenzira za gibanje** — znači “zarotira” i “pomakne” ih tako da se sve točke usklade s trenutnim kretanjem kamere.
+* Time se dobiva **oštrija, stabilnija slika** iz niza eventa → i tada se mogu koristiti klasični feature detektori (npr. FAST, Harris).
+
+---
+
+### 🧩 6️⃣ Keyframe-based optimizacija
+
+* Sustav ne optimizira svaki frame → prevelik trošak.
+* Umjesto toga, koristi **keyframe pristup** → uzme ključne frameove i među njima optimizira:
+
+  * Poze kamere (R, t)
+  * 3D pozicije landmarka (točke u prostoru)
+* Sve to radi preko **nelinearne optimizacije** (npr. Bundle Adjustment) kako bi smanjio ukupnu reprojection grešku.
+
+---
+
+### 📈 7️⃣ Spajanje i event + intensity frameova
+
+* Kasniji radovi ([27]) spajaju event kameru i običnu (intensity) kameru u isti sustav.
+* Time dobiješ najbolje od oba svijeta:
+
+  * Event kamera = visoka brzina i HDR (ne zaslijepljuje se)
+  * Obična kamera = bogata tekstura
+* Zajedno omogućuju rad i u **mraku, jakoj svjetlosti, ili brzoj rotaciji** (npr. dron koji leti u sumrak).
+
+---
+
+### 🧮 8️⃣ Optimizacija = procjena putanje i mape
+
+* Cilj sustava:
+
+  * Rekonstruirati **trajektoriju kamere** u 6-DOF-u (pozicija + orijentacija)
+  * Stvoriti **sparse 3D mapu** svijeta oko nje (landmarki u prostoru).
+* Sve se optimizira kako bi **reprojection error bio minimalan** → da se projekcije 3D točaka poklapaju s njihovim promatranim mjestima na slici.
+
+---
+
+### 📊 9️⃣ Benchmarking
+
+* Sve te metode se testiraju na **6-DOF datasetima** (npr. [98]) — obično realni pokreti kamere s ground truthom.
+* Svaka nova verzija metode poboljšava prethodnu po brzini, preciznosti i otpornosti na šum.
+
+---
+
+### ⚡ 10️⃣ Glavni takeaway
+
+Feature-based event VIO =
+➡️ *pretvori evente u točke koje možeš pratiti*,
+➡️ *spoji s IMU-om da dobiješ robustnu procjenu kretanja*,
+➡️ *optimiziraj poze i mapu kroz keyframe-based nelinearnu optimizaciju.*
+➡️ Rezultat: **precizan, robustan, high-speed 3D tracking — čak i u mraku ili ekstremnim uvjetima!**
+
+---
+
+Continuous-time framework – kamera se modelira kao kontinuirana funkcija vremena, ne samo diskretne frameove, što je prirodnije za event kamere koje daju asinkrone događaje.
+
+Reprojection error – umjesto samo feature trackova, svaka predviđena lokacija događaja se reprojektira u sliku, i razlika između stvarnih i predviđenih događaja je mjera pogreške.
+
+Fuzija s IMU – inertialni podaci se uključuju u istu optimizaciju, tj. objektivna funkcija minimizira i vizualnu (event) i inercijalnu pogrešku.
+
+Event-based bundle adjustment – slično klasičnom BA za standardne kamere, ali sada optimiziramo trajektoriju kamere i poziciju točaka (scene structure) iz samih eventa.
+
+Izbjegavanje konverzije u feature tracks – klasični feature-based pristup prvo pretvara evente u geometrijske featuree; reprojection-based metoda direktno koristi raw evente, što potencijalno daje precizniju rekonstrukciju.
+
+Photometric error / firing rate – događaji imaju intenzitet pokretanja (event rate) koji se može koristiti kao fotometrijski signal za optimizaciju, slično VI-DSO za standardne kamere.
+
+Stereo event VIO – još nije istraženo, ali kombiniranje stereokamera + event-based depth može dovesti do full SLAM + VIO sistema s real-time mapiranjem.
+
+Learning-based alternative – trenutno literatura je model-based (klasične optimizacijske metode), ali deep learning bi mogao direktno mapirati raw evente + IMU u 6-DOF poziciju.
+
+Ključna prednost – kontinuirana optimizacija po segmentima trajektorije daje glatkije i robusnije pozicije, drastično smanjujući drift u usporedbi sa čistim feature-based ili jednostavnim Kalman filter pristupom.
+
+Izazov implementacije – zahtjeva složenije numeričke metode, nelinearnu optimizaciju, te dobar model kamere i IMU kalibracije. Ovo nije trivialno za real-time CPU implementaciju, ali GPU i batch optimizacije čine to izvedivim.
 
