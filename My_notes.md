@@ -3905,3 +3905,92 @@ Scenska reprezentacija – rekonstruirane slike daju stabilniji prikaz scene od 
 Facilitacija korrespondencija – rekonstruirani frameovi pomažu u povezivanju istih featurea između eventa, što je ključno za tracking i VIO.
 
 Dodatna vrijednost – osim praktičnih zadataka, rekonstruirane slike služe i kao appearance maps, što je korisno za vizualizaciju scene i eventualnu fuziju s drugim senzorima.
+
+Motion segmentation
+
+Segmentacija pokretnih objekata koje promatra stacionarna event kamera je jednostavna
+Eventi su vezani samo uz kretanje objekata (pod pretpostavkom konstantnog osvjetljenja)
+U slučaju pokretne kamere javljaju se izazovi jer se eventi događaju svuda u vidokrugu kamere
+Stvaraju ih pokretni objekti i prividno pokretna scena (scena je statična, ali se čini da se miče zbog micanja kamere)
+Cilj je za svaki event razaznati je li uzrokovan pokretom objekta na sceni ili pokretom scene zbog kamere
+Izazovno je to odraditi jer svaki event u sebi nosi jako malo informacija
+Ukratko: vidimo kako se globalno kreće scena (global flow) i onda to oduzmemo od pojedinih kretanja u svakom eventu
+
+Način istraživanja: segmentacija motiona u scenarijima koji postaju progresivno sve kompleksniji, zbog smanjivanja dodatnih informacija za rješavanje problema
+Primjeri dodatnih informacija: algoritam ima info o tome koji oblik ili koji način kretanja mora očekivati (ča očekujen vidit i kako će se kretat)
+
+Ako nemaš dodatne informacije (kao što su flow kamere ili dubinska mapa), problem postaje unsupervised – moraš se osloniti samo na eventi.
+
+Osnovna ideja: pokretni objekti stvaraju distinktivne tragove eventa na slici. Ti tragovi se mogu pratiti kroz vrijeme da bi se rekonstruirale putanje objekata.
+
+Rezultat: segmentacija objekata se dobiva istovremeno s procjenom njihove putanje.
+
+Ovo je u osnovi joint optimization problem:
+
+tražiš parametre pokreta objekata (kao “klastere”)
+
+dok istovremeno određuješ koji event pripada kojem objektu.
+
+U praksi se ovo često rješava iterativno:
+
+prvo inicijalna grupa eventa u klastere
+
+zatim optimizacija parametara pokreta i reassignment eventa
+
+ponovi dok se ne konvergira
+
+Ukratko: čak i bez dodatnih senzora, segmentacija može uspjeti tako što iskoristi prostorno-vremenske obrasce eventa.
+
+Poznavanje oblika objekta pomaže:
+
+[13] detektira i prati krug čak i kad pokret kamere stvara puno “cluttera”.
+
+Koristi Hough transform i optical flow iz vremenskih prozora eventa.
+
+Robusnost praćenja:
+
+[181] proširuje metodu s particle filterom, dinamički prilagođava trajanje prozora za praćenje naglih promjena gibanja.
+
+Općeniti oblici objekata:
+
+[188] koristi event corners kao geometrijske primitive.
+
+Zahtijeva dodatno znanje o robot joints koji pokreću kameru.
+
+Segementacija pomoću motion-compensated event images:
+
+[132], [154], [155] koriste ovu ideju: evente warpaju prema hipotezi pokreta da bi se dobile oštre konture objekata.
+
+Jednostavne hipoteze pokreta:
+
+Linearni modeli (konstantni optical flow) često su dovoljni za kratka vremena.
+
+Scene se opisuju kao kolekcije objekata s različitim linearnim modelima pokreta.
+
+Greedy pristupi segmentaciji:
+
+[154] prvo uklanja dominantne evente (pozadinu), zatim fitira linearni model na ostatak (objekti).
+
+[132] otkriva pokretne objekte detektiranjem odstupanja od dominantnog pokreta (background).
+
+Iterativni pristupi:
+
+[155] iterativno optimizira event-object assignments i motion parameters, daje bolje rezultate od greedy metoda.
+
+Omogućuje general parametric motion models za svaki objekt.
+
+Learning-based pristupi:
+
+[133] koristi ANN za procjenu depth, ego-motion, segmentation masks i 3D brzine objekata.
+
+Dataset s pixel-wise motion maskama omogućuje nadzirano učenje.
+
+Prednosti event-based segmentacije:
+
+Daje robusno praćenje čak i u HDR i high-speed scenama gdje standardne kamere ne mogu.
+
+Zaključak:
+
+Segmentacija je ključna u frame-based vision, ali je još nedovoljno istražena u event-based vision.
+
+Kako se razvijaju napredniji event-based algoritmi, očekuje se rast radova na ovom izazovnom problemu.
