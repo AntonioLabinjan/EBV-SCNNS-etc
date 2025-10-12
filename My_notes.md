@@ -3817,3 +3817,91 @@ Ključna prednost – kontinuirana optimizacija po segmentima trajektorije daje 
 
 Izazov implementacije – zahtjeva složenije numeričke metode, nelinearnu optimizaciju, te dobar model kamere i IMU kalibracije. Ovo nije trivialno za real-time CPU implementaciju, ali GPU i batch optimizacije čine to izvedivim.
 
+Image reconstruction
+
+Event = promjena svjetline – svaki event kodira samo kada se svjetlina promijeni iznad nekog praga, s polaritetom (+/-).
+
+Ne-redundantno kodiranje – unlike obična kamera koja zapisuje cijeli frame, event kamera šalje samo promjene, pa je podatak “komprimiran” po prirodi.
+
+Integracija eventa = vraćanje svjetline – kad integriraš sve promjene po pikselima kroz vrijeme, dobiješ “aproksimativnu” originalnu svjetlinu scene.
+
+Rekonstrukcija slika – ovaj proces integracije eventa naziva se image reconstruction; efektivno decompressaš event stream natrag u brightness mapu.
+
+Visoka temporalna rezolucija – eventi dolaze u mikrosekundama, pa možeš rekonstruirati frameove na tisuće Hz (2–5 kHz) ili kontinuirano.
+
+Prednosti – nema motion blur-a jer se integrira u realnom vremenu; možeš dobiti “trenutnu sliku” čak i pri velikim brzinama objekata.
+
+Metode rekonstrukcije – od jednostavne akumulacije eventa (dodan +1/-1 po pikselu) do sofisticiranih algoritama koji uključuju regularizaciju, optimizaciju i rekonstrukciju visoke kvalitete.
+
+Continuous-time reconstruction – neke metode (npr. [62]) ne čekaju frame, nego kontinuirano ažuriraju brightness mapu dok dolaze eventi.
+
+Noise & sensor limitations – u stvarnom svijetu eventi imaju šum, dead pixels, i neidealni response, pa rekonstrukcija često koristi filtering i denoising.
+
+Primjena – high-speed tracking, HDR scena u realnom vremenu, robotika, AR/VR, pa čak i predobuka za SLAM ili VIO sustave.
+
+Event = promjena svjetline – svaki event kodira samo kada se svjetlina promijeni iznad nekog praga, s polaritetom (+/-).
+
+Ne-redundantno kodiranje – unlike obična kamera koja zapisuje cijeli frame, event kamera šalje samo promjene, pa je podatak “komprimiran” po prirodi.
+
+Integracija eventa = vraćanje svjetline – kad integriraš sve promjene po pikselima kroz vrijeme, dobiješ “aproksimativnu” originalnu svjetlinu scene.
+
+Rekonstrukcija slika – ovaj proces integracije eventa naziva se image reconstruction; efektivno decompressaš event stream natrag u brightness mapu.
+
+Visoka temporalna rezolucija – eventi dolaze u mikrosekundama, pa možeš rekonstruirati frameove na tisuće Hz (2–5 kHz) ili kontinuirano.
+
+Prednosti – nema motion blur-a jer se integrira u realnom vremenu; možeš dobiti “trenutnu sliku” čak i pri velikim brzinama objekata.
+
+Metode rekonstrukcije – od jednostavne akumulacije eventa (dodan +1/-1 po pikselu) do sofisticiranih algoritama koji uključuju regularizaciju, optimizaciju i rekonstrukciju visoke kvalitete.
+
+Continuous-time reconstruction – neke metode (npr. [62]) ne čekaju frame, nego kontinuirano ažuriraju brightness mapu dok dolaze eventi.
+
+Noise & sensor limitations – u stvarnom svijetu eventi imaju šum, dead pixels, i neidealni response, pa rekonstrukcija često koristi filtering i denoising.
+
+Primjena – high-speed tracking, HDR scena u realnom vremenu, robotika, AR/VR, pa čak i predobuka za SLAM ili VIO sustave.
+
+Image reconstruction iz evenata zahtjeva regularizaciju. 
+Event kamere imaju neovisne piksele koji "reportiraju" promjene u osvjetljenju. Per-pixel integracija takvih promjena kroz vrijeme rezultira samo slikama s inkrementiranom svjetlošću
+
+ključni detalj u image reconstruction iz eventa – sam event stream ti daje samo promjene svjetline, ne apsolutne vrijednosti. Evo kako to možemo objasniti u natuknicama:
+
+Event = brightness change, ne apsolutna vrijednost – svaki piksel šalje +1/-1 ili neku sličnu oznaku promjene.
+
+Integracija po pikselu daje brightness increment image, tj. koliko se svjetlina promijenila u nekom vremenskom intervalu, ali ne i stvarnu svjetlinu scene.
+
+Offset image = početna svjetlina – da bi dobio stvarnu brightness mapu, trebao bi dodati početnu sliku intervala na integrirane promjene.
+
+Problem – u praksi često nemamo tu početnu sliku (offset), posebno u potpuno event-based sustavima.
+
+Rješenje: regularizacija – koristi se prostorno i/ili vremensko glatkanje (smoothing) kako bi se rekonstruirala brightness slika iz nule.
+
+Spatial smoothing – pikseli se “pomažu” susjedima; izbjegava se ekstremno šum i lokalne nepravilnosti.
+
+Temporal smoothing – koristi informacije iz prethodnih intervala; stabilizira brightness mapu kroz vrijeme.
+
+Learning-based regularization – deep learning modeli mogu naučiti statistiku prirodnih scena i rekonstruirati realistične brightness slike iz event streama.
+
+Prednosti – omogućuje HDR rekonstrukciju, pod visokim brzinama i u sceni s velikim kontrastom (npr. izlazak iz tunela, eksplozija).
+
+Rezultat – dobivaš kontinuiranu brightness mapu, visoke dinamičke širine, bez motion blur-a i s očuvanjem detalja, što je ključno za event-based SLAM, VIO ili tracking.
+
+Summary:
+
+Kvaliteta slike – jako ovisi o noise-u u contrast threshold-u piksela; pikseli nisu savršeno identični zbog manufacturing mismatcha i promjena svjetla/dinamike.
+
+Spatial resolution – viša rezolucija senzora → bolja reconstructed slika, niža → gubi detalje.
+
+Integracija events → brightness image – principijelno se evente može “dekomprimirati” u brightness frame koji se koristi kao obična slika.
+
+Mature CV pipelines – rekonstruirani frameovi omogućuju korištenje svih standardnih computer vision algoritama (prepoznavanje objekata, SLAM, optical flow…).
+
+Prednosti – može hvatati high-speed motion i HDR scene; scene koje bi obična kamera teško snimila.
+
+Trošak – rekonstrukcija je računalno intenzivna, ima latenciju i povećanu potrošnju energije.
+
+Nije uvijek nužno – za neke zadatke poput feature tracking, SLAM-a ili optical flowa, ne mora se rekonstruirati frame; eventi sami često daju dovoljno informacije.
+
+Scenska reprezentacija – rekonstruirane slike daju stabilniji prikaz scene od same sekvence eventa; manje osjetljiv na noise i kratkotrajne promjene.
+
+Facilitacija korrespondencija – rekonstruirani frameovi pomažu u povezivanju istih featurea između eventa, što je ključno za tracking i VIO.
+
+Dodatna vrijednost – osim praktičnih zadataka, rekonstruirane slike služe i kao appearance maps, što je korisno za vizualizaciju scene i eventualnu fuziju s drugim senzorima.
