@@ -4259,4 +4259,138 @@ Kriterij kategorizacije neuromorfnih procesora može biti način implementacije 
 Analogni neuroni, digitalni neuroni i software neuroni.
 Neke arhitekture omogućavaju i on-chip learning
 
-Doša san do stranice 21, poglavlje 5.1, rečenica "when evaluating blablabla"
+Pri evaluaciji neuromorfnog procesora za ebv sustav, u obzir treba uzeti:
+- funkcionalnost i performanse procesora
+- ekosustav u kojem je software razvijen (minimum je: API za komponirati i trenirati network, kompajler za pripremu networka za hardver, runtime library za deployment networka na harddver
+- event based vision sustavi tipično zahtjevaju da je procesor dostupan kao zasebni sustav koji se može pokretati na edge devices, a da nije samo hostan na nekom remote serveru
+- dostupnost neuromorphic procesora
+
+Da bi se neuromorfni procesori šire koristili, nužno je:
+- razviti više user-friendly ekosustav (lakši način za isprogramirati ono što želimo deployat na hardver)
+- omogućiti veće procesne mogućnosti na hardverskoj platformi
+- povećati dostupnost uređaja
+
+Najbolji trenutni procesori:
+
+---
+
+###  **SpiNNaker (Spiking Neural Network Architecture)**
+
+* Koristi **ARM jezgre** (general-purpose procesore).
+* Ne koristi fizičke neurone, već ih **simulira softverski** → **maksimalna fleksibilnost**, ali **manje ubrzanje**.
+* Primjene s event kamerama:
+
+  * **Stereo depth estimation**
+  * **Optic flow**
+  * **Object tracking i recognition**
+* Fokus: **biološki realistične simulacije** mozga.
+
+---
+
+###  **TrueNorth (IBM)**
+
+* Ima **digitalne neurone** — svaka čip simulira:
+
+  * **1 milijun neurona**
+  * **256 milijuna sinapsi**
+  * **4096 neurosinaptičkih jezgri**
+* **Nema učenja na čipu** → mreže se treniraju **offline (GPU)**.
+* Primjene s event kamerama:
+
+  * **Gesture recognition**
+  * **Stereo rekonstrukcija**
+  * **Optical flow**
+* Fokus: **real-time inference**, **niska potrošnja**, **niska latencija**.
+
+---
+
+###  **Loihi (Intel)**
+
+* Ima **digitalne neurone** s **real-time inference + online learning**.
+* Jedan čip:
+
+  * **131 tisuća neurona**
+  * **130 milijuna sinapsi**
+* Ima **learning engine** koji podržava:
+
+  * **STDP** (Spike-Timing Dependent Plasticity)
+  * **Reinforcement learning**
+* Može trenirati obične mreže u **TensorFlowu**, pa ih konvertirati u spiking verziju pomoću **Nengo DL toolkita**.
+* Planiran sustav **Pohoiki Springs** s:
+
+  * **768 Loihi čipova**, ~**100 milijuna neurona**, **100 milijardi sinapsi**.
+* Fokus: **online učenje i fleksibilnost**, ali još uvijek daleko od biološkog mozga (koji ima ~800 trilijuna sinapsi).
+
+---
+
+### ️ **DYNAP (Dynamic Neuromorphic Asynchronous Processor) – aiCTX**
+
+* Dvije varijante:
+
+  * **Dynap-se** → optimiziran za **inference (skalabilno izvođenje)**
+  * **Dynap-le** → optimiziran za **online learning**
+* Fokus: **asinkrono, energetski učinkovito procesiranje**.
+
+---
+
+###  **Braindrop**
+
+* Prototip jedne jezgre sustava **Brainstorm** (planiran s 1M neurona).
+* Programira se pomoću **Nengo** i koristi **Neural Engineering Framework (NEF)**.
+* Razvijen na **Stanfordu**, nasljednik je **Neurogrid** procesora.
+* Fokus: **istraživanje modela neuronskih mreža**, **jednostavna integracija u softver**.
+
+---
+
+
+
+---
+
+| **Procesor**                | **Broj neurona (≈)**                    | **Sinapse (≈)**       | **Učenje na čipu**       | **Fokus / Namjena**                         | **Primjene s event kamerama**                   | **Posebne značajke**                                                      |
+| --------------------------- | --------------------------------------- | --------------------- | ------------------------ | ------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------- |
+|  **SpiNNaker**            | Fleksibilno (ovisno o broju ARM jezgri) | Softverski definirano |  Da (softverski modeli) | Biološki realizam, simulacija mozga         | Stereo depth, optic flow, tracking, recognition | Neuronski modeli u softveru → maksimalna fleksibilnost                    |
+|  **TrueNorth (IBM)**      | 1 milijun                               | 256 milijuna          |  Ne                     | Real-time inference, niska potrošnja        | Gesture recognition, stereo, optical flow       | 4096 neurosinaptičkih jezgri, trenira se offline (GPU)                    |
+|  **Loihi (Intel)**        | 131 tisuća (po čipu)                    | 130 milijuna          |  Da (STDP, RL)          | Online učenje, adaptivnost                  | Eksperimentalno za učenje u hodu                | TensorFlow + Nengo DL integracija, projekt Pohoiki Springs (100M neurona) |
+| ️ **DYNAP (aiCTX)**        | Tisuće po čipu (ovisno o verziji)       | Nepoznato             |  Da (u Dynap-le)        | Energetska učinkovitost, inference/learning | -                                               | Asinkron dizajn, dvije varijante: SE (inference), LE (learning)           |
+|  **Braindrop (Stanford)** | 1 jezgra prototip (~1M planirano)       | -                     |  Da                     | Istraživanje neuronskih modela              | -                                               | Koristi Neural Engineering Framework (NEF), Nengo programiranje           |
+
+---
+
+
+---
+
+### Real-time on-board robotika s event kamerama
+
+**Glavna ideja:**
+Event kamere generiraju znatno manje podataka po vremenskom intervalu nego klasične frame-based kamere.
+Zbog toga obrada može biti izvedena u stvarnom vremenu na samom uređaju, bez potrebe za snažnim računalom ili USB prijenosom podataka.
+
+---
+
+### Konkretni primjeri:
+
+1. **Wheeled robot (s ARM mikrokontrolerom)**
+
+   * Dual-core ARM mikrokontroler na 200 MHz s 136 KB RAM-a obraduje evente u stvarnom vremenu.
+   * Radi potpuno samostalno, bez vanjskog računala.
+   * Izvodi zadatke poput praćenja linije, aktivnog i pasivnog praćenja objekata, procjene udaljenosti i jednostavnog mapiranja prostora.
+   * Ovaj primjer pokazuje da su event kamere iznimno učinkovite i prikladne za robote s vrlo niskom potrošnjom energije.
+
+2. **SpeckSoC11 (edge computing primjer)**
+
+   * Sustav kombinira DVS (Dynamic Vision Sensor) i Dynap-se neuromorfni CNN procesor.
+   * Potrošnja energije manja je od 1 mW, a latencija ispod 30 ms.
+   * Primjene uključuju kontinuiranu detekciju objekata, sustave nadzora i automobilske aplikacije poput detekcije prepreka ili pješaka.
+
+3. **Quadrotori (dronovi)**
+
+   * Event kamere integrirane su u dronove s ograničenim računalnim resursima.
+   * Koriste se za autonomno slijetanje, navigaciju i let u zahtjevnim uvjetima, poput slabog osvjetljenja ili velikih brzina kretanja.
+   * Glavna prednost je vrlo niska latencija i otpornost na zamućenje slike pri brzom kretanju.
+
+---
+
+### Zaključak:
+
+Event kamere omogućuju obradu vizualnih informacija izravno na senzoru, u stvarnom vremenu i s minimalnom potrošnjom energije.
+Zbog toga su idealne za primjenu u mobilnim i energetski ograničenim sustavima, poput autonomnih robota, dronova i IoT uređaja.
