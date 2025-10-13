@@ -4245,3 +4245,18 @@ Biološka analogija prema Kahnemanu [257]:
 
 Cilj: spojiti oba sustava u jedinstvenu, adaptivnu kontrolnu arhitekturu.
 
+Chapter 5. -> event based systems&applications
+Neuromorphic computing
+
+Neuromorfno inženjerstvo pokušava koristiti kombinaciju računalne snage i efikasnosti mozga kombinirajući njegovu strukturu i funkciju
+Paralelni hardverski akceleratori za SNN-ove => definicija neuromorfnog procesora
+
+Neuronski spikeovi unutar procesora su asinkroni i zato je neuromorfno procesiranje idealno za koristiti s event kamerama
+Neuromorfni procesori reagiraju na evente koje šalje event kamera, bez dodatne konverzije => jako dobro spatially i temporally lokalno procesiranje podataka
+Low power consumption & low latency
+
+Kriterij kategorizacije neuromorfnih procesora može biti način implementacije modela neurona
+Analogni neuroni, digitalni neuroni i software neuroni.
+Neke arhitekture omogućavaju i on-chip learning
+
+Doša san do stranice 21, poglavlje 5.1, rečenica "when evaluating blablabla"
