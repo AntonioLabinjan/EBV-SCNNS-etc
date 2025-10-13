@@ -4112,3 +4112,136 @@ Summary:
 * Velika prilika: napraviti **alat/pipeline za lako prikupljanje i označavanje event podataka**, čak i od strane laika.
 
 ---
+Neuromorphic control
+- Kod živih bića, većina informacija se procesira pomoću spike-based reprezentacije
+Spikeovi enkodiraju senzorske (osjetilne) podatke
+Spikeovi obavljaju izračune
+Spikeovi odrađuju "aktuatorske naredbe"
+Dakle, event-based paradigma primjenjiva je i na kontrolu, a ne samo percepciju i inference
+
+Neurmorphic-vision-driven Control Architecture
+- komponente: neuromorfni senzor, event-based estimator i tradicionalni kontroler
+
+Estimator računa "state", a kontroler računa potrebnu kontrolu na temlju tog "statea"
+Kontroler "nije svjestan" asinkronosti arhitekture
+
+Prednosti: niska latencija i visoka efikasnost
+Primjeri: spike-based konvolucijski target tracker, robotski "golman", robot koji balansira kemijsku
+Latencija manja od 1ms + jednostavna ugradnja u embedded sustave (može raditi i na prilično ograničenim resursima)
+
+Event based control theory
+Control&decision => više informacija omogućuje bolje odluke, ali ako su troškovi vezani za dobivanje informacija preveliki, racionalnije je donijeti odluku na temelju parcijalne informacije
+U event-based kontroli, signal se mijenja asinkrono 
+Postoji više varijacija, ovisno o tome kako se generiraju control events
+
+Najbitnije: event-triggered control i slef-triggered control
+
+Osnovna ideja
+
+Kod živih bića većina senzorne i motoričke obrade odvija se u spike-based formatu (tj. event-based).
+
+Spikeovi enkodiraju senzorske podatke, računaju stanja, i pokreću akcije — percepcija, odluka i reakcija u jedinstvenom okviru.
+
+Dakle, event-based paradigma nije samo za percepciju (vid, sluh...), nego i za kontrolu (pokret, akcije, regulaciju).
+
+Neuromorphic Vision–Driven Control Architecture
+Komponente:
+
+Neuromorfni senzor (event camera) → proizvodi asinkrone događaje.
+
+Event-based estimator → procjenjuje trenutno stanje sustava (“state”).
+
+Klasični kontroler → generira kontrolne naredbe na temelju tog stanja.
+
+Kontroler nije svjestan asinkronosti — on samo prima ažuriranja kad ih ima.
+
+Takva arhitektura kombinira biološki realizam s inženjerskom jednostavnošću.
+
+Prednosti:
+
+Ultra-niska latencija (ispod 1 ms).
+
+Visoka energetska i računska efikasnost.
+
+Može raditi na embedded platformama i mikrokontrolerima s ograničenim resursima.
+
+Pogodno za brze, reaktivne zadatke:
+
+spike-based target tracking,
+
+robotski “golman”,
+
+balansiranje fizikalnih sustava (npr. kemijska epruveta).
+
+Event-Based Control Theory
+Konceptualna osnova:
+
+Utemeljeno na control i decision teoriji.
+
+Inspirirano ekonomskim principom “rational inattention” [247]:
+
+Više informacija = bolje odluke,
+
+ali ako je skupljanje ili obrada informacija skupa, racionalno je donositi odluke s parcijalnim znanjem.
+
+Dakle, kontrolni signal se mijenja samo kad je to potrebno, a ne u fiksnim vremenskim koracima.
+
+Način rada:
+
+Kontrolni signali se ažuriraju asinkrono — samo kad događaji to opravdaju.
+
+Postoje dvije glavne paradigme:
+
+Event-triggered control –
+
+događaj pokreće reakciju izvana (“exogenously”),
+
+npr. ponovno izračunaj kontrolu kad pogreška u praćenju pređe prag.
+
+Self-triggered control –
+
+kontroler sam odlučuje kada će ponovno izračunati izlaz,
+
+npr. “spava” duže ako je stanje stabilno, reagira brže ako se sustav mijenja.
+
+Trade-off i motivacija:
+
+Cilj: balansirati između performansi i računalnog troška.
+
+Idealno bi bilo stalno recomputati kontrolu (beskonačno često) → ali to je računski neizvedivo.
+
+Event-based pristup daje jednaku kontrolnu kvalitetu s puno manje računanja, ili bolju kontrolu s istim brojem izračuna.
+
+U nekim slučajevima (npr. linear Gaussian sistemi) taj se trade-off može izračunati analitički.
+
+Ograničenja i izazovi
+
+Klasična event-based control teorija bavi se malim, niskodimenzionalnim sistemima (npr. mrežna kontrola).
+
+Neuromorphic control sustavi (npr. robotika, vozila) su visokodimenzionalni i nelinearni.
+
+To otežava zatvorene (closed-form) matematičke rezultate → potrebno je empirijsko i heurističko modeliranje.
+
+Otvoreni istraživački problemi
+1. Task-driven sensing
+
+U prirodi, percepcija ima smisla samo ako vodi akciji.
+
+Cilj: kontroler koji dinamički modulira senzorski ulaz ovisno o zadatku i kontekstu.
+
+Potencijal: integracija s region-of-interest (ROI) mehanizmima i promjenjivim bias postavkama kamere → efikasniji sensing i kontrola.
+
+2. Thinking Fast and Slow
+
+Trenutni fokus: brza, niskolatencijska kontrola (“fast thinking”).
+
+Problem: kako to integrirati s višerazinskom kognitivnom arhitekturom (npr. planiranjem, učenjem)?
+
+Biološka analogija prema Kahnemanu [257]:
+
+“System 1” – brzo, instinktivno, refleksno (event-based).
+
+“System 2” – sporo, svjesno, deliberativno.
+
+Cilj: spojiti oba sustava u jedinstvenu, adaptivnu kontrolnu arhitekturu.
+
