@@ -4392,5 +4392,29 @@ Zbog toga obrada može biti izvedena u stvarnom vremenu na samom uređaju, bez p
 
 ### Zaključak:
 
-Event kamere omogućuju obradu vizualnih informacija izravno na senzoru, u stvarnom vremenu i s minimalnom potrošnjom energije.
-Zbog toga su idealne za primjenu u mobilnim i energetski ograničenim sustavima, poput autonomnih robota, dronova i IoT uređaja.
+- Event kamere omogućuju obradu vizualnih informacija izravno na senzoru, u stvarnom vremenu i s minimalnom potrošnjom energije.
+- Zbog toga su idealne za primjenu u mobilnim i energetski ograničenim sustavima, poput autonomnih robota, dronova i IoT uređaja.
+
+
+DISCUSSION & CONCLUSION
+- EBV = computer vision + robotika + neuromorphic engineering
+- Omogućava low power consumption (always ON uređaji)
+- Korisno za embedded aplikacije na platformama s ograničenim resursima
+- Niska latencija za visoku reaktivnost sustava
+- Visoka dostupnost informacija za bolju percepciju okoline
+- Troši se malo računalnih resursa
+
+- Ne zna se još koji je najbolji način za procesiranje i reprezentaciju evenata (jer ovisi o use case-u)
+Više trade-off slučajeva:
+- latency vs power consumption
+- accuracy&sensitivity vs bandwith&processing capacity
+
+npr. Smanjenje kontrast thresholda i/ili povećanje rezolucije kreira više evenata (te evente procesira algoritam na platformi s ograničenim resursima)
+Izazov:
+- kvantifikacija opisanih tradeoffova i razvoj tehnika za dinamičku prilagodnu senzora i/ili algoritamskih parametara za optimalne performanse
+- razvoj bio-inspired sustava koji su event based od početka do kraja (od percepcije do kontrole i aktuacije (uporabe aktuatora))
+- različito u odnosu na mainstream deep learning metoda computer visiona (ideja: probati adaptirati postojeće koncepte ili razviti sustave za određene probleme od nule uz ča bolje performanse)
+- active vision -> percepcija + kontrola; posebno relevantno za event kamere jer eventi ovise o pokretima
+- event kamera + hardver na istom senzorskom uređaju (efikasno, near-sensor procesiranje, samo high level ne-redundantne informacije se šalju; smanjenje bandwitha, latencije i potrošnje energije)
+
+
