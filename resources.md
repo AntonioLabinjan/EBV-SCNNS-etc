@@ -99,3 +99,8 @@ Resursi iz papera: (OBAVEZNO SVE ISTRAŽIT I ISPROBAT :D )
 - event-driven YARP - libraries za rad s neuromorphic senzorima + algoritmima za procesiranje event podataka (YARP = yet another robot platform)
 - pyAER - python wrapper napravljen oko libcaera -> ima puno poetencijala...forši to istražit
 - DV - C++ open-source softver za iniViation DVS/DAVIS -> službeni SDK za to
+
+DATASETS & SIMULATORS
+Ima dobrih dataseta za: target motion estimation, image reconstruction (regresija), target recognition (klasifikacija)
+Regresija -> optical flow, SLAM, object tracking, segmetation
+Klasifikacija -> object and action recognition
