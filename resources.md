@@ -89,3 +89,13 @@ Resources for the algorithms and software frameworks used to build and train SNN
 
 Cool video
 https://youtu.be/2tLGNFlS7bM?si=5LXCnkSnPfBkDMV5
+
+Resursi iz papera: (OBAVEZNO SVE ISTRAŽIT I ISPROBAT :D )
+- za sad još nema neke standard biblioteke integrirane u OpenCV koja upotrebljava EBV
+- jAER - Java-based enviroment za event senzore i procesiranje (noise reduction, feature extraction, optical flow, de-rotation (IMU, CNN, RNN)
+- pomoću jAER su napravljeni brojni ne-mobilni roboti; ima i mobilnih, ali jAER nije idealan za to)
+- libcaer - C biblioteka za konfiguraciju i obradu podataka iz iniVation i aiCTX neuromorfnih senzora i procesora (DVS i DAVIS kamere + Dynap-SE neuromorfni procesor)
+- ROC DVS paket - temeljen na libcaeru; C++ driveri za DVS i DAVIS (super za robotiku jer se lako integrira s robotskim OS-ovima)
+- event-driven YARP - libraries za rad s neuromorphic senzorima + algoritmima za procesiranje event podataka (YARP = yet another robot platform)
+- pyAER - python wrapper napravljen oko libcaera -> ima puno poetencijala...forši to istražit
+- DV - C++ open-source softver za iniViation DVS/DAVIS -> službeni SDK za to
