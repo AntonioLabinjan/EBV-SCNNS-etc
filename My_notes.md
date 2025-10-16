@@ -4509,3 +4509,15 @@ I dalje postoji manji gubitak performansi nakon konverzije
 Autori analiziraju izvore tih gubitaka i predlažu alate za optimizaciju
 Zaključuju da ako se SNN-ovi pokreću u odgovarajućem režimu, mogu postići gotovo bezgubitnu konverziju i vrlo brzu klasifikaciju uz samo nekoliko izlaznih spikeova
 
+* U potpuno povezanim feed-forward neuronskim mrežama (FCNs), svaki neuron u jednom sloju povezan je sa svim neuronima u sljedećem sloju, bez veza unutar istog sloja
+* Nedavna istraživanja ponovno su pobudila interes za ovu arhitekturu zbog natjecateljskih rezultata
+* Ključne točke uspješnog treniranja FCN-a su pravilna inicijalizacija težina kako bi se očuvao gradijent pogreške i regularizacija radi sprječavanja overfittinga
+* Kombinacija dropout tehnike i ReLU aktivacija dovela je do značajnih poboljšanja performansi
+* ReLU (Rectified Linear Unit) je nelinearna funkcija definirana kao xi = max(0, Σ(wij * xj))
+* ReLU omogućuje jednostavnu i učinkovitu propagaciju signala kroz mrežu
+* Aktivacije se iterativno ažuriraju sloj po sloj kako bi se ulaz propagirao do izlaznih neurona koji označavaju predikciju klase
+
+* Trening se nastavlja pomoću standarne backpropagacije greške
+* Gradijent funkcije greške se propagira unazad po layerima
+* Računaju se lokalne derivacije da bi se updateali lokalni weightovi i minimizirala greška
+* Trening služi za prilagodbu nasumično inicijalizirani matrice weightova koji opisuju veze između layera da bi se greška minimizirala koristeći stohastički gradijentni spust
