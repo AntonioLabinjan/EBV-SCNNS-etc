@@ -104,3 +104,8 @@ DATASETS & SIMULATORS
 Ima dobrih dataseta za: target motion estimation, image reconstruction (regresija), target recognition (klasifikacija)
 Regresija -> optical flow, SLAM, object tracking, segmetation
 Klasifikacija -> object and action recognition
+
+
+
+FENOMENALNA STVAR
+https://r-gaurav.github.io/2024/01/04/Building-And-Training-Spiking-Neural-Networks-From-Scratch.html
