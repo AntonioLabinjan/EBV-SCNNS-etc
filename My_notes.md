@@ -4521,3 +4521,26 @@ Zaključuju da ako se SNN-ovi pokreću u odgovarajućem režimu, mogu postići g
 * Gradijent funkcije greške se propagira unazad po layerima
 * Računaju se lokalne derivacije da bi se updateali lokalni weightovi i minimizirala greška
 * Trening služi za prilagodbu nasumično inicijalizirani matrice weightova koji opisuju veze između layera da bi se greška minimizirala koristeći stohastički gradijentni spust
+
+* Konvolucijske neuronske mreže (ConvNets ili CNNs) su višeslojne feed-forward arhitekture koje koriste konvolucijske jezgre (kernels) kao detektore značajki
+* Tipično se sastoje od naizmjeničnih slojeva konvolucije i prostornog subsamplinga (poolinga), uz nelinearnu aktivaciju između njih
+* Svaki konvolucijski sloj generira skup feature mapa konvoluiranjem prethodnih aktivacija s jezgrama Wk i dodavanjem bias termina bk
+* Aktivacija svakog feature mapa definira se kao xk = f(Wk * xl + bk), gdje je f nelinearna funkcija (ovdje ReLU)
+* Jezgre reagiraju samo na male lokalne dijelove ulazne slike i primjenjuju se pomicanjem preko cijelog ulaza (weight sharing)
+* Nakon konvolucije slijedi pooling ili subsampling sloj koji kombinira odgovore više feature detektora u jednu vrijednost
+* U ovom radu korišten je **average pooling** radi bolje prenosivosti ConvNeta u SNN
+* ConvNet smanjuje dimenzionalnost podataka dok istovremeno generira apstraktnije značajke
+* Zbog manjeg broja težina u odnosu na potpuno povezane mreže, manja je mogućnost overfittinga
+* Izlaz CNN-a čini spajanje svih feature mapa iz zadnjeg sloja, što se zatim koristi kao ulaz u jednostavnu potpuno povezanu mrežu za klasifikaciju
+* Treniranje se vrši stohastičkim gradijentnim spuštanjem i backpropagacijom, uz dijeljenje težina u konvolucijskim slojevima
+
+* Overfitting je čest problem kod velikih i dubokih neuronskih mreža
+* Dropout tehnika djeluje kao regularizator koji sprječava overfitting
+* Dropout slučajno isključuje određene neuronske jedinice (ulaze ili skrivene neurone) tijekom treniranja
+* Na taj način se izbjegava prevelika specijalizacija i međusobna ovisnost skrivenih jedinica
+* U ovom radu dropout se koristi u sklopu ReLU aktivacijske funkcije kao maska koja slučajno isključuje određene ReLU aktivacije
+* Formula za ReLU s dropoutom: xi = max(0, Σ(wij * xj)) s vjerojatnošću dr, ili 0 inače
+* Dropout stopa (dr) određuje udio jedinica koje se isključuju pri svakom trening koraku
+* Tipična vrijednost dr je 0.5, što znači da se nasumično isključi polovica veza tijekom svake iteracije treninga
+* Rezultat je povećana robusnost mreže i bolja generalizacija na nove podatke
+
