@@ -4417,4 +4417,95 @@ Izazov:
 - active vision -> percepcija + kontrola; posebno relevantno za event kamere jer eventi ovise o pokretima
 - event kamera + hardver na istom senzorskom uređaju (efikasno, near-sensor procesiranje, samo high level ne-redundantne informacije se šalju; smanjenje bandwitha, latencije i potrošnje energije)
 
+########################################################################################################################
+Fast-Classifying, High-Accuracy Spiking Deep Networks Through Weight and Threshold Balancing
+
+Duboke neuronske mreže poput CNN-ova i DBN-ova su zlatna stvar za klasifikaciju u CV-u
+
+CNNs
+Main features:
+- inspirirane ljudskim vidnim sustavom
+- koriste konvolucijske slojeve (filters/kernel) koji klite preko slike i oktrivaju lokalne uzorke (rubovi, teksture etc.)
+- imaju pooling slojeve za smanjenje dimenzionalnosti i fully connected slojeve na kraju za klasifikaciju
+- dobre za: obradu slika, videa, object recognition, face detection etc.
+- uče prostorne hijerarhije featurea (from simpler to more complex)
+
+DBNs
+Main features:
+- sastoje se od više slojeva RBM-ova (Restricted Boltzmann Machines)
+- unsupervised learning (prvo uče reprezentacije podataka (features), pa se kasnije mogu tunirati za klasifikaciju
+- Stohastičke neuronske jedinice (probabilistički pristup)
+- popularne PRIJE pojave CNN-ova (posebno za generative learning i dimensionality reduction)
+
+Similarities:
+- obadvoje su multi-layered deep neural networks
+- uče data representations hijerarhijski
+- mogu se koristiti za klasifikaciju, feature extraction i pattern recognition
+
+| Značajka            | CNN                                     | DBN                                  |
+| ------------------- | --------------------------------------- | ------------------------------------ |
+| Tip učenja          | Najčešće **supervizirano**              | **Nesupervizirano** (pre-trening)    |
+| Struktura           | Konvolucijski slojevi + pooling + dense | Hijerarhija RBM-ova                  |
+| Područje primjene   | Obrada slika, videa                     | Generativni modeli, feature learning |
+| Način rada          | Deterministički                         | Probabilistički                      |
+| Brzina i efikasnost | Brži, lakše trenira                     | Sporiji, teže trenira                |
+
+- SNN-ovi omogućavaju da nadiđemo velike computational troškove kod običnih CNN-ova
+
+- Spiking deep networks su predloženi kako bi se smanjio veliki računski trošak dubokih mreža
+
+- Iskorištavaju specijalizirani hardver za spiking neural networks (SNNs)
+
+- Konverzija iz analognih neuralnih mreža (ANNs) u SNNs uzrokuje gubitke performansi
+
+- Glavni razlog gubitaka je prelazak s kontinuiranih (bez pojma vremena) ANNs na rijetko aktivirane, event-driven SNNs
+
+- Analizira se utjecaj konverzije ANNs u SNNs u odnosu na parametre spike neurona, poput frekvencije aktivacije (firing rate) i praga aktivacije (threshold)
+
+- Postoji set optimizacijskih tehnika za minimizaciju gubitka performansi u procesu konverzije za CNN-ove i fully connected deep networks
+- Takve mreže nadmašuju sve prethodne SNN-ove rađene na MNISTU i jako dobro rade u vidu performansi
+
+- Koristi se ReLU (rectified linear units) bez biasa za vrijeme treniranja, koristeći novu weight normalizaciju za reguliranje fire-ratea
+
+- Cilj: fast&efficient pattern recognition
+
+- Duboke neuronske mreže (konvolucijske) su fully connected feed forward neural networks
+- Trenutno su jedna od najuspješnijih arhitektura za image classification
+
+Record-breaking results za: handwriting recognition, scene labeling, CIFAR i ImageNet benchmarkse
+
+Networks inspired by hierarchies of cortical visual information processing
+Uspješne su, ali ima značajan trošak resursa pri treniranju i runnanju
+Stoga, potreban je specijalizirani hardver + akcelaracija istog
+Potreba za razvojem novih računalnih paradigmi koji će omogućiti uporabu deep networka za real-time praktične primjene
+
+SNN-ovi su primarni kandidati za omogućavanje takve akceleracije
+
+Nova metoda optimizacija za Spiking deep arhitekture ( i za full connected feed forward networke i za conv. networks)
+Niska latencija + manje potrebnih računskih operacija u usporedbi s konvencionalnim computingom
+Cilj: izgraditi biologically realistic neuarl networks
+
+Neuromorphic plathorms => emuliranje brain-like spike-based računanja na analognom ili digitalnom hardveru
+Puno efikasnije od CPUova i GPUova (posebno za spiking networkse)
+Omogućavaju distribuirano, asinkrono event-based računanje
+Skalabilno i s minimalnom latencijom
+Sustavi se fokusiraju na trenutno aktivne djelove networka i tako štede energiju na drugim djelovima networka
+Koriste input neuromorfnih senzora (poput silicon retine)
+Kreiraju se sparse, frame-free, precizno tempirani streamovi evenata s puno manje latencije u usporedbi s frame-based pristupima
+
+Treniranje spiking deep networka tipično ne koristi spike-based learning pravila, nego počinje s konvencionalnim ANN-ovima treniranima pomoću backpropagacije
+Zatim se taj rate-based model konvertira u model sačinjen od jednostavnih spiking neurona
+
+Malo je teško trenirati SNN-ove.
+Teorija pokazuje da su SNN-ovi barem jednako računski moćni kao i njihovi analogni ekvivalenti (ANN-ovi), ali je u praksi teško postići ekvivalentne rezultate
+Jedan pristup trenira spiking DBN-ove pomoću Siegert aproksimacije srednje brzine aktivacije (mean-firing-rate) LIF neurona kako bi se aproksimirale vjerojatnosti tijekom treniranja
+Drugi pristup zahtijeva podešavanje parametara poput "leak" i "refractory period" u spiking mreži
+Oba pristupa pate od značajnog gubitka točnosti klasifikacije u usporedbi s ne-spiking mrežama slične arhitekture
+Nedavno je predložena metoda konverzije spiking ConvNet mreža koja uzima u obzir razlike između spiking i ne-spiking mreža, te postiže bolje performanse od prijašnjih metoda
+Glavni izazovi su reprezentacija negativnih vrijednosti i bias-a u spiking neuronima
+Ti problemi se izbjegavaju korištenjem ReLU aktivacija i postavljanjem svih bias vrijednosti na nulu
+Max-pooling se zamjenjuje prostornim linearnim subsamplingom
+I dalje postoji manji gubitak performansi nakon konverzije
+Autori analiziraju izvore tih gubitaka i predlažu alate za optimizaciju
+Zaključuju da ako se SNN-ovi pokreću u odgovarajućem režimu, mogu postići gotovo bezgubitnu konverziju i vrlo brzu klasifikaciju uz samo nekoliko izlaznih spikeova
 
