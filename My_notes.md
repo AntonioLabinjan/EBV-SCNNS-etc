@@ -4873,6 +4873,93 @@ gdje je:
 
 ---
 
+- Spiking network conversion
 
+- Konverzija deep ANN-ova u SNN-ove
+- Redukcija gubitka perfomransi tijekom konverzije
+- Normalizacija + analiza firing rateova i thresholda
+
+---
+
+## 🔹 **Veza između ReLU ANNs i SNN-ova**
+
+1. **ReLU ≈ firing rate IF neurona**
+
+   * ReLU može se smatrati **aproksimacijom broja spike-ova IF neurona** u zadanom vremenskom prozoru.
+   * Bez refraktornog perioda, izlaz ReLU-a je proporcionalan broju spike-ova.
+
+2. **Prednosti ReLU-a za treniranje**
+
+   * Njihova **piecewise linear derivacija** omogućuje **jednostavne i stabilne update-e težina**.
+   * Za klasifikacijske zadatke, važna je samo **maksimalna aktivacija izlaznog sloja**, pa se **sve stope može skalirati konstantom**.
+
+3. **Skala težina je važna**
+
+   * Ako je bias fiksiran na 0, jedino što utječe su **omjeri težina među neuronima i njihov prag (threshold)**.
+
+---
+
+## 🔹 **Recept za konverziju ANN → SNN**
+
+1. Koristiti **ReLU aktivacije** za sve jedinice mreže.
+2. Fiksirati **bias na nulu** i trenirati mrežu normalnim **backpropagationom**.
+3. **Izravno mapirati težine** iz ReLU mreže u IF neuronsku mrežu.
+4. Primijeniti **normalizaciju težina** (weight normalization) → postiže se **skoro bez gubitka točnosti i brža konvergencija**.
+
+> Ove metode rade za **FCN i ConvNet** arhitekture.
+
+---
+
+## 🔹 **Potencijalni gubici performansi nakon konverzije**
+
+1. **Nedovoljno ulaza za spike**
+
+   * Neuron ne prelazi prag → njegova frekvencija spike-ova je manja od očekivane.
+
+2. **Previše ulaza / over-aktivacija**
+
+   * ReLU predviđa više od jednog spike-a po timestepu.
+   * Može se dogoditi zbog:
+
+     * Previše spike-ova u jednom timestepu.
+     * Težine ulaza veće od praga neurona.
+
+3. **Probabilistička priroda spike-ova**
+
+   * Spike-trains nisu uniformni → može doći do **prekomjerne ili nedovoljno jake aktivacije određenih značajki**.
+
+---
+
+## 🔹 **Kako ublažiti probleme**
+
+* **Smanjiti timestep simulacije** → smanjuje broj spike-ova po timestepu.
+* **Povećati trajanje simulacije** → sprječava nedovoljnu aktivaciju.
+* **Pronaći ravnotežu između:**
+
+  * Spiking threshold (prag za spike)
+  * Težina ulaznih sinapsi
+  * Firing rate ulaza
+
+> Visok prag (ili niske ulazne težine) → smanjuje over-aktivaciju, ali povećava under-aktivaciju.
+> Nizak prag (ili visoke težine) → smanjuje under-aktivaciju, ali povećava over-aktivaciju.
+
+* **Ključ:** Samo **omjer praga i ulaznih težina** određuje integriranu vrijednost do spike-a, ne njihove apsolutne vrijednosti.
+
+---
+
+## 🔹 **Rješenje za preciznu konverziju**
+
+* Umjesto ručnog podešavanja:
+
+  * **Izračunati faktore reskaliranja težina** → smanjuju greške iz **tri gore navedena uzroka** (under-aktivacija, over-aktivacija, neidealni spike-trains).
+
+---
+
+- Smanjenje timestampa u simulaciji može pomoći za smanjenje broja input spikeova po timestepu i povećanje trajanja simulacije pomaže izbjeći nedovoljne aktivacije
+
+- Bitno je izbalansirati spiking thresholdse, input weights i input firing rates
+- Visoki spiking threshold (ili niski input weights) smanjuju errore uzrokovane over-aktivacijom i ne-idealnim spikre trainovima, ali povećava greške zbog under-aktivacije i obratno
+
+- samo omjer spiking thresholda i input weightova određuje akumuliranu količinu inputa za spiking, ali ne i vrijednosti pojedinih impulsa
 
 
