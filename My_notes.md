@@ -4804,4 +4804,75 @@ gdje je:
 
 ---
 
+- U klasičnim ANN-ovima, cijeli input vector "unosi" se istovremeno, pa procesira layer po layer i stvara 1 output vrijednost
+- U SNN-ovima, inputi su tipično streamovi evenata i neuroni stvaraju spikeove na temelju tih evenata
+- Spikeovi služe za komunikaciju sa svim layerima i na kraju dovode do "firea" kod output neurona
+- Fire se sumira kroz vrijeme
+- Input i output su pseudosimultani
+- Time-varying inputi se mogu efikasno procesirati
+- super za račuanje na specijaliziranim hardverima
+
+---
+
+## 🔹 **Spiking neuron model – Integrate-and-Fire (IF)**
+
+### 🧠 **Osnovna ideja**
+
+* Koristi se **jednostavni Integrate-and-Fire (IF)** model neurona.
+* To je **biološki inspiriran model**, gdje neuron akumulira (integrira) ulazne impulse i ispaljuje *spike* kad dosegne određeni prag.
+
+---
+
+### ⚙️ **Evolucija membranskog napona**
+
+* Membranski napon neurona označava se kao ( v_{mem}(t) ).
+* Njegova promjena kroz vrijeme opisana je diferencijalnom jednadžbom:
+  [
+  \frac{dv_{mem}(t)}{dt} = \sum_i w_i \sum_s \delta(t - s_i)
+  ]
+  gdje je:
+
+  * ( w_i ) → težina *i*-tog dolaznog sinapsnog spoja
+  * ( \delta(t - s_i) ) → **Dirac delta funkcija** koja predstavlja dolazak spike-a u trenutku ( s_i )
+  * ( S_i = {t^0_i, t^1_i, ...} ) → skup vremena kada *i*-ti presinaptički neuron puca (emitira spike)
+
+---
+
+### ⚡ **Način rada neurona**
+
+1. **Integracija:**
+
+   * Neuron **zbraja dolazne impulse** (spikes) ponderirane težinama ( w_i ).
+   * Time se povećava njegov membranski potencijal ( v_{mem} ).
+
+2. **Ispaljivanje spike-a (Fire):**
+
+   * Kad ( v_{mem} ) **prijeđe prag pobude ( v_{thr} )** → neuron **generira spike** (akcijski potencijal).
+
+3. **Resetiranje:**
+
+   * Nakon što neuron ispali spike, njegov membranski napon se **resetira na vrijednost ( v_{res} )**.
+   * Zatim ciklus integracije počinje iznova.
+
+---
+
+### ⏱️ **Diskretizacija u simulacijama**
+
+* U simulacijama se ovaj **kontinuirani model** aproksimira **diskretnim vremenskim koracima od 1 ms**.
+  → To znači da se napon i spike-ovi ažuriraju u **milisekundnim intervalima**.
+  → Takva aproksimacija olakšava digitalnu implementaciju modela (npr. u PyTorch-u ili simulacijskim alatima).
+
+---
+
+### ✅ **Ključne značajke IF modela**
+
+* Jednostavan, ali učinkovit model neuronskog ponašanja.
+* Hvata osnovnu dinamiku biološkog neurona (integracija i ispaljivanje).
+* Koristi se kao **temelj za izgradnju složenijih SNN arhitektura** (npr. LIF – Leaky Integrate-and-Fire).
+* Idealno za **simulacije s vremenskom diskretizacijom** i **neuralne čipove (neuromorfne sustave)**.
+
+---
+
+
+
 
