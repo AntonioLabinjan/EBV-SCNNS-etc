@@ -5170,4 +5170,283 @@ for layer in layers:
 ---
 
 
+---
 
+## 🔹 **Eksperimentalni setup — A. Dataset**
+
+### 🧠 **Korišteni skup podataka**
+
+* Odabran je **MNIST dataset** — najpoznatiji i najčešće korišten skup u *machine learningu*.
+* Sastoji se od **ručno pisanih znamenki (0–9)**, svaka u formatu **28×28 piksela**, **sivih tonova** (grayscale).
+
+---
+
+### 📊 **Struktura podataka**
+
+* **Trening skup**:
+
+  * 60.000 slika ručno pisanih znamenki.
+  * Slike su prikupljene iz **poštanskih kodova (postal codes)**.
+  * Svaka slika ima pripadajuću oznaku (label) od **0 do 9**.
+* **Testni skup**:
+
+  * 10.000 slika znamenki, korištene isključivo za evaluaciju modela.
+
+---
+
+### 🏆 **Referentne točnosti (baseline rezultati)**
+
+* **Najveća točnost klasične (nespiking) mreže**:
+
+  * **99.55%**, postignuto pomoću **Maxout Networks** ([23]).
+  * Ova vrijednost je “state-of-the-art” bez korištenja data augmentationa.
+
+* **Najveća točnost prethodne spiking implementacije**:
+
+  * **98.30%**, postignuto pomoću **spiking konvolucijskih mreža (spiking ConvNets)** ([24]).
+
+---
+
+### 📈 **Zaključak**
+
+* MNIST je izabran jer je:
+
+  * **standardiziran** → omogućuje lako uspoređivanje s drugim modelima,
+  * **dovoljno jednostavan** za brze eksperimente,
+  * ali i **dovoljno izazovan** da pokaže učinkovitost konverzije ANN → SNN.
+
+---
+
+
+---
+
+### 🔹 Eksperimentalne arhitekture
+
+#### 1. **Fully-connected network (FCN)**
+
+* Struktura: **784–1200–1200–10** (2 skrivena sloja po 1200 neurona).
+* Svi neuroni su **povezani između slojeva**.
+* **Trening setup:**
+
+  * Learning rate: **1**
+  * Momentum: **0.5**
+  * Batch size: **100**
+  * Epochs: **50**
+  * Dropout: **50%**
+  * Random inicijalizacija težina u rasponu **[-0.1, 0.1]**
+* **Rezultati:**
+
+  * Train accuracy: **99.87%**
+  * Test accuracy: **98.68%**
+
+---
+
+#### 2. **Convolutional neural network (ConvNet)**
+
+* Arhitektura: **28x28–12c5–2s–64c5–2s–10o**
+
+  * 12 konvolucijskih jezgri 5x5
+  * 2x2 prosječno subsampliranje
+  * 64 konvolucijske jezgre 5x5
+  * 2x2 prosječno subsampliranje
+  * Potpuno povezani izlazni sloj od 10 neurona (za 10 klasa znamenki)
+* **Trening setup:**
+
+  * Learning rate: **1**
+  * Batch size: **50**
+  * Momentum: **0**
+  * Dropout: **50% na kernelima**
+  * Bias: **0**
+  * Epochs: **50**
+  * **Bez augmentacije** dataset-a
+* **Rezultati:**
+
+  * Train accuracy: **99.19%**
+  * Test accuracy: **99.14%**
+
+---
+
+### 🔹 Pretvorba u Spiking IF mreže
+
+* Najbolji ReLU modeli iz obje arhitekture su **konvertirani** u **spiking IF (Integrate-and-Fire)** mreže.
+* **Grid search** je korišten za pronalazak optimalnih kombinacija:
+
+  * **Input rate**: {25, 50, 100, 200, 400, 1000 Hz}
+  * **Threshold (v_thr)**: {0.25, 0.5, 1, 2, 4, 10, 20}
+
+---
+
+### 🔹 Normalizacija težina
+
+#### a) **Model-based normalization (algoritam 1)**
+
+* Znatno smanjuje težine svakog sloja.
+* FCN težine smanjene za:
+
+  * Faktor 0.08 (prvi sloj)
+  * Faktor 0.045 (drugi sloj)
+* **Nije primijenjena na izlazni sloj**.
+* ConvNet težine:
+
+  * Conv1: 0.1657
+  * Conv2: 0.1238
+
+#### b) **Data-based normalization (algoritam 2)**
+
+* Lagano prilagođava težine, čini mrežu otpornijom na visoke input rateove.
+* FCN faktori:
+
+  * 0.37, 1.25, 0.8
+* ConvNet faktori:
+
+  * Conv1: 0.1657
+  * Conv2: 1.0021
+  * Output: 1.19
+* Povećanje težina u izlaznom sloju zbog **premale aktivacije** tijekom treninga.
+
+---
+
+Spiking input
+Vrijednosti intenziteta na MNIST slikama su bile normalizirane u vrijednostima između 0 i 1.
+Na temelju tih vrijednosti, korištenjem Poissonove distribucije, spike trains su bili generirani za svaki piksel u slici, s firing rateom proporcionalnim s intenzitetom piksela
+
+Što znači „spiking input“ za MNIST slike (detalnije)
+
+Normalizacija piksela
+
+Intenzitet piksela 
+𝐼
+𝑖
+𝑗
+I
+ij
+	​
+
+ je skaliran u raspon 
+[
+0
+,
+1
+]
+[0,1].
+
+0 = potpuno crno (nema svjetla), 1 = maksimalna svjetlina.
+
+Pretvaranje intenziteta u firing rate
+
+Za svaki piksel definiramo firing rate (stopu pucanja) 
+𝑟
+𝑖
+𝑗
+r
+ij
+	​
+
+ proporcionalnu intenzitetu:
+
+𝑟
+𝑖
+𝑗
+=
+𝐼
+𝑖
+𝑗
+×
+𝑟
+max
+r
+ij
+	​
+
+=I
+ij
+	​
+
+×r
+max
+	​
+
+
+𝑟
+max
+r
+max
+	​
+
+ je maksimalna stopa (npr. 100 Hz, 400 Hz, 1000 Hz — ovisno o eksperimentu).
+
+Dakle, bijeli piksel intenziteta 1 generira spike-ove sa stopom 
+𝑟
+max
+r
+max
+	​
+
+, tamni piksel intenziteta 0 ne generira spikes.
+
+Poissonov proces za spike-train
+
+Spike-ovi se modeliraju kao Poissonov proces s intenzitetom 
+𝑟
+𝑖
+𝑗
+r
+ij
+	​
+
+.
+
+U kontinuiranom vremenu: broj spike-ova u intervalu 
+[
+0
+,
+𝑇
+]
+[0,T] slijedi Poissonovu distribuciju s parametrom 
+𝑟
+𝑖
+𝑗
+𝑇
+r
+ij
+	​
+
+T.
+
+Diskretna aproksimacija (korisna za simulacije): s vremenskim korakom 
+𝑑
+𝑡
+dt (npr. 
+𝑑
+𝑡
+=
+1
+ ms
+=
+0.001
+ s
+dt=1 ms=0.001 s), u svakom koraku generiraš Bernoullijevu odluku s vjerojatnošću:
+
+𝑝
+=
+𝑟
+𝑖
+𝑗
+⋅
+𝑑
+𝑡
+p=r
+ij
+	​
+
+⋅dt
+
+tj. u svakom timestepu piksel puca s vjerojatnošću 
+𝑝
+p. Ovo je standardna i vrlo dobra aproksimacija Poisson procesa.
+
+Zašto Poisson?
+
+Poisson spike-trains imaju nezavisne inter-spike intervale i stohastičnost nalik biologiji.
+
+Daje varijaciju u ulazu (ne determinističke spike-ove) što testira robusnost SNN-a
