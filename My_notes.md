@@ -4544,3 +4544,264 @@ Zaključuju da ako se SNN-ovi pokreću u odgovarajućem režimu, mogu postići g
 * Tipična vrijednost dr je 0.5, što znači da se nasumično isključi polovica veza tijekom svake iteracije treninga
 * Rezultat je povećana robusnost mreže i bolja generalizacija na nove podatke
 
+Arhitektura FCN (Fully Connected Feed-forward Neural Networks)
+* Svaki neuron u jednom sloju povezan je sa svim neuronima u sljedećem sloju.
+
+* Nema poveznica unutar istog sloja (nema intra-layer konekcija).
+
+* Takva mreža se zove feed-forward jer se informacija kreće samo u jednom smjeru – od ulaza prema izlazu
+
+Dobre performanse
+Ključni faktori:
+- dobra inicijalizacija weightove => stabilno širenje gradijenta (bez gubitka signala kroz layere)
+- regularizacija => spriječava overfittinga
+
+Bitne tehničke komponente:
+
+Dropout (regularizacijska tehnika)
+
+Nasumično isključuje određene neurone tijekom treniranja → sprečava njihovu međusobnu ovisnost.
+
+Time se model uči robustnije, smanjuje overfitting i poboljšava generalizaciju.
+---
+
+## 🔹 **ReLU-temeljene feed-forward neuronske mreže (FCN)**
+
+### 🧠 Osnovna ideja
+
+* **Feed-forward neuronska mreža (FCN)** je tip mreže u kojoj:
+
+  * Svaki **neuron iz jednog sloja povezan je sa svim neuronima sljedećeg sloja** (*fully connected*).
+  * **Nema veza unutar istog sloja** (*no intra-layer connections*).
+* Informacija teče **jednosmjerno — od ulaza prema izlazu**.
+
+---
+
+### ⚙️ **Razlozi ponovne popularnosti**
+
+* Nedavni uspjesi u istraživanjima pokazali su da FCN-ovi mogu **postići vrlo konkurentne rezultate**.
+* Ključni preduvjeti za visoke performanse:
+
+  * **Dobra inicijalizacija težina** → sprječava problem nestajanja ili eksplozije gradijenata i osigurava stabilno učenje.
+  * **Regularizacija** → smanjuje rizik od **overfittinga** (prenaučenosti).
+
+---
+
+### 🔸 **Najvažnija poboljšanja**
+
+1. **Dropout tehnika**
+
+   * Tijekom treniranja **nasumično "isključuje" neke neurone**, tako da mreža ne postane previše ovisna o određenim značajkama.
+   * Rezultat: **robustniji i generaliziraniji model**.
+
+2. **ReLU (Rectified Linear Unit)**
+
+   * Vrlo jednostavna, ali učinkovita **nelinearna aktivacijska funkcija**:
+     [
+     x_i = \max(0, \sum_j w_{ij}x_j)
+     ]
+   * Značenje:
+
+     * ( x_i ): aktivacija neurona *i*
+     * ( w_{ij} ): težina između neurona *j* i *i*
+     * ( x_j ): izlaz neurona *j* iz prethodnog sloja
+   * **Prednosti ReLU-a:**
+
+     * Ubrzava učenje
+     * Sprječava problem saturacije gradijenata
+     * Daje **rijetke aktivacije** (mnogi neuroni imaju 0 → učinkovitija mreža)
+
+---
+
+### 🔹 **Kako se informacije šire**
+
+* Mreža **sloj po sloj izračunava aktivacije** na temelju prethodnog sloja.
+* Na kraju se **aktiviraju izlazni neuroni** koji predstavljaju rezultat modela (npr. klasnu oznaku).
+
+---
+
+### 🔧 **Proces treniranja**
+
+* Koristi se **standardni algoritam povratnog širenja pogreške (backpropagation)**:
+
+  * Pogreška na izlazu **propagira se unazad kroz mrežu**, sloj po sloj.
+  * Računaju se **lokalne derivacije** za svaki neuron.
+  * **Težine se ažuriraju** u smjeru koji minimizira ukupnu pogrešku.
+* Optimizacija se izvodi pomoću **stohastičkog gradijentnog spusta (SGD)**.
+* Težine su u početku **nasumično inicijalizirane**, a zatim se uče kroz iteracije.
+
+---
+
+### ✅ **Zaključak**
+
+* Kombinacijom **ReLU aktivacija**, **dropout regularizacije**, i **dobro inicijaliziranih težina**,
+  FCN-ovi mogu postići **vrlo visoke performanse** na standardnim skupovima podataka.
+* Takva kombinacija je postala **temelj suvremenih dubokih neuronskih mreža**.
+
+---
+
+## 🔹 **Konvolucijske neuronske mreže (ConvNets / CNNs)**
+
+### 🧠 **Osnovna ideja**
+
+* **CNN** je **višeslojna feed-forward arhitektura** (kao FCN), ali:
+
+  * Umjesto punih veza, koristi **konvolucijske filtre (kernels)** kao detektore značajki (feature detectors).
+* Sastoji se od **izmjeničnih slojeva konvolucije i prostornog poduzorkovanja (subsampling/pooling)**, s **nelinearnom funkcijom aktivacije** između njih.
+
+---
+
+### ⚙️ **Konvolucijski sloj**
+
+* Svaki konvolucijski sloj stvara **više “feature mapa”**.
+
+* Svaka mapa ( x_k ) dobiva se **konvolucijom** aktivacija prethodnog sloja s odgovarajućim kernelom ( W_k ):
+  [
+  x_k = f(l * W_k + b_k)
+  ]
+  gdje je:
+
+  * ( f ): aktivacijska funkcija (ovdje ReLU)
+  * ( l ): aktivacija prethodnog sloja
+  * ( * ): 2D konvolucijska operacija (valid-region)
+  * ( b_k ): bias (pomak)
+
+* Kernel (filter) **"klizi" po cijelom ulaznom prostoru** i reagira samo na **mala lokalna područja** (lokalna receptivna polja).
+  → Time se mreža fokusira na **lokalne uzorke** (rubove, teksture, oblike).
+
+---
+
+### 🔸 **Pooling (subsampling) sloj**
+
+* Slijedi iza konvolucijskog sloja.
+* **Smanjuje dimenzionalnost podataka** kombiniranjem odgovora više detektora značajki u jedan izlaz.
+* U ovom radu koriste se **average pooling slojevi** (prosječni kernel) — umjesto max poolinga — kako bi se mreža lakše prenijela u **spiking neuronsku mrežu (SNN)**.
+* Aktivacija pooling sloja je kao i u jednadžbi (2), ali s fiksnim težinama:
+  [
+  W_{kij} = \frac{1}{\text{size}(W_k)}
+  ]
+  gdje je *size(Wk)* broj piksela u kernelu.
+
+---
+
+### 🔹 **Ključne prednosti CNN-ova**
+
+1. **Smanjena dimenzionalnost podataka**
+
+   * Naizmjenični slojevi konvolucije i pooling-a **postupno reduciraju prostorne informacije**, dok povećavaju **apstrakciju značajki**.
+
+2. **Manji broj težina**
+
+   * Zbog **dijeljenja težina (weight sharing)** u konvolucijskim slojevima, CNN-ovi imaju **znatno manje parametara** od potpuno povezanih mreža (FCN).
+   * To **smanjuje overfitting** i ubrzava treniranje.
+
+3. **Učinkovito učenje reprezentacija**
+
+   * Donji slojevi uče **jednostavne uzorke** (rubovi, boje, teksture).
+   * Viši slojevi kombiniraju te uzorke u **složenije značajke** (oblici, dijelovi objekata, cijeli objekti).
+
+---
+
+### 🔧 **Treniranje CNN-a**
+
+* Izvodi se pomoću **stohastičkog gradijentnog spusta (SGD)** i **backpropagationa** — isto kao kod FCN-a.
+* **Težine konvolucijskih filtera (Wk)** i težine završnog **klasifikacijskog sloja (FC sloj)** uče se zajedno.
+* **Dijeljenje težina (weight sharing)** dodatno smanjuje broj parametara i stabilizira učenje.
+
+---
+
+### 🧩 **Izlaz mreže**
+
+* **Sve feature mape iz posljednjeg konvolucijskog sloja se spajaju (concatenate)**.
+* Dobiveni vektor ulazi u **jednostavnu potpuno povezanu mrežu (FCN)** koja služi kao **klasifikator**.
+
+---
+
+### ✅ **Zaključak**
+
+* CNN-ovi kombiniraju **konvolucijske slojeve + pooling + ReLU + weight sharing**,
+  čime:
+
+  * smanjuju broj parametara,
+  * ublažavaju overfitting,
+  * i proizvode **sve apstraktnije značajke**.
+* Na kraju, FC sloj klasificira izlaz → čitav sustav se trenira putem **SGD + backpropagation**.
+
+---
+
+
+---
+
+## 🔹 **Dropout tehnika**
+
+### ⚠️ **Problem: Overfitting**
+
+* **Overfitting (prenaučenost)** je čest problem kod **velikih i dubokih neuronskih mreža**.
+* Dogodi se kad se mreža **previše prilagodi trening podacima**, pa loše generalizira na nove (testne) podatke.
+
+---
+
+### 💡 **Rješenje: Regularizacija**
+
+* Da bi se izbjegao overfitting, uvode se **regularizacijske metode**.
+* Jedna od najuspješnijih i najpopularnijih je upravo **dropout tehnika**.
+
+---
+
+### 🧠 **Što je dropout**
+
+* Tijekom učenja, **nasumično se “isključuju” (onemogućuju) određene jedinice (neuroni)**.
+* Time se sprječava da se neuroni **međusobno previše “naviknu” jedni na druge** (tj. sprječava **ko-adaptacija**).
+* To tjera mrežu da nauči **robustnije značajke**, koje bolje generaliziraju.
+
+---
+
+### 🔧 **Kako se dropout primjenjuje**
+
+* Dropout se u ovom radu koristi **unutar ReLU aktivacijske funkcije**, kao **maska** koja slučajno onemogućuje dio ReLU aktivacija.
+* Time se **povećava robusnost mreže**.
+
+---
+
+### 🔹 **Matematički prikaz (jednadžba 3)**
+
+[
+x_i =
+\begin{cases}
+\max(0, \sum_j w_{ij}x_j), & \text{s vjerojatnošću } (1 - d_r) \
+0, & \text{inače}
+\end{cases}
+]
+gdje je:
+
+* ( x_i ) → aktivacija neurona *i*
+* ( w_{ij} ) → težina između neurona *j* i *i*
+* ( x_j ) → aktivacija prethodnog neurona
+* ( d_r ) → **dropout stopa (dropout rate)**, tj. vjerojatnost da će se neuron isključiti
+
+---
+
+### 🔁 **Mehanizam učenja**
+
+* Na **svakom trening koraku** (iteraciji), **donosi se nova nasumična odluka za svaki neuron** — hoće li biti aktivan ili ne.
+* Tijekom inferencije (testiranja), dropout se **isključuje**, ali se izlazi **skaliraju** tako da reflektiraju prosječan učinak tijekom treniranja.
+
+---
+
+### 🔢 **Tipične vrijednosti**
+
+* U praksi se često koristi **dropout rate ( d_r = 0.5 )**
+  → znači da se **polovica veza nasumično isključi** u svakom koraku treniranja.
+
+---
+
+### ✅ **Ključne prednosti**
+
+* Smanjuje overfitting.
+* Potiče mrežu da nauči **distribuirane i stabilnije reprezentacije**.
+* Poboljšava **generalizaciju i otpornost** na šum u podacima.
+* Jednostavan i vrlo učinkovit dodatak koji se može koristiti s bilo kojom aktivacijom (ali ReLU + dropout = zlatna kombinacija).
+
+---
+
+
