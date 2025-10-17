@@ -4962,4 +4962,212 @@ gdje je:
 
 - samo omjer spiking thresholda i input weightova određuje akumuliranu količinu inputa za spiking, ali ne i vrijednosti pojedinih impulsa
 
+🔹 Glavni doprinos rada
+
+Uvedena je nova metoda normalizacije težina (weight normalization).
+
+Cilj: dovesti mrežu u stabilan režim rada, gdje se izbjegavaju problemi poput:
+
+neuroni koji previše spikaju (overactivation),
+
+neuroni koji premalo spikaju (underactivation),
+
+netočne procjene izlaza zbog previsokih ReLU aktivacija.
+
+🔹 Ideja normalizacije
+
+Želimo ograničiti aktivacije tako da:
+
+ReLU ne precjenjuje izlaz neurona.
+
+Neuron ne može proizvesti više od jednog spike-a u istom trenutku.
+
+🔹 Model-based normalizacija (konzervativna metoda)
+
+Za svaki sloj razmatraju se sve moguće pozitivne aktivacije.
+
+Izračuna se maksimalni mogući pozitivni ulaz u sloj.
+
+Sve težine u tom sloju se skaliraju tako da taj maksimalni ulaz proizvede najviše jedan spike.
+
+🔹 Prednosti
+
+Mreža postaje robustna na vrlo visoke ulazne stope (input rates).
+
+Eliminiraju se gubici zbog previše ulaznih spike-ova.
+
+🔹 Nedostatak
+
+Potrebno više vremena da neuron akumulira dovoljno dokaza za spike.
+→ dulje vrijeme simulacije, sporija reakcija.
+
+🔹 Kada koristiti
+
+Ako je visoka točnost klasifikacije prioritet.
+
+Ako su dulja vremena uzorkovanja prihvatljiva.
+
+🔹 Naziv metode
+
+Zove se Model-Based Normalization jer koristi samo težine mreže —
+ne zahtijeva podatke iz stvarnih uzoraka (temelji se na modelu, ne na podacima).
+
+Savršeno! Evo ti **detaljne natuknice** iz tog dijela o **data-based normalizaciji težina** — jasno i sažeto:
+
+---
+
+## 🔹 **Data-Based Normalization (normalizacija temeljena na podacima)**
+
+### 🔸 Osnovna ideja
+
+* Umjesto najgoreg mogućeg slučaja (kao kod model-based metode),
+  koristi se **stvarno ponašanje mreže na trening skupu** za procjenu tipičnih aktivacija.
+* Time se dobiva **manje konzervativna** metoda koja čuva točnost, ali ubrzava obradu.
+
+---
+
+### 🔸 Postupak
+
+1. Nakon što se trenira ReLU mreža,
+   **propagira se cijeli trening skup** kroz mrežu.
+2. Pohranjuju se **ReLU aktivacije** za sve neurone.
+3. Težine se **normaliziraju** prema **maksimalnoj aktivaciji** koja se pojavila u trening skupu,
+   tako da ta aktivacija proizvede **samo jedan spike**.
+4. U obzir se uzima i **maksimalna pojedinačna ulazna težina** —
+   da se spriječi situacija gdje **jedan spike nosi previše težine**,
+   prisiljavajući neuron da spike-a više puta u istom timestepu.
+
+---
+
+### 🔸 Prednosti
+
+* **Manje konzervativna** od model-based metode → **brža konvergencija**.
+* **Zadržava gotovo svu točnost** (minimalan gubitak performansi).
+* **Znatno kraće vrijeme integracije dokaza** (kraće trajanje simulacije).
+* Idealna za **ravnotežu između točnosti i brzine reakcije**.
+
+---
+
+### 🔸 Ograničenja
+
+* **Nema jamstva** da će performanse biti jednake na test skupu,
+  ali ako je trening skup **reprezentativan**, rezultati su **vrlo pouzdani**.
+
+---
+
+### 🔸 Kada koristiti
+
+* Kad želiš **visoku točnost** + **kratke latencije** (brz rad).
+* Odlična za **praktične implementacije** gdje trebaš balans performansi i brzine.
+
+---
+
+### 🔸 Ključna razlika od model-based metode
+
+| Značajka          | Model-Based Normalization   | Data-Based Normalization                  |
+| ----------------- | --------------------------- | ----------------------------------------- |
+| Temelj            | Na težinama modela          | Na stvarnim aktivacijama iz trening skupa |
+| Konzervativnost   | Visoka (sigurna, ali spora) | Niska (brža, ali s rizikom)               |
+| Brzina simulacije | Spora                       | Brza                                      |
+| Točnost           | Vrlo visoka                 | Gotovo jednaka, uz manju latenciju        |
+| Naziv             | Model-based                 | Data-based                                |
+
+---
+Odlično! 👏
+Ovo što si zalijepio su pseudokodovi za **model-based** i **data-based** normalizaciju težina — i točno tako se u radu i predstavljaju (Algorithm 1 i Algorithm 2).
+Sad ću ti ih **prepisati i pojasniti korak po korak na hrvatskom**, da dobiješ jasan intuitivan osjećaj što svaka verzija radi i u čemu se razlikuju.
+
+---
+
+## 🔹 **Algorithm 1 – Model-Based Weight Normalization**
+
+### 💡 Ideja
+
+Cilj: osigurati da **nijedan neuron ne može proizvesti više od jednog spike-a** za maksimalni mogući ulaz.
+→ Mreža postaje vrlo stabilna i robusna, ali zahtijeva dulju simulaciju.
+
+### 🧠 Logika pseudokoda
+
+```python
+for layer in layers:
+    max_pos_input = 0
+
+    # 1️⃣ Nađi maksimalni mogući pozitivan ulaz u sloj
+    for neuron in layer.neurons:
+        input_sum = 0
+        for input_wt in neuron.input_wts:
+            input_sum += max(0, input_wt)
+        max_pos_input = max(max_pos_input, input_sum)
+
+    # 2️⃣ Normaliziraj sve težine u sloju
+    for neuron in layer.neurons:
+        for input_wt in neuron.input_wts:
+            input_wt = input_wt / max_pos_input
+```
+
+### 🔍 Objašnjenje
+
+* Za svaki sloj se traži **najveća moguća suma pozitivnih težina** (pretpostavlja se da svi ulazi mogu biti maksimalno aktivni).
+* Sve težine se potom **skaliraju** tako da ta maksimalna kombinacija proizvodi **jedan spike**.
+* Dakle: sigurnije, ali sporije — treba više vremena da neuron „nabere” dovoljno energije za spike.
+
+---
+
+## 🔹 **Algorithm 2 – Data-Based Weight Normalization**
+
+### 💡 Ideja
+
+Koristi **stvarne aktivacije iz trening skupa** umjesto najgoreg slučaja.
+→ Brža mreža, zadržava točnost, ali malo manje konzervativna.
+
+### 🧠 Logika pseudokoda
+
+```python
+previous_factor = 1
+
+for layer in layers:
+    max_wt = 0
+    max_act = 0
+
+    # 1️⃣ Pronađi najveću težinu i najveću ReLU aktivaciju u sloju
+    for neuron in layer.neurons:
+        for input_wt in neuron.input_wts:
+            max_wt = max(max_wt, input_wt)
+        max_act = max(max_act, neuron.output_act)
+
+    # 2️⃣ Izračunaj faktor skaliranja
+    scale_factor = max(max_wt, max_act)
+    applied_factor = scale_factor / previous_factor
+
+    # 3️⃣ Skaliraj težine u sloju
+    for neuron in layer.neurons:
+        for input_wt in neuron.input_wts:
+            input_wt = input_wt / applied_factor
+
+    # 4️⃣ Spremi faktor za sljedeći sloj
+    previous_factor = scale_factor
+```
+
+### 🔍 Objašnjenje
+
+* Nakon treniranja ReLU mreže, kroz nju se propušta **trening skup** i bilježe se stvarne **ReLU aktivacije**.
+* Računa se **maksimalna aktivacija** i **maksimalna težina** u sloju.
+* Na temelju toga se određuje faktor skaliranja koji osigurava da ni najjača aktivacija neće proizvesti više od jednog spike-a.
+* Svaki sloj koristi svoj **“applied_factor”**, ali i **prenosi informaciju o prethodnom sloju** da očuva proporcionalnost.
+
+---
+
+## ⚖️ **Sažetak razlika**
+
+| Značajka           | Model-Based                 | Data-Based                           |
+| ------------------ | --------------------------- | ------------------------------------ |
+| Na čemu se temelji | Maksimalni mogući ulaz      | Stvarne aktivacije s trening skupa   |
+| Konzervativnost    | Visoka (sigurna, ali spora) | Niska (brža, ali može malo varirati) |
+| Vrijeme simulacije | Dulje                       | Kraće                                |
+| Točnost            | Vrlo visoka                 | Gotovo identična                     |
+| Pogodno za         | Eksperimentalnu robusnost   | Praktične implementacije             |
+
+---
+
+
 
