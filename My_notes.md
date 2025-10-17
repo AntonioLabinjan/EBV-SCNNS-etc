@@ -5450,3 +5450,41 @@ Zašto Poisson?
 Poisson spike-trains imaju nezavisne inter-spike intervale i stohastičnost nalik biologiji.
 
 Daje varijaciju u ulazu (ne determinističke spike-ove) što testira robusnost SNN-a
+
+Evo kako to možemo izvući i objasniti na hrvatskom, korak po korak:
+
+---
+
+### **Evaluacija rezultata konverzije ReLU → SNN**
+
+1. **Cilj**
+
+   * Provjeriti koliko dobro spiking IF mreže mogu replicirati performanse originalnih ReLU mreža.
+
+2. **Postupak evaluacije**
+
+   * Originalna ReLU mreža je trenirana i postavlja ciljnu točnost (`target performance`) za spiking mrežu.
+   * Spike-based mreže se simuliraju za **0.5 s po slici**.
+   * Parametri spike mreže (input rate i threshold) su podešavani **grid searchom** za najbolje performanse.
+
+3. **Vrste spiking mreža koje se evaluiraju**
+
+   1. **Najbolja spiking IF mreža** – dobivena grid searchom parametara.
+   2. **Data-normalized mreža** – težine su prilagođene prema stvarnim aktivacijama trening seta, bez podešavanja hyperparametara.
+   3. **Model-normalized mreža** – težine su skalirane prema maksimalnim mogućim aktivacijama (konzervativnija metoda).
+
+4. **Zaključci iz rezultata**
+
+   * **Data-normalized mreža** gotovo replicira točnost originalne ReLU mreže **bez potrebe za grid searchom**.
+   * U praksi, **dovoljno je simulirati samo nekoliko desetaka milisekundi** po slici da se postigne performansa usporediva s originalnom mrežom.
+   * Model-normalized mreža je konzervativnija, često zahtijeva duže simulacije zbog smanjenih težina, ali eliminira probleme s previše spike-ova u jednom timestepu.
+
+5. **Praktična implikacija**
+
+   * Data-based normalizacija omogućuje **brzu i preciznu konverziju ReLU mreža u SNN**.
+   * Spike simulacije mogu biti vrlo kratke (`tens of milliseconds`) i i dalje postižu visoku točnost.
+   * Pokazuje da SNN-ovi mogu biti gotovo jednako učinkoviti kao i standardne ANN-ovi, ali koriste **temporalnu kodiranu informaciju** i stohastičke spikeove.
+
+---
+
+
