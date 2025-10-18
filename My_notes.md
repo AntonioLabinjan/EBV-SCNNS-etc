@@ -5488,3 +5488,143 @@ Evo kako to možemo izvući i objasniti na hrvatskom, korak po korak:
 ---
 
 
+Brainchip.com
+---
+
+## 🧠 BrainChip Akida – Neuromorfni AI procesor
+
+### 🔍 Što je Akida?
+
+* **Neuromorfni čip** inspiriran ljudskim mozgom.
+* **Event-based arhitektura**: obrađuje samo značajne podatke, čime se postiže visoka energetska učinkovitost i niska latencija.
+* Omogućuje **učenje u stvarnom vremenu** na uređaju, bez potrebe za stalnom vezom s oblakom ([BrainChip][1]).
+
+### ⚙️ Ključne značajke
+
+* **Sparsity princip**: obrađuje samo podatke koji donose vrijednost, ignorirajući nule i neaktivne informacije ([BrainChip][2]).
+* **Spiking Neural Networks (SNNs)**: neuronske jedinice aktiviraju se samo kada je to potrebno, slično ljudskom mozgu ([eejournal.com][3]).
+* **On-chip učenje**: omogućuje treniranje modela direktno na uređaju, smanjujući potrebu za obradom u oblaku ([BrainChip][1]).
+
+### 🧩 Arhitektura
+
+* **Modularna struktura**: do 256 čvorova povezano u mrežu, svaki s četiri Neural Processing Unit-a (NPU).
+* **Fleksibilnost**: NPUs mogu biti konfigurirani kao konvolucijski ili potpuno povezani slojevi.
+* **Skalabilnost i kompaktnost**: omogućuje primjenu u različitim uređajima, od IoT senzora do autonomnih sustava ([BrainChip][4]).
+
+### 🌐 Primjene
+
+* **Edge AI**: obrada podataka na uređaju u stvarnom vremenu.
+* **Industrijska automatizacija**: nadzor proizvodnih linija i prediktivno održavanje.
+* **Pametni gradovi i IoT**: analiza podataka s senzora za optimizaciju resursa.
+* **Zdravstvo**: detekcija anomalija u medicinskim uređajima i nosivim tehnologijama.
+
+---
+
+BrainChip nudi vlastiti razvojni alat pod nazivom **Akida Development Environment (ADE)**, koji je sada besplatan i dostupan za preuzimanje. 🎉
+
+---
+
+## 🧰 Akida Development Environment (ADE)
+
+### 🔧 Što je ADE?
+
+* **MetaTF** je glavni okvir unutar ADE-a, temeljen na Pythonu i inspiriran Keras API-jem. Omogućuje razvoj, treniranje i testiranje neuronskih mreža na Akida neuromorfnoj platformi.
+* Uključuje:
+
+  * **Akida Simulator**: softverska implementacija Akida NSoC-a za simulaciju modela.
+  * **CNN2SNN**: alat za konverziju konvolucijskih modela u spiking neuronske mreže.
+  * **QuantizeML**: alat za kvantizaciju modela s niskobitnim težinama i aktivacijama.
+  * **Akida Model Zoo**: zbirka unaprijed obučenih modela za jednostavan početak rada. ([doc.brainchipinc.com][1])
+
+### 🧠 Radni tok u ADE-u
+
+1. **Izgradnja modela**: Koristi Keras ili model iz BrainChip Model Zoo.
+2. **Kvantizacija**: Primijeni QuantizeML za smanjenje preciznosti modela.
+3. **Konverzija**: Upotrijebi CNN2SNN za prilagodbu modela Akida platformi.
+4. **Simulacija i testiranje**: Pokreni model u Akida Simulatoru ili na stvarnom AKD1000 hardveru. ([doc.brainchipinc.com][2])
+
+### ☁️ Akida Cloud
+
+Za brži početak, BrainChip nudi **Akida Cloud** – platformu koja omogućuje razvoj i testiranje modela bez potrebe za lokalnim hardverom. Idealno za prototipiranje i eksperimentiranje. ([BrainChip][3])
+
+---
+
+- Uklanjaju se podaci, weightovi i aktivacije koje ne donose značajne informacije
+
+- Sparse princip => sparse data, sparse weights, sparse activations
+- Sparse = rijedak / razrijeđen
+
+- U neuronskim mrežama, “sparse” znači da većina neurona ili konekcija ne šalje signal u svakom trenutku.
+
+- Samo oni neuroni koji su stvarno “aktivni” zbog značajnog inputa zapravo šalju spike (impuls).
+
+- Prednost sparse pristupa
+
+- Manja potrošnja energije – čip ne troši resurse na nepotrebne izračune.
+
+- Brža obrada – jer se procesira samo mali dio podataka.
+
+- Efikasno u stvarnom vremenu – idealno za edge AI i senzore koji stalno prikupljaju podatke.
+
+- Kako to izgleda u praksi
+
+- Recimo da kamerom snimaš scenu: ako se većina scene ne mijenja, neuroni koji “prate” neaktivne dijelove ne šalju spike.
+
+- Samo neuroni koji detektiraju pokret ili promjenu podataka šalju signal i aktiviraju daljnju obradu.
+
+- Veza sa Spiking Neural Networks (SNN)
+
+- Sparse priroda Akida čipova se savršeno uklapa u SNN: spikeovi se događaju samo kad je potrebno, slično ljudskom mozgu.
+
+- Za razliku od klasičnih CNN ili DNN gdje se cijela matrica propagira kroz mrežu, ovdje većina neurona miruje dok ne dođe do bitnog događaja.
+
+- Sparse data => streaming inputi konvertiraju se u eventa na hardverskoj razini, smanjuje se obujam podataka za čak 10 puta prije nego procesiranje počne. Tradicionalni CNN-ovi procesiraju svaki ulazni datapoint, neovisno o promjeni. Brainchip filtrira input na hardverskoj razini i reagira samo na nove relevantne podatke
+- Sparse weights => nepotrebni weightovi se uklanjaju i komprimiraju, smanjuje se veličina modela i računalna složenost za čak 10x
+- Sparse activations => Samo ključne aktivacijske funkcije šalju podatke u sljedeće slojeve, smanjujući računanje u narednim slojevima do 10 puta.
+
+- BITNI PRINCIPI:
+- event-driven
+- process only when needed (computation se obavlja samo kad se event treba obraditi; smanjuje se potrošnja energije i workload)
+- communicate essentials (nodevi u neuralnoj mreži dijelie podatke samo kad je potrebno; izbjegava se komunikacijski overhead koji bezveze troši energiju)
+- keep data close to compute (memorije je distribuirana i nalazi se blizu računalnih nodeva da se smanji latencija i potrošnja struje)
+- focus on development, not owerhead (intelligent runtime + simple API...navodno lako za koristit...vidit ćemo :D )
+- learn and adapt on device (on-chip learning...uređaji se mogu personalizirati i adaptirati bez clouda)
+- reduce CPU load (smanjenje ili uklanjanje potrebe za uporabom CPU-a)
+- fully digital and proven in silicon (u potpunosti digitalan dizajn; skalabilan, portabilan i spreman za produkciju)
+- built-in privacy (podaci su privatni jer se svi računi obavljaju lokalno i samo weights se spremaju za učenje)
+- podržava rad s CNN-ovima, DNN-ovima, RNN-ovima i sl. Omogućava pretvorbu istih u SCNN-ove
+- more se pokrenut na FPGA, AKIDA hardveru ili u simulatorima
+
+- Podržavaju razne arhitekture:
+---
+
+### 🖼️ CNNs and Spatio-Temporal CNNs
+
+* Optimizirane za **prostorne (spatial) i vremenski ovisne (time-aware) zadatke**.
+* Idealne za: **prepoznavanje slika**, **detekciju gesta**, **analizu vibracija**.
+* Rade s podacima koji imaju i **prostorne i vremenske dimenzije**.
+
+---
+
+### ⏱️ State Space Models (SSMs)
+
+* Nova klasa neuronskih mreža koja **kombinira temporalnu svijest i efikasnost u treniranju**.
+* **Bolje performanse od tradicionalnih RNNs** (LSTM, GRU) u skalabilnosti i brzini treniranja.
+* Pogodne za **zadace gdje treba pratiti stanje kroz vrijeme**.
+
+---
+
+### 🎯 Temporal Event-Based Neural Networks (TENNs™)
+
+* Idealne za **sve što uključuje kretanje** – prate streaming podatke kroz vrijeme.
+* Poboljšavaju SSMs dodavanjem **event-based awareness**.
+* Pojednostavljuju: **motion tracking**, **object detection**, **audio processing**.
+* Koriste **manje memorije i računanja** od transformera.
+
+---
+
+Zašto su opisani SCNN-ovi bolji nego tradicionalni?
+- Parallel training => izrazito brži od konkurencije s arhitekturama dizajniranima za paralelni rad
+- Efficiency => manji modeli s manje parametara i manje memorijskog overheada
+- Stable and reliable => konzistentan trening i lakši deployment na edge devices
+
