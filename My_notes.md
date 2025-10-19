@@ -5628,3 +5628,25 @@ Zašto su opisani SCNN-ovi bolji nego tradicionalni?
 - Efficiency => manji modeli s manje parametara i manje memorijskog overheada
 - Stable and reliable => konzistentan trening i lakši deployment na edge devices
 
+################################################## BRAINCHIPS ##########################################################
+Dmitry Ivanov&co - Neuromorphic AI systems
+- Moderni AI sustavi bazirani na von Neumann arhitekturei i klasičnim neural mrežama imaju mnoge nedostatke u usporedbi s mozgom
+- Pregled dostupnih neuromorfnih čipova => TrueNorth, Loihi, Tianjic, SpiNNaker, BrainScaleS, NeuronFlow, DYNAP, Akida
+- Klasifikacija neuromorfnih sustava na temelju brain featuresa koji koriste
+- Neuronske mreže, paralelizam i asinkronost, prijenos informacija pomoću impulsa, lokalno učenje, sparsity, analogni in-memory computing
+
+- Bitno je brzo obavljanje brojnih repetitivnih paralelnih operacija
+- Bilo bi idealno kreirati AI algoritme spojene s hardverom na kojem rade (zato jer zapravo hardver određuje dostupnost i efektivnost AI algoritama
+
+- Glavni problem Von Neumann Arhitekture => odvajanje memorije i operacija
+- Operacije se izvršavaju u obliku programa (sekvence strojnih uputa)
+- Procesor obavlja instrukcije => više argumenata koje prima od procesnih registara (male, ali brze memorijske ćelije locirane na procesoru)
+- Instrukcije i većina podataka se pohranjuju u memoriju koja je odvojena od procesora
+- Procesor i memorija spojeni su data busem preko kojeg procesor prima instrukcije i podatke iz memorije
+
+- Prvi bottleneck: ograničena propusnost podataka između memorije i procesora
+- Data bus većinom šalje privremene izračuna prema RAM-u/iz RAM-a tijekom rada programa
+- Throughtput data busa je puno manji od brzine kojom procesor može procesirati podatke (u prijevodu: brža obrada ne pomore, kad svakako bus ne more brzo slat podatke)
+- RAM i procesni registri nisu jednako brzi => uzrokuje se latencija i processor downtime => procesor ne dela niš dok čeka podatke iz memorije => VON NEUMANN BOTTLENECK
+- Troši se jako puno energije => čak i više energije za sam prijenos podataka nego za obradu istih => čisti overhead
+- npr. u operaciji zbrajanja 2 broja više energije se troši za dovlačenje i čitanje brojeve iz memorije nego za samo zbrajanje
