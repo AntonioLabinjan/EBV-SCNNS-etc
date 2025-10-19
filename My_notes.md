@@ -5714,3 +5714,11 @@ Time GPU postiže visoku propusnost i efikasnost u paralelnom procesiranju podat
 
 Uz samu latenciju, ključan je i memory throughtput => makismalna količina podataka koja se može primiti iz memorije u određenoj vremenskoj jedinici 
 
+TPU => smanjuje efekte latencije i low memory throughtputa koristeći systoličke matrice i software controlled memoriju umjesto cache-a.
+
+Ideja systolic računanja je kreiranje velike matrice (256x256 za TPUv1) računalnih jedinica
+
+Svaka jedinica pohranjuje weightove i odrađuje 2 operacije. PRvo množi broj x koji je došao iz jedinice lijevo. Zatim šalje broj x primljen od jedinice gore, jedinici dole i prosljeđuje primljenu sumu na desno
+Weigthovi su pohranjeni u računalnim jedinicama, a ne u memoriji => EFIKASNO :D
+
+TPU štedi energiju jer ima mnogo ALU jedinica koje mogu ponovno koristiti ulazne vrijednosti bez stalnog pristupa registrima, za razliku od CPU-a i GPU-a koji to stalno rade.
