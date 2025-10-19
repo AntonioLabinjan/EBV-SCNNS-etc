@@ -5650,3 +5650,67 @@ Dmitry Ivanov&co - Neuromorphic AI systems
 - RAM i procesni registri nisu jednako brzi => uzrokuje se latencija i processor downtime => procesor ne dela niš dok čeka podatke iz memorije => VON NEUMANN BOTTLENECK
 - Troši se jako puno energije => čak i više energije za sam prijenos podataka nego za obradu istih => čisti overhead
 - npr. u operaciji zbrajanja 2 broja više energije se troši za dovlačenje i čitanje brojeve iz memorije nego za samo zbrajanje
+
+- Neuralne mreže temeljene na Von Neumann arhitekturi
+
+- namijenjene za riješavanje kognitivnih problema na računalu
+- utemeljene na perceptronu i metodi backpropagacije
+- Perceptron => pojednostavljeni matematički model neronske mreže u kojem neuroni računaju weighted zbroj input signala i generiraju output signal koristeći aktivacijsku funkciju
+- Proces treniranja svodi se na prilagdobe weightova s ciljem smanjenja errora
+
+- Pošto večina modernih neuronskih mreža ima layered arhitekturu, najviše računalno zahrjevana operacija je svakako množenje matrica vektorima (y = Wx)
+- Da bi se taj proces odradio, potrebno je najprije dohvatiti podatke iz memorije (m*n weightova za W i n vrijednsoti vektora x) => vrijednosti m*n weigthova koriste se jednom po množenju, dok se vrijendosti vektora x koriste ponovno
+
+- Da bi računao, procesor treba primiti weightove i input podatke iz memorije
+- Propusnost (throughtput) data busa i latencija u primanju podataka ograničavaju brzinu dobivanja weightova
+- broj weightova raste u O(n^2) di je n veličina inputa
+- Throughtput se izrazito jako troši za množenje matrica vektorom
+
+- Kako ublažiti navedena ograničenja?
+
+- CPU => korištenje kompleksnog multi-level cache sistema
+- U modernim procesorima, cache zna činiti i do 40% površine čipa
+- deseci megabajta ultra-brze memorije
+- često, neuronske mreže ne dozvoljavaju pohranu svih weightova u cache
+- Ne trebaju nam neka super kompleksna rješenja jer u množenju matrica unaprijed znamo redoslijed operacija
+- CPU je u ANN-ovima zadovoljavajuć samo za male neuronske mreže, ali ne i za moderne velike arhitekture od više stotina MB
+
+- GPU => više strategija za riješavanje memorijske latencije
+- svakom streaming multiprocesoru daje se veliki file registar koji sprema execution context za puno threadova i omogućava brzi switch između njih (za svaki thread se zna ča točno dela)
+- koristi se computation scheduler koji upotrebljava upravo taj feature s više threadova
+Visoka latencija instrukcija
+
+Neke instrukcije, poput pristupa podacima iz glavne memorije, imaju značajno vrijeme čekanja (latenciju).
+
+Tijekom tog čekanja, procesor ne može odmah nastaviti s izvršavanjem te instrukcije.
+
+Prebacivanje između threadova (warp switching)
+
+Kada GPU detektira da trenutni thread (npr. SIMD thread 1) čeka na podatke, scheduler automatski prebacuje izvršavanje na drugi thread (SIMD thread 2).
+
+Ako i taj thread naiđe na latenciju, GPU može nastaviti s trećim threadom (SIMD thread 3), i tako redom.
+
+Ovo prebacivanje je vrlo brzo i odvija se bez značajnog overheada.
+
+Sakrivanje latencije (latency hiding)
+
+Dok jedan thread čeka podatke iz memorije, drugi threadovi koriste računalne resurse (ALU, FPU itd.).
+
+Na taj način, ukupna iskoristivost GPU-a ostaje visoka, iako su pojedini threadovi privremeno blokirani.
+
+Velik broj paralelnih threadova
+
+GPU arhitektura podržava istovremeno izvođenje velikog broja threadova (često tisuće).
+
+Ti threadovi su grupirani u streaming multiprocesore (SM) – svaka jedinica SM sadrži vlastiti scheduler i skup jezgra.
+
+Brojni SM-ovi zajedno omogućuju kontinuirano izvođenje i ravnomjernu raspodjelu opterećenja.
+
+Efekt
+
+Zahvaljujući ovom mehanizmu, latencija memorije se "skriva" jer se u međuvremenu obavlja koristan rad na drugim threadovima.
+
+Time GPU postiže visoku propusnost i efikasnost u paralelnom procesiranju podataka.
+
+Uz samu latenciju, ključan je i memory throughtput => makismalna količina podataka koja se može primiti iz memorije u određenoj vremenskoj jedinici 
+
