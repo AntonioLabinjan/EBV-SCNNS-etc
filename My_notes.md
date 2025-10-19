@@ -5748,7 +5748,7 @@ Neuromorfni pristupi u računalnim sustavima
 - Asinkronost: nema posebnog procesa koji sinkronizira ostale
 - Impulsna priroda transmisije informacija: minimalni overhead za transimisiju i procesiranje signala na primateljskom neuronu => resistance to noise
 - Local learning: manji overhead za transfer podataka tijekom učenja; mogućnost kreiranja neograničeno velikih sustava; kontinuirano inkrementalno učenje
-- Sparse data streamovi=> podaci stižu rijekto, ali smisleno
+- Sparse data streamovi=> podaci stižu rijetko, ali smisleno
 - GPT SAID:
 Znači da se podaci generiraju samo kada se dogodi neki događaj (event), umjesto kontinuiranog slanja ogromne količine informacija (kao u klasičnim kamerama ili senzorima).
 
@@ -5761,3 +5761,57 @@ smanjuje overhead (opterećenje) kod prijenosa i obrade,
 i povećava učinkovitost cijelog sustava.
 - Analog computing: efikasna implementacija hardvera
 - in-memory computing: nema overheada za transfer privremenih međupodataka; nema kompetitivnog pristupa memoriji
+
+- PARALELIZAM:
+- svaki biološki neuron je neovisno računalo, ali puno sporiji nego silicijski procesori
+- U mozgu ima i više od 87 milijardi neurona
+- Potrebno je puno paralelnog rada da bi svi oni mogli raditi
+
+- ASINRKONOST:
+- paralelizam sam po sebi ne daje uvjek dovoljan efekt jer je ipak potrebna sinkronizacija između nodeva
+- Po Amdahlovom zakonu, sinkronizacijski owerhead raste nelinearno kako se povećava broj kompjutera i tako limitira dobrobiti paralelizma
+- Čini se da mozak nema mehanizam koji eksplicitno sinkronizira rad svih neurona
+- biološki neuroni rade asinkrono i omogućavaju da se nadiđu ograničenja Amadhlovog zakona
+
+- IMPULSNA PRIRODA TRANSMISIJE INFORMACIJA
+---
+
+### **Ključne ideje o Spiking Neural Networks (SNN):**
+
+* **Način prijenosa informacija:**
+
+  * U mozgu se informacije prenose u obliku impulsa (spikeova) — kratkih, naglih promjena potencijala.
+  * SNN modelira upravo tu prirodu — neuroni međusobno razmjenjuju *spikeove* koji sadrže **samo informaciju o vremenu nastanka**.
+
+* **Vremenska komponenta:**
+
+  * Prijenos spikea nije trenutan — svaka sinapsa ima **težinu (w)** i **vremensko kašnjenje (d)**.
+  * **Vrijeme spikea i kašnjenje** služe za **eksplicitno uvođenje vremena** u model obrade informacija.
+
+---
+
+### **Prednosti SNN-a nad klasičnim neuronskim mrežama:**
+
+* **Asinkroni prijenos podataka:**
+  Omogućuju prijenos informacija između neurona *bez potrebe za globalnim sinkronizacijama*.
+
+* **Rad s dinamičkim podacima:**
+  Zahvaljujući vremenskoj komponenti, SNN može obrađivati **signale koji se mijenjaju u vremenu**, jer informacija ovisi o **vremenu generiranja spikea** i **kašnjenju propagacije**.
+
+* **Nelinearna dinamika:**
+  SNN su **kompleksni nelinearni dinamički sustavi**, što omogućuje bogatiju i realističniju obradu informacija.
+
+* **Energetska učinkovitost:**
+  Neuroni troše energiju samo kada reagiraju na dolazni spike, a zatim prelaze u **neaktivno stanje**.
+  U svakom trenutku samo **mali broj neurona radi**, što dramatično **smanjuje potrošnju energije**.
+
+---
+
+### **Ograničenja danas:**
+
+* Malo praktičnih primjena zbog **ograničenja hardvera** i **težine treniranja**.
+* Klasične mreže još uvijek **postižu bolje rezultate** u većini zadataka.
+* Trening algoritmi i topologije SNN-a su još uvijek **otvoreni istraživački problemi**.
+
+---
+
