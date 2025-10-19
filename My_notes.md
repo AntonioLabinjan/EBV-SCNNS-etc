@@ -5736,4 +5736,28 @@ Mozak je tehnički gledano, veliki fundamentalno drukčiji, non von Neumann komp
 - Learning procesi su lokalni
 - Network topologije su neslojevite
 - Nema zajedničke memorije s kojom bi univerzalni procesori radili
-- Umjesto toga, postoji ogroman broj jednostavnih afenata koji funkcioniraju samoorganizacijski
+- Umjesto toga, postoji ogroman broj jednostavnih agenata koji funkcioniraju samoorganizacijski
+
+Neuromorfni pristupi u računalnim sustavima
+- Danas se mnogi akceleratori neuronskih mreža nazivaju **neuromorfnim AI sustavima** kako bi privukli pažnju.
+- Kako bi se **smanjila nejasnoća u klasifikaciji** AI sustava kao neuromorfnih, autori predlažu **popis svojstava** koja su korisna pri izradi računalnih sustava.
+- Ta svojstva su se **pokazala učinkovitima u stvarnim projektima**.
+
+- Neural network-based approach: sposobnost učenja (ne treba postavljati parametre eksplicitno) => povezivanje velikog broje relativno jednostavnih elemenata u network => zajednički obavljaju složene zadatke
+- Paralelizam: paralelni rad neurona i simultana provedba više zadataka
+- Asinkronost: nema posebnog procesa koji sinkronizira ostale
+- Impulsna priroda transmisije informacija: minimalni overhead za transimisiju i procesiranje signala na primateljskom neuronu => resistance to noise
+- Local learning: manji overhead za transfer podataka tijekom učenja; mogućnost kreiranja neograničeno velikih sustava; kontinuirano inkrementalno učenje
+- Sparse data streamovi=> podaci stižu rijekto, ali smisleno
+- GPT SAID:
+Znači da se podaci generiraju samo kada se dogodi neki događaj (event), umjesto kontinuiranog slanja ogromne količine informacija (kao u klasičnim kamerama ili senzorima).
+
+Takav event-driven signal processing omogućuje da se obrada i prijenos podataka odvijaju samo kad je to potrebno, čime se:
+
+smanjuje overhead (opterećenje) kod prijenosa i obrade,
+
+štedi energija,
+
+i povećava učinkovitost cijelog sustava.
+- Analog computing: efikasna implementacija hardvera
+- in-memory computing: nema overheada za transfer privremenih međupodataka; nema kompetitivnog pristupa memoriji
