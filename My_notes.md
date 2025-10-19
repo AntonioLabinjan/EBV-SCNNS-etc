@@ -5815,3 +5815,60 @@ i povećava učinkovitost cijelog sustava.
 
 ---
 
+Local Learning
+- klasične neuronske mreže treniraju se na principu backpropagacije što je poseban slučaj metode gradijentnog spusta
+- Nije baš realistično raditi gradient descent jer je potrebno svakom neuronu dati korektivni signal koji se računa negdje na temelju rezultata netwoeka
+- To znači da nam treba i feedback sistem => nema ga...a čak i kad bi postojao, ne zna se kako bi 2 spojena sistema (direktno i unazad) izmenjivala informacije koje u sebi imaju vrijednosti weightova. WEIGHT TRANSPORT PROBLEM
+
+- Alternativa backpropagaciji => princip lokalnosti
+- Sinaptički weight se modificira samo na temelju nekih karakteristika aktivnosti neurona povezanih sinapsom
+- REINFORCEMENT LEARNING => točnost mreže se evaluira odgođenim signalima nagrade i kazne
+
+- U slučaju SNNova, zakoni sinaptičke plastičnosti korišteni za učenje su prilično različiti
+- Ali, mnogi od njih su modifikacije STDP-a
+Spike Timing Dependent Plasticity (STDP)
+
+Osnovni princip:
+STDP je biološki inspiriran mehanizam učenja kojim se mijenjaju težine sinapsi na temelju vremenskog odnosa između spikeova neurona — kada neuroni “pucaju” jedan u odnosu na drugi.
+
+Način rada:
+
+Ako presinaptički neuron (onaj koji šalje spike) aktivira nešto prije postsinaptičkog neurona, veza među njima se ojača.
+→ To znači da je njegov signal vjerojatno doprinio aktivaciji.
+
+Ako presinaptički neuron aktivira nakon postsinaptičkog, veza se oslabi.
+→ Signal nije bio koristan za uzrokovanje reakcije.
+
+Posljedice i prednosti:
+
+STDP omogućuje lokalno učenje — svaka sinapsa samostalno mijenja težinu na temelju lokalnog vremena spikeova, bez potrebe za globalnim signalima ili centralnim nadzorom.
+
+Takav pristup zadržava asinkronost rada mreže, što znači da mreža može rasti do neograničene veličine bez gubitka performansi.
+
+U mnogim implementacijama STDP-a moguće je ažurirati težine sinapsi bez množiteljskih operacija, što smanjuje računsko opterećenje i potrošnju energije — idealno za neuromorfni hardver.
+
+Sparsity of data streams
+
+Manje od 10% neurona u mozgu je aktivno u istom trenutku, za razliku od klasičnih neuronskih mreža gdje svi neuroni sudjeluju u izračunima.
+
+To proizlazi iz tri glavna oblika sparsityja u mozgu:
+
+Temporal sparsity (vremenska rijetkost):
+
+Posljedica je velike sličnosti između uzastopnih ulaznih signala.
+
+Prenosi se samo promijenjeni dio informacije (npr. promjena svjetline piksela), što drastično smanjuje količinu podataka.
+
+Koristi se u event-based kamerama (npr. Dynamic Vision Sensor – DVS), koje generiraju spikeove samo kad dođe do promjene.
+
+Spatial sparsity (prostorna rijetkost):
+
+Neuroni ispaljuju spike samo ako im potencijal membrane prijeđe određeni prag.
+
+Velik broj neurona ostaje neaktivan (izlaz = 0), slično kao kod ReLU aktivacije u klasičnim mrežama, gdje se nule ipak obrađuju na GPU-u.
+
+Structural sparsity (strukturna rijetkost):
+
+Mozak nema potpuno povezane slojeve — svaki neuron ima ograničen broj sinapsi (~5000).
+
+U dubokim mrežama moguće je “nultirati” preko 90% težina bez gubitka performansi, čime se dodatno smanjuje potrošnja resursa.
