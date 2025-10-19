@@ -5722,3 +5722,18 @@ Svaka jedinica pohranjuje weightove i odrađuje 2 operacije. PRvo množi broj x 
 Weigthovi su pohranjeni u računalnim jedinicama, a ne u memoriji => EFIKASNO :D
 
 TPU štedi energiju jer ima mnogo ALU jedinica koje mogu ponovno koristiti ulazne vrijednosti bez stalnog pristupa registrima, za razliku od CPU-a i GPU-a koji to stalno rade.
+
+Neuromorphic approach
+
+CPU, GPU i TPU su supercool, ali ni blizu legit biološkim conterpartovima.
+Posebno u: potrošnji energije, fleksibilnosti (mogućnost da riješavaju različite zadatke), adaptibilnosti i skalabilnosti
+Implementacija ključnih funkcionalnosti i principa mozga mogle bi riješiti taj gap
+
+Mozak je tehnički gledano, veliki fundamentalno drukčiji, non von Neumann kompjuter
+- Za razliku od everyday kompova, u mozgu:
+- neuroni šalju informacije koristeći diskretne impulse (spikeove)
+- svi eventi se događaju asinkrono (nema 1 centralnog procesa koji eksplicitno orkestrira rad svih neurona)
+- Learning procesi su lokalni
+- Network topologije su neslojevite
+- Nema zajedničke memorije s kojom bi univerzalni procesori radili
+- Umjesto toga, postoji ogroman broj jednostavnih afenata koji funkcioniraju samoorganizacijski
