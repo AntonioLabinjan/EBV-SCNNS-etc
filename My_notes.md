@@ -6531,3 +6531,600 @@ Omogućuju analogno i STDP učenje direktno u hardveru
 
 Već pokazali odlične rezultate u malim demonstracijama, ali komercijalna primjena još je u ranoj fazi zbog tehnoloških izazova
 
+# Paper 20.10.2025.
+Enabling efficient processing of Spiking Neural Networks with On-chip learning on commodity neuromorphic processors for edge AI systems
+Raste potražnja za energetski efikasnim edge AI sustavima => neuromorphic computing je ključan!!
+Nudi ultra low-power AI computation koristeći SNN-ove
+Ključne karakteristike neuromorphic hardvera (memorija i "cijena" computationa) + kompatibilnost mreža na istim tim čipovima
+On-chip learning mehanizam za update znanja sustava za adaptaciju novim input klasama i dinamičkom okruženju
+Niska inference latencija i niska latencija on-chip učenja
+Potrošnja manje od 250mW snage i manje od 15 mJ energije
+* Sve je veća potreba za energetski učinkovitim edge AI sustavima (mobilni roboti, IoT uređaji itd.).
+* Ti sustavi poboljšavaju kvalitetu usluge (QoS) i ljudsku produktivnost.
+* Problem: rade na baterijama ograničenog kapaciteta → kratak vijek trajanja baterije.
+* Povećanje kapaciteta baterije nije skalabilno rješenje jer veća baterija povećava masu sustava.
+* Veća masa → veća potrošnja energije → opet kraći vijek trajanja baterije.
+* Stoga, pravo rješenje je razvoj **ultra-niskoenergetskih AI algoritama** koji optimiziraju ukupnu potrošnju energije sustava.
+* Neuromorfno računarstvo (NC) s algoritmima **spiking neural networks (SNN)** pojavilo se kao potencijalno rješenje.
+* Razlog: SNN koristi **rijetke (sparse), događajem vođene (spike-driven)** operacije koje troše znatno manje energije.
+* Da bi se maksimalno iskoristila energetska učinkovitost NC-a, **SNN obrade moraju se izvoditi na specijaliziranom neuromorfnom hardveru**.
+* Takav hardver podržava spike-driven operacije i omogućuje stvarnu prednost u energetskoj učinkovitosti.
+* Većina postojećih neuromorfnih procesora (npr. **SpiNNAker, NeuroGrid, IBM TrueNorth, Intel Loihi**) razvijena je **za istraživačke svrhe** i **nije komercijalno dostupna**.
+* Zbog toga je **teško primijeniti SNN sustave u stvarnim edge AI primjenama**.
+* Nedavno su se pojavili **komercijalno dostupni neuromorfni procesori**, poput **BrainChip Akida** i **SynSense DYNAP**, koji omogućuju razvoj stvarnih SNN sustava.
+* Ipak, **učinkovite strategije implementacije** za te procesore **još nisu dovoljno istražene**, što ograničava njihov puni potencijal.
+* Glavni istraživački cilj rada: **Kako omogućiti učinkovito izvođenje SNN modela na komercijalnim neuromorfnim procesorima**, uz **dobar kompromis između točnosti, memorije i potrošnje energije**.
+* Dosadašnja istraživanja o **neuromorfnim procesorima** za **edge AI sustave** uglavnom su se fokusirala na **specifične primjene** — npr.
+  * upravljanje sustavima,
+  * taktilno (dodirno) osjetilo,
+  * analiza hoda,
+  * detekcija objekata.
+* Međutim, **nisu istražili on-chip učenje** — sposobnost modela da **uči i prilagođava se novim uvjetima direktno na čipu**.
+* Zbog toga **još ne postoji univerzalna metodologija dizajna** koja omogućuje **učinkovito izvođenje SNN-ova** na **komercijalnim neuromorfnim procesorima** za različite tipove zadataka.
+
+* Cilj istraživanja bio je analizirati **zahtjeve za memorijom i računanjem** pri izvođenju različitih **SNN modela** na istom **neuromorfnom procesoru (Akida)**.
+* Testirani su modeli **AkidaNet** i **Spiking-MobileNetV1** s ulaznim rezolucijama **160×160** i **224×224**.
+
+**Rezultati pokazuju:**
+
+* Veći SNN modeli daju **veću točnost** (zahvaljujući boljoj ekstrakciji značajki).
+* No, to dolazi uz **veću potrošnju memorije**, **više računalnih resursa (NPU jedinica)** i **višu potrošnju energije**.
+* Time se smanjuje ukupna **energetska učinkovitost** edge AI sustava.
+
+**Dodatni izazov:**
+
+* Edge AI sustavi mogu **naići na nove klase u stvarnom vremenu**, pa moraju **učiti nove informacije na čipu (on-chip learning)**.
+* Bez toga, **točnost opada** jer **offline trenirani SNN** ne može učinkovito naučiti nove klase i pritom **zadržati staro znanje** (tzv. *catastrophic forgetting*).
+
+**Zaključak i potreba:**
+Potrebna je **dizajnerska metodologija** koja:
+
+1. Utvrđuje **kompatibilnost mreže i procesora**,
+2. Omogućuje **energetski učinkovito mapiranje SNN modela** na hardver,
+3. Uvodi **on-chip learning mehanizme** za učenje novih klasa uz **očuvanje prethodnog znanja**.
+
+* Autori predlažu **novu dizajnersku metodologiju** za **učinkovito izvođenje SNN-ova na komercijalnim neuromorfnim procesorima**, s ciljem postizanja **energetski učinkovitih edge AI sustava**.
+
+**Glavni doprinosi rada:**
+
+1. **Network compatibility analysis (III-A)**
+
+   * Brza evaluacija odabranog SNN modela radi provjere može li se učinkovito izvršavati na određenom neuromorfnom procesoru.
+   * U obzir se uzimaju **memorijska i računalna ograničenja procesora**, uz korištenje predloženog **analitičkog modela**.
+
+2. **Efficient deployment (III-B)**
+
+   * Učinkovita **strategija mapiranja mreže** na procesor koja postiže **dobar kompromis između performansi i potrošnje resursa**.
+   * Optimizacija kroz **runtime postavke procesora**.
+
+3. **On-chip learning strategy (III-C)**
+
+   * Omogućuje **učenje novih klasa nakon deployanja SNN-a**.
+   * Realizirano pomoću **modifikacije završnog sloja** mreže, bez potrebe za ponovnim treniranjem cijelog modela.
+
+4. **Sveobuhvatna evaluacija (V)**
+
+   * Analiziraju se **točnost, latencija, propusnost i potrošnja energije**.
+   * Evaluacija obuhvaća više aplikacija (**klasifikacija slika, prepoznavanje objekata u video streamu, prepoznavanje riječi**) i različite scenarije (**offline treniranje i on-chip learning**).
+
+Rezultati: evaluirano kroz real-world edge AI prototip koristeći AKIDA neuromorfni procesor
+Niska latencija inferencije i niska latencija on-chip učenja (sve uz manje od 250mW snage)
+
+* **Spiking Neural Networks (SNNs)** su **biološki uvjerljivi modeli neuronskih mreža**, inspirirani načinom na koji **ljudski mozak koristi električne spikeove** za prijenos i obradu informacija.
+* SNN-ovi **ne koriste kontinuirane vrijednosti** kao klasične neuronske mreže, već **diskretne spikeove (impulse)** koji predstavljaju događaje u vremenu.
+* Osnovne komponente SNN-a:
+
+  1. **Spiking neuroni** – modeliraju stvarne neurone koji generiraju spikeove kada se postigne određeni prag pobude.
+  2. **Sinapse** – povezuju neurone i upravljaju prijenosom spikeova (s težinama koje definiraju jačinu veze).
+  3. **Topologija/struktura mreže** – način na koji su neuroni i sinapse organizirani (npr. slojevita arhitektura).
+  4. **Neuralno kodiranje (encoding)** – način na koji se ulazni podaci (npr. slike, zvuk) pretvaraju u spikeove koje mreža može obraditi.
+
+Ukratko: SNN-ovi imitiraju stvarne neuronske procese, čime omogućuju **veću energetsku učinkovitost i temporalnu obradu informacija**, što ih čini pogodnima za **edge AI i neuromorfne čipove**.
+
+* **Spiking Neuron**: osnovna jedinica u SNN-u koja generira spikeove na temelju membranskog potencijala.
+* Najčešće korišten model: **Leaky Integrate-and-Fire (LIF)** neuron.
+* Dinamika LIF neurona:
+
+  1. **U_mem** – membranski potencijal neurona.
+  2. **U_thr** – prag potencijala; kada U_mem ≥ U_thr, neuron generira spike.
+  3. **U_rst** – reset potencijal; nakon spikea, U_mem se resetira na ovu vrijednost.
+* Kada **ulazni spike stigne**, U_mem se poveća; **ako nema ulaznog spikea**, U_mem polako opada (leak).
+* Output neurona je **diskretni spike** generiran kada membranski potencijal dostigne ili premaši prag.
+
+Ukratko: LIF neuron integrira ulazne spikeove, propušta ih kroz “curenje” i generira spike kada se dostigne prag, imitirajući ponašanje biološkog neurona.
+
+* **Neuromorphic Processors**: specijalizirani hardver optimiziran za **energetski efikasnu obradu SNN-a**.
+* **Tipovi**:
+
+  1. **Research processors** – namijenjeni isključivo istraživanju, nisu komercijalno dostupni; primjeri: SpiNNaker, NeuroGrid, IBM TrueNorth, Intel Loihi.
+  2. **Commodity processors** – komercijalno dostupni, mogu se koristiti za stvarne primjene; primjeri: BrainChip Akida, SynSense DYNAP-CNN.
+* U ovom radu se koristi **Akida** zbog podrške za **on-chip learning**, što omogućuje fino podešavanje SNN-a i adaptivnost u edge AI sustavima.
+
+Evo sažeto i konkretno, sve bitno za tvoj rad na **Akida Neuromorphic Processor-u**:
+
+* **Akida Neuromorphic SoC (NSoC)**: dizajniran od strane BrainChip-a za **energetski efikasnu obradu SNN-a** u low-power aplikacijama.
+* **Komercijalna verzija**: Akida v1.0 (AKD1000), izrađena u **TSMC 28nm tehnologiji**, **radni takt 300 MHz**.
+* **Arhitektura**:
+
+  * **Cortex-M4 CPU** – host procesor SoC-a.
+  * **80 Akida Neural Processing Units (NPUs)** – SNN procesorske jezgre.
+  * **Node**: 4 NPUs = 1 node → ukupno 20 nodes.
+  * **NPU struktura**: svaki NPU ima 8 **Neural Processing Engines (NPEs)** za izvođenje sinaptičkih i neuronskih operacija (npr. event-based convolutions).
+  * **Lokalna memorija**: 100 KB SRAM (40 KB za težine, 60 KB za spike podatke).
+* **Dodatni moduli**:
+
+  * DMA kontroler (Direct Memory Access)
+  * PMU (Power Management Unit)
+  * Data interfejsi: USB3.0, PCIe2.1, I2S, I3C, UART, JTAG
+  * Memory interfaces: SPI Flash, LPDDR4
+  * Multi-chip expansion interface
+* **Data encoding**: koristi **data/pixel spike converter** za pretvaranje podataka u spike format.
+* **Softverska podrška**: **MetaTF framework** – omogućava:
+
+  * ANN → SNN konverziju
+  * SNN mapping na NPUs
+  * On-chip learning i fine-tuning
+
+
+---
+
+### **Pipeline za razvoj i implementaciju SNN-a na Akidi**
+
+1. **Network development (Offline training)**
+
+   * Koristi se postojeći framework, npr. **TensorFlow + Keras**, za razvoj i treniranje običnog **ANN modela** (konvencionalna neuronska mreža).
+   * Cilj: dobiti **offline-trained NN model** prije nego što ide na neuromorphic hardware.
+
+2. **Network compatibility analysis**
+
+   * Offline-trained NN i konfiguracija procesora se koriste za **analizu kompatibilnosti mreže**.
+   * Analitički model procjenjuje:
+
+     * **Memorijski budžet**: da li model stane u lokalnu memoriju NPUs (Akida: 100 KB SRAM po NPU, 40 KB za težine, 60 KB za spike podatke).
+     * **Compute resurse**: broj potrebnih NPE-ova i NPUs za izvršavanje modela u realnom vremenu.
+   * Rezultat: odabir NN modela koji se **efikasno može izvesti** na Akidi.
+
+3. **ANN → SNN konverzija**
+
+   * Ako je izabrani model **još uvijek u ANN formatu**, tada se konvertira u **spiking neural network (SNN)**.
+   * Ako je model već **u spiking domenu**, preskače se ovaj korak.
+
+4. **Deployment na Akida procesoru**
+
+   * SNN model se mapira na Akida NPUs koristeći **specifičnu mapping strategiju**.
+   * Mapping strategija uzima u obzir:
+
+     * Efikasnu raspodjelu memorije i compute resursa.
+     * Optimalan trade-off između **latencije**, **protokola podataka** i **potrošnje energije**.
+   * Model se evaluira s odgovarajućim workloadom (npr. image classification, keyword recognition).
+
+5. **On-chip learning (ako je potrebno)**
+
+   * Ako je potrebno ažurirati znanje modela (npr. novi razredi u klasifikaciji):
+
+     * Izvodi se **on-chip learning** koristeći MetatTF framework.
+     * Obično se mijenja **zadnji layer** mreže za prilagodbu novim klasama.
+   * Ako ažuriranje nije potrebno, koristi se **originalni SNN** za evaluaciju.
+
+6. **Evaluacija i deployment**
+
+   * Evaluacija SNN-a uključuje:
+
+     * **Accuracy / točnost**
+     * **Latency / kašnjenje**
+     * **Power / energy consumption**
+   * Ako SNN ispunjava **zahtjeve aplikacije**, model se može **finalno deployati** na Akida procesoru.
+   * Ako ne, vraća se na **korak 2** i bira se manji ili prilagođeni NN model.
+
+---
+
+
+---
+
+### **Network Compatibility Analysis za SNN na Akidi**
+
+**Cilj:**
+Provjeriti može li odabrana mreža biti **efikasno izvršena na ciljanom neuromorphic procesoru** bez potrebe za dijeljenjem mreže ili dodatnim schedulingom.
+
+* Ako se mreža može u potpunosti mapirati i izvršiti odjednom:
+
+  * **Smanjuju se skupi memorijski pristupi** i pomicanja podataka → veća energetska efikasnost.
+  * Omogućuje bolju predikciju performansi **prije deploya na hardware**.
+
+---
+
+### **Analiza memorije i compute troškova**
+
+1. **Memory budget (memorijski budžet):**
+
+   * Maksimalna veličina mreže + aktivacijski podaci koja se može mapirati u jednom potezu.
+
+2. **Compute budget (compute budžet):**
+
+   * Maksimalni broj **event-based operacija** koji se mogu izvršiti odjednom.
+
+3. **Analitički model:**
+
+   * Procjenjuje koliko NPUs (neuronskih procesorskih jedinica) je potrebno za izvršavanje mreže.
+   * **NNPU_tot** = ukupan broj NPUs potrebnih za sve slojeve mreže:
+     [
+     NNPU_{tot} = \sum_{l=1}^{L} N_{l}^{NPU_mem}
+     ]
+
+     * (L) = broj slojeva u mreži
+     * (N_l^{NPU_mem}) = broj NPUs potrebnih za memoriju sloja (l)
+
+---
+
+### **Proračun NPUs po sloju**
+
+* Za svaki sloj računamo **koliko NPUs je potrebno za network parameters i activation data**:
+  [
+  N_l^{NPU_mem} = \max(N_l^{NPU_net}, N_l^{NPU_dat})
+  ]
+
+  * (N_l^{NPU_net}) = broj NPUs za pohranu težina i bias-a sloja (l)
+  * (N_l^{NPU_dat}) = broj NPUs za pohranu aktivacijskih podataka sloja (l)
+
+* **Izračun memorije sloja:**
+  [
+  M_l^{net} = (N_w + N_b) \cdot bit_{par}
+  ]
+  [
+  M_l^{dat} = (H_l \cdot W_l \cdot C_l) \cdot bit_{dat}
+  ]
+
+  * (N_w, N_b) = broj težina i bias-a sloja
+  * (H_l, W_l, C_l) = visina, širina i broj kanala feature mapa
+  * (bit_{par}, bit_{dat}) = preciznost bitova za težine i podatke
+
+---
+
+### **Network selection (odabir mreže)**
+
+* Koristi se **analitički model** da se odaberu mreže koje:
+
+  1. Mogu se **efikasno izvršiti** na procesoru ((NNPU_{tot} < NNPU_{proc}))
+  2. Pružaju **visoku točnost** (accuracy)
+* Cilj: optimizirati **trade-off između performansi i resursa** na Akidi.
+
+---
+
+---
+
+### **B. Efficient Deployment on the Processor**
+
+**Cilj:**
+Omogućiti **efikasno deployanje odabrane SNN mreže na neuromorphic procesor**, tako da se ispune zahtjevi aplikacije (npr. **latency, power/energy**) uz optimalnu upotrebu resursa.
+
+---
+
+### **Mapping Strategy (Strategija mapiranja)**
+
+* Koristi se **MetaTF framework** (BrainChip) za Akida procesor.
+* Cilj strategije:
+
+  * Maksimizirati korištenje **lokalne memorije NPUs** za pohranu težina i podataka.
+  * **Minimizirati broj prolaza (sequential passes)** → manja paralelizacija, ali bolja energetska efikasnost.
+  * Mapirati **cijeli SNN model i podatke** u NPUs dok se sekvencijalno izvršavaju synaptic i neuronal operacije sloj po sloj.
+
+---
+
+### **Optimizacijski cilj**
+
+* Minimizaija broja NPUs potrebnih za izvršavanje synaptic i neuronal operacija po sloju:
+  [
+  \text{Objective: minimize } N_l^{NPU_exe}
+  ]
+
+  * (N_l^{NPU_exe}) = broj NPUs potrebnih za izvršavanje sloja (l)
+
+---
+
+### **Funkcija troška (Cost function) za mapiranje na hardware**
+
+* Ukupni trošak mapiranja (C) za sve slojeve:
+  [
+  C = \sum_{l=1}^{L} \max(N_l^{NPU_mem}, N_l^{NPU_exe})
+  ]
+
+  * (N_l^{NPU_mem}) = broj NPUs potrebnih za memoriju sloja (l) (težine + aktivacije)
+  * (N_l^{NPU_exe}) = broj NPUs potrebnih za izvršavanje operacija sloja (l)
+
+---
+
+### **Korištenje hardverskih resursa (Hardware Utilization)**
+
+* Postotak iskorištenosti NPUs:
+  [
+  U = \frac{C}{NNPU_{proc}} \cdot 100%
+  ]
+
+  * (NNPU_{proc}) = ukupni broj NPUs dostupnih u procesoru
+  * Pomaže pri evaluaciji **efikasnosti deploya**
+
+---
+
+### **Evaluacija mreže**
+
+1. Nakon što je SNN mapiran i deployan, evaluira se **performanse i efikasnost**.
+2. Ako sustav treba **update znanja (novih klasa ili adaptacija)** → koristi se **on-chip learning** za prilagodbu modela bez offline retraininga.
+
+---
+
+---
+
+### **C. On-Chip Learning Strategy**
+
+**Cilj:**
+Omogućiti **učenje novih klasa direktno na čipu**, što omogućava **efikasno fine-tuning** postojećeg SNN modela bez ponovnog offline treninga.
+
+---
+
+### **Princip i zahtjevi**
+
+* Strategija ovisi o **API-ju i razvojnim alatima procesora** (za Akida → MetaTF framework).
+* Fokusira se na **zadnji sloj mreže**, jer se **samo taj sloj trenira on-chip**.
+* Za zadnji sloj vrijede sljedeća ograničenja:
+
+  1. **Fully connected sloj**
+  2. **Binarne težine**
+  3. **Binarni ulazi**
+
+---
+
+### **Postupak implementacije**
+
+1. **Zamjena zadnjeg sloja:**
+
+   * Novi sloj zadovoljava gore navedene uvjete.
+
+2. **Proširenje kapaciteta za nove klase:**
+
+   * Novi sloj mora moći klasificirati **stare i nove klase**.
+   * Za svaku staru klasu koriste se **višestruki neuroni**, što omogućava prostor za učenje novih klasa.
+
+3. **Few-shot učenje on-chip:**
+
+   * Koristi se nekoliko uzoraka za svaku novu klasu.
+   * Akida **built-in algoritam** povezuje nove klase s određenim neuronima u zadnjem sloju.
+
+---
+
+### **Evaluacija**
+
+* Nakon što je SNN **updatean i deployan on-chip**, evaluira se **performanse i efikasnost**.
+* Cilj je provjeriti zadovoljava li **novi model zahtjeve aplikacije** (npr. točnost, latency, power/energy).
+
+---
+
+---
+
+### **Evaluacija predložene metodologije**
+
+#### **1. Softverski dio**
+
+* **MetaTF framework** (baziran na TensorFlow + Keras) koristi se za:
+
+  * **Konverziju pre-treniranih NN modela u SNN modele**
+  * **Mapiranje SNN modela na neuromorfni procesor**
+  * **On-chip fine-tuning** za učenje novih klasa (zadnji sloj modificiran kao u III-C)
+* Mjerenja i rezultati:
+
+  * **Točnost (accuracy)**
+  * **Latencija (latency)**
+  * **Potrošnja energije (power/energy)**
+
+---
+
+#### **2. Hardverski dio**
+
+* **Edge AI sustav** sastoji se od:
+
+  * **Neuromorfni procesor:** Akida NSoC v1.0 (AKD1000)
+  * **Host CPU:** ARM Cortex-A72, Raspberry Pi Compute Module 4 (CM4), Ubuntu 22.04
+* **Povezivanje:** PCIe sučelje za high-speed komunikaciju između hosta i SNN procesora
+
+---
+
+#### **3. Application Use-Cases**
+
+1. **Classification of Static Images:**
+
+   * Dataset: ImageNet
+   * Zahtjevi: **max 50 ms latency**, **250 mW power**
+
+2. **Real-time Object Recognition in Video Streaming:**
+
+   * Dataset: PASCAL-VOC 2007
+   * Hardver: Logitech C270 HD Webcam za edge video streaming
+   * Zahtjevi: **max 200 ms latency**, **250 mW power**
+
+3. **Keyword Recognition:**
+
+   * Dataset: Google Speech Command
+   * Zahtjevi: **max 5 ms latency**, **250 mW power**
+
+---
+
+
+---
+
+### **1. Network Selection**
+
+* **Odabir modela:** AkidaNet 0.5 224
+* **Razlozi za odabir:**
+
+  * Veličina mreže odgovara **memorijskom budgetu Akida čipa** (8 MB)
+  * Broj potrebnih NPUs zadovoljava **NPU budget čipa** (80 NPUs)
+  * Dobra **accuracy**, iako malo niža od AkidaNet 1160 i Spiking-MobileNetV1 1160
+  * Podržava **input resolution 224x224**, što je bolje za sustave s high-res senzorima
+
+---
+
+### **2. Accuracy**
+
+* **Eksperimenti:** 10 nasumičnih ImageNet slika po 100 iteracija
+* **Rezultat:** **80% točnost**
+* **Objašnjenje:**
+
+  * Efektivno treniranje u **ANN domenu** s backpropagation tehnikom
+  * Precizna konverzija ANN → SNN
+
+---
+
+### **3. Latency i Throughput**
+
+* **Latencija:** ~41 ms po iteraciji (ispod maksimuma od 50 ms)
+* **Throughput:** 24 FPS
+* **Uzrok:**
+
+  * Optimalna **mapping strategija**, cijeli SNN model mapiran u Akida NPUs
+  * Izbjegnute **dijeljenje mreže i višestruke iteracije**, što štedi vrijeme
+
+---
+
+### **4. Power i Energy Consumption**
+
+* **Power:** ~215 mW (ispod limita 250 mW)
+* **Energy per inference:** ~9 mJ
+* **Uzrok:**
+
+  * **Sparse spike-driven computation**
+  * Efikasna **NPU allocation** koja minimizira kretanje podataka i time trošak energije
+
+---
+
+---
+
+### **1. Network Selection**
+
+* **Odabir modela:** Spiking-YOLOv2
+* **Razlozi za odabir:**
+
+  * Veličina mreže ~3 MB, što je ispod **memorijskog limita Akida čipa (8 MB)**
+  * Broj potrebnih NPUs = 71, što je ispod **NPU budgeta (80 NPUs)**
+
+---
+
+### **2. Accuracy**
+
+* **Eksperimenti:** 2500 iteracija s prikazom objekata (person i car)
+* **Rezultat:** **94.44% točnost**
+* **Objašnjenje:**
+
+  * Precizno treniranje u ANN domenu s backpropagation
+  * Točna konverzija ANN → SNN model
+
+---
+
+### **3. Latency i Throughput**
+
+* **Latencija:** ~160 ms po iteraciji (ispod maksimuma od 200 ms)
+* **Throughput:** 6 FPS
+* **Uzrok:**
+
+  * **Mapping strategija** koja cijeli SNN model mapira u NPU fabrice
+  * Izbjegnuto **dijeljenje mreže**, štedi vrijeme
+
+---
+
+### **4. Power i Energy Consumption**
+
+* **Power:** ~78 mW (ispod limita 250 mW)
+* **Energy per inference:** ~13 mJ
+* **Uzrok:**
+
+  * **Sparse spike-driven computation**
+  * Efikasna **NPU allocation**, minimizira kretanje podataka i time trošak energije
+
+---
+
+---
+
+### **1. Network Selection**
+
+* **Odabir modela:** Spiking-DSCNN (Depthwise Separable CNN)
+* **Razlozi za odabir:**
+
+  * Veličina mreže = 23 KB, ispod **memorijskog limita Akida čipa (8 MB)**
+  * Broj potrebnih NPUs = 5, ispod **NPU budgeta (80 NPUs)**
+
+---
+
+### **2. Accuracy**
+
+* **Eksperimenti:** 1000 keywords iz Google Speech Command dataset, 9 iteracija
+* **Rezultat:** **91.73% točnost**
+* **Objašnjenje:**
+
+  * Precizno treniranje u ANN domenu
+  * Točna konverzija ANN → SNN
+
+---
+
+
+### **3. Latency i Throughput**
+
+* **Latencija:** ~0.72 ms po iteraciji (ispod maksimuma od 5 ms)
+* **Throughput:** >1.3 M keywords/s
+* **Uzrok:**
+
+  * Mala veličina mreže (23 KB)
+  * Lako mapiranje cijelog modela u NPU fabric, izbjegnuto dijeljenje mreže i nepotrebno kretanje podataka
+
+---
+
+### **4. Power i Energy Consumption**
+
+* **Power:** ~68 mW (ispod limita 250 mW)
+* **Energy per inference:** ~49 µJ
+* **Uzrok:**
+
+  * Mala mreža → cijeli model efikasno izvršen u NPU fabric
+  * Minimalna potrošnja energije i niska latencija
+
+---
+
+---
+
+### **1. Network Selection i Setup**
+
+* **Model:** Spiking-DSCNN (pre-trained)
+* **Offline trening:** 32 keywords iz Google Speech Command dataset
+* **On-chip learning:** 3 nove klase: `backward`, `follow`, `forward`
+
+---
+
+### **2. Accuracy**
+
+* **On-chip learning:** 160 uzoraka po novoj klasi
+* **Inference:** 6 uzoraka za `backward`, 7 za `follow`, 6 za `forward`, preko 9 iteracija
+* **Rezultat:** **94.74% točnost**
+* **Razlog:** Efikasni few-shot learning algoritam iz Akida MetaTF frameworka
+
+---
+
+### **3. Latency i Throughput**
+
+* **Latencija:** ~1.5 ms po iteraciji
+* **Throughput:** >650 KPS (keywords per second)
+* **Uzrok:** Few-shot learning koristi mali broj uzoraka → brza obrada
+
+---
+
+### **4. Power i Energy Consumption**
+
+* **Power:** ~41 mW
+* **Energy per inference:** ~62 µJ
+* **Uzrok:** Mala veličina mreže i efikasna few-shot on-chip implementacija
+
+---
+
+### **5. Dodatna Diskusija**
+
+* Neuromorfičke SNN implementacije (Akida) su **više energetski učinkovite** od konvencionalnih ANN rješenja (CPU/GPU/FPGA/ASIC)
+* Sparse spike-driven computation → minimalna potrošnja energije i maksimalna efikasnost
+* **Prednost Akida:** omogućava on-chip learning → fleksibilno dodavanje novih klasa bez ponovnog treninga cijelog modela
+
+---
