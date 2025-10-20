@@ -5911,3 +5911,22 @@ Analogni neuroni koriste se i za implementaciju sinaptičkih operacija
 * U takvom analognom pristupu, **sve operacije množenja i zbrajanja odvijaju se paralelno** — **u jednom vremenskom taktu**, što značajno povećava brzinu i energetsku učinkovitost.
 
 ---
+
+In-Memory Computing
+
+- Pri emulaciji neural networka na CPU/GPU, 1 jezgra služi za modeliranje velikog broja neurona, sekvencijalno radeći context switch između njih
+- To stvara značajni vremenski i energetski overhead za transfer konteksta neurona u memoriju i nazad
+- Nema ničeg sličnog u biološkim neuronima
+
+- Biološki neuron implementira prinicp in-memory computinga
+- On je istovremeno uređaj koji pohranjuje stanje (memorija je reprezentirana kroz membranski potencijal i snagu sinaptičke veze) i uređaj koji izvršava izračune
+- Taj prinicp nije ograničen von Neumann limitima uzrokovanim fizičkom odvojenosti memorije i procesora
+- Memorija neurona je odvojena od drugih neurona
+- one neuron - one computer model => analogna implementacija neurona
+- u digitalnim implementacijama ovaj pristup je previše wasteful jer se može modelirati puno neurona na 1 jezgri zahvaljujući context switchingu
+- Jako korisno u digitalnim implementacijama
+- Memorija je dijeljena među grupama neurona i fizički se nalazi u blizini jezgre (NEAR MEMORY COMPUTING)
+- SRAM za takva riješenja je prilično skup => nema baš puno SRAM-based čipova
+- SRAM => STATIC RANDOM ACCESS MEMORY
+
+  
