@@ -6409,4 +6409,60 @@ Memristor je doslovno **“pametni otpornik”** ili **otpor koji pamti**. Evo k
 
 ---
 
+Množenje vektora i matrica u memoriji
+
+
+---
+
+### 🔹 **Klasične CMOS neuralne mreže – problem:**
+
+* Operacije: **množenje + zbrajanje + aktivacija**
+* Težine pohranjene u **SRAM ili DRAM**
+
+  * SRAM: prevelike ćelije → loša gustoća
+  * DRAM: zahtjeva periodično osvježavanje → gubi energiju
+* Klasični pristup: čitanje iz memorije → prenos u core → računanje → zapis nazad
+
+  * **Uzrokuje sporost + veliku potrošnju energije**
+  * Problematično za **big data i deep learning**
+
+---
+
+### 🔹 **Memristor crossbar – rješenje:**
+
+* **Crossbar topologija:**
+
+  * Žice postavljene okomito
+  * **Memristori na sjecištima** → svaki memristor = sinapsa + računanje + memorija
+* **Prednosti:**
+
+  * Podaci se **procesiraju direktno u hardveru**
+  * **Štedi prostor na čipu**
+  * **Ekstremno niska potrošnja energije**
+
+---
+
+### 🔹 **Primjeri i performanse:**
+
+1. **Jednoslojna NN (128×64 memristor array)**
+
+   * MNIST: **89.9% accuracy**
+2. **CNN (8×2048 memristor array)**
+
+   * MNIST: **>96% accuracy**
+   * **110× bolje energetski** od Tesla V100 (11 GOPS/W)
+   * **30× bolje performanse po mm²** (1.2 GOPS/mm²)
+3. **Dvoslojni RNN (14 memristor LSTM blokova)**
+
+   * Human walking classification: **79.1% accuracy**
+
+---
+
+### ✅ **Zaključak:**
+
+* Memristori omogućuju **sintezu pohrane i izračuna u jednom elementu**
+* **Izuzetno energetski efikasno i gusto** → pogodno za edge uređaje i big data
+* Pokazuju **konkurentne rezultate s klasičnim GPU-ima**, ali s minimalnom potrošnjom energije
+
+---
 
