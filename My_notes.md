@@ -5929,4 +5929,418 @@ In-Memory Computing
 - SRAM za takva riješenja je prilično skup => nema baš puno SRAM-based čipova
 - SRAM => STATIC RANDOM ACCESS MEMORY
 
-  
+
+
+---
+
+### 🔹 **TrueNorth (IBM, 2014)**
+
+**Porijeklo:** Razvijen u okviru DARPA SyNAPSE programa — prvi industrijski neuromorfni čip na svijetu.
+
+**Arhitektura i tehničke karakteristike:**
+
+* Digitalni čip **bez general-purpose jezgri**.
+* Sadrži **4,096 neuralnih jezgri**, svaka simulira **256 spiking neurona u stvarnom vremenu**.
+* Svaka jezgra ima **100 Kbit SRAM-a** za pohranu stanja sinapsi.
+* Komunikacija među neuronima ide preko **AER (Address Event Representation)** paketa.
+* **Samo sabiranje i oduzimanje** su podržani — **nema množenja ni dijeljenja**.
+* **Svaki neuron ima do 256 sinapsi**, s težinama kodiranim u **2 bita** (vrlo grubo).
+* Nema mogućnost **učenja na čipu** — radi isključivo **inferencu**.
+* Trening se radi na vanjskim uređajima (npr. GPU), pa se naučene težine “prevode” u konfiguraciju čipa.
+
+**Podržani modeli:**
+
+* Izvršava **CNN** i **RNN** modele, ali samo u inference modu (bez učenja).
+
+**Značajne demonstracije:**
+
+* **CVPR 2017:** Event-based prepoznavanje gesta (DVS kamera + TrueNorth), 10 gesta, **96.5% točnost**, **0.18 W potrošnja**.
+* **CVPR 2018:** Event-based stereo vision (2 DVS kamere + 8 čipova), **2000 disparity mapa/s**, **200× energetski učinkovitije** od konkurencije.
+* **2019:** Scene-understanding sustav — detekcija i klasifikacija objekata u HD videu, **100+ FPS**.
+
+**Zaključak:**
+TrueNorth je **energetski ultra-efikasan digitalni neuromorfni čip** optimiziran za **brzu inferencu SNN-ova i CNN-ova**, ali **bez mogućnosti učenja na čipu**. Idealan je za **event-based obradu** (npr. geste, stereo vizija, scene).
+
+---
+
+
+---
+
+### 🔹 **Loihi (Intel, 2018 – 2021)**
+
+**Porijeklo:** Prvi **neuromorfni čip s učenjem na čipu (on-chip learning)**, razvijen od strane **Intela**.
+
+---
+
+### 🧠 **Loihi 1 (2018)**
+
+**Arhitektura i karakteristike:**
+
+* Sadrži **128 neuralnih jezgri**, **3 Pentium procesora** i **4 AER komunikacijska modula**.
+* Svaka jezgra simulira do **1,024 spiking neurona** i ima **128 KB SRAM-a** za sinapse.
+* Ukupno: ~**128,000 neurona** i ~**128 milijuna sinapsi** po čipu.
+* Ako je promet spikeova prevelik → sustav se **automatski usporava** (zadržava pouzdanost prijenosa).
+* Težine sinapsi: **1–9 bita**, **dinamične i promjenjive u hodu** (mogućnost učenja).
+* Svaka sinapsa ima i **kašnjenje (do 6 bitova)** te dodatnu **varijablu (do 8 bitova)** za lokalnu plastičnost.
+* Učenje se provodi **lokalno**, pomoću jednostavne formule (samo **zbrajanje i množenje**).
+
+**Najpoznatiji sustav:**
+
+* **Pohoiki Springs** – superračunalo s **768 Loihi čipova** (24 modula na jednoj ploči), koje simulira **100 milijuna neurona**.
+
+**Primjene (istraživački projekti):**
+
+* Prepoznavanje i segmentacija **slika i mirisa**
+* Obrada **sekvenci podataka**
+* Spiking **PID kontroleri**
+* **Najkraći put** u grafovima
+* **Robotska ruka** i **balansiranje drona (copter balancing)**
+* Treniranje SNN-a putem **surrogate gradijenata** ili **lokalnih pravila učenja**.
+
+---
+
+### ⚙️ **Loihi 2 (Intel, 2021)**
+
+**Glavne nadogradnje:**
+
+* I dalje 128 neuralnih jezgri, ali sada:
+
+  * **1,000,000 programabilnih neurona**
+  * **120 milijuna sinapsi**
+* Izrađen u **Intel 4 (7nm) tehnologiji**,
+
+  * **2.3 milijarde tranzistora**, **31 mm² površine**.
+* **3D multi-chip scaling** – čipovi se mogu povezivati u **3D prostoru** za nižu latenciju i veću efikasnost komunikacije.
+* **Generalizirani event-based model** s **graded spikes** (ne-binarni spikeovi s amplitudom do **32 bita**).
+* Time Loihi 2 prelazi prema **analogno-inspiriranim komunikacijama**, sličnim **NeuronFlow** konceptu.
+
+**Softverska podrška:**
+
+* Uz Loihi 2 uveden je **Lava framework** — open-source, cross-platform sustav za **process-based neuromorphic computing**.
+
+  * Radi na **CPU, GPU i Loihi 2**, omogućujući hibridni razvoj i simulaciju.
+
+---
+
+### ✅ **Zaključak:**
+
+Loihi je **prvi čip koji uči samostalno**, s **dinamičnim sinapsama i lokalnim pravilima plastičnosti**.
+
+* **Loihi 1:** temelj za on-chip learning i eksperimentalne sustave poput Pohoiki Springs.
+* **Loihi 2:** donosi **veću preciznost, 3D skaliranje, graded spikeove** i **Lava framework** — pravi korak prema **univerzalnoj, skalabilnoj neuromorfnoj arhitekturi**.
+
+---
+
+---
+
+### 🔹 **Tianjic (2019, Tsinghua University)**
+
+**Porijeklo:** Prvi **hibridni čip** koji može efikasno raditi s **ANN-ovima i SNN-ovima** unutar iste arhitekture.
+
+---
+
+### 🧠 **Arhitektura i karakteristike:**
+
+* **156 neuralnih jezgri**
+* Simulira **40,000 neurona** i **10 milijuna sinapsi**
+* Svaka jezgra sadrži **22 KB SRAM-a**
+* **Digitalni data bus** + **AER paketi** za komunikaciju
+* Skaliranje: **2D mesh network**
+* **On-chip learning nije podržan** — sve mreže se **prethodno treniraju na GPU-u**, a zatim prenose na Tianjic za inference.
+
+**Ključna prednost:**
+
+* **Hibridnost**: istim dijelovima čipa mogu se obrađivati različite vrste mreža (ANN + SNN)
+* **Niski overhead**: samo **3% čip površine** za podršku hibridnosti
+
+---
+
+### ⚡ **Performanse i efikasnost**
+
+* **SNN:** 22× brže i 10,000× energetski učinkovitije od GPU-a
+* **ANN:**
+
+  * LSTM: 467× energetski učinkovitije
+  * MLP: 723× energetski učinkovitije, 35× brže
+  * CNN: 53× energetski učinkovitije, 101× brže
+
+---
+
+### 🔧 **Primjeri primjene:**
+
+* **Bicycle motion control system** (jedan Tianjic čip):
+
+  * CNN: real-time detekcija objekata
+  * CANN: praćenje objekata
+  * SNN: glasovna kontrola
+  * MLP: balans i izbjegavanje prepreka
+* **Neural State Machine (NSM):** integrira više neuralnih mreža u jedan sustav
+
+---
+
+### ✅ **Zaključak:**
+
+Tianjic je **prvi univerzalni neuromorfni čip za hibridno izvođenje ANN + SNN**, ultra-efikasan i izuzetno brz za inference, ali **ne podržava učenje na čipu**. Idealan je za **multi-modalne sustave** koji kombiniraju različite vrste neuralnih mreža u stvarnom vremenu.
+
+---
+
+
+---
+
+### 🔹 **SpiNNaker (2011, University of Manchester)**
+
+**Porijeklo:** Prva **hardverska platforma dizajnirana isključivo za SNN istraživanje**.
+
+---
+
+### 🧠 **Arhitektura i karakteristike:**
+
+* **Masivno paralelno računalo**, **nije klasični čip**
+* Glavna komponenta: **specijalno dizajnirani mikrokrug** s **18 MB SRAM-a** i **144 ARM M4 procesora**
+
+  * Procesori imaju **ograničen set instrukcija** (npr. bez dijeljenja), ali su **visoko učinkoviti i niskopotrošni**
+* **SpiNNaker 2 (2018)** dodaje:
+
+  * Podršku za **rate-based DNN**
+  * **Aceleratore za numeričke operacije** (exp, log, random, MAC, conv2d)
+  * **Dynamic power management** (različiti napon i frekvencije po zadatku)
+
+---
+
+### ⚡ **Skalabilnost i paralelizam:**
+
+* Čipovi se montiraju na **ploče: 56 čipova/ploča**
+* Ploče u **rackovima: 25 ploča/rack**, **kabineti: 10 rackova/kabinet**
+* Asinhroni rad čipova → **fleksibilnost i skalabilnost**, komunikacija preko **AER paketa**
+* Različite strategije komunikacije: multicast, core-to-core, nearest neighbor
+
+---
+
+### 🔧 **Primjene i performanse:**
+
+* **Modeliranje bioloških moždanih struktura**
+* **Real-time simulacija 1 mm² kortikalnog stupca:** 77,000 neurona, 285,000,000 sinapsi, 0.1 ms timestep
+
+  * Na GPU-u **dva puta sporije od realnog vremena**
+* Skaliranje: povećanjem broja modula → **simulacija 100 mm² kolone**
+
+  * GPU ne može ovo zbog **synchronization limita**
+
+---
+
+### ✅ **Zaključak:**
+
+SpiNNaker je **ultra-skalabilna platforma za SNN**, dizajnirana za **istraživanje i simulaciju bioloških mreža u stvarnom vremenu**, s **masivnom paralelizacijom** i **asinhronim radom**. Idealan za **biološki inspirirane simulacije** i **large-scale SNN istraživanja**.
+
+---
+
+---
+
+### 🔹 **BrainScaleS (2020, Heidelberg University)**
+
+**Porijeklo:** ASIC uređaj razvijen u okviru **European Human Brain Project**, inspiriran **analogno-emuliranim spiking neuronima**.
+
+---
+
+### 🧠 **Arhitektura i karakteristike:**
+
+* **Analogna implementacija neurona**:
+
+  * Svaki neuron → elektronički krug s otpornikom i kondenzatorom
+  * Krug simulira ponašanje membranskog potencijala **biološkog neurona**
+* **BrainScaleS 2** dodaje digitalne procesore za **lokalno učenje (STDP)**
+* Komunikacija: **digitalni data bus + AER paketi**
+* Kapacitet čipa: **512 neurona**, **130,000 sinapsi**
+* **Velika brzina:** analogni neuron radi **10,000× brže od biološkog**
+
+---
+
+### ⚡ **Funkcionalnosti i performanse:**
+
+* Može se koristiti i za **klasične ANN operacije**, npr. **matrix-vector multiplication** u analognom modu
+* **On-chip learning** podržan, često koristeći **surrogate gradient metode**
+* Primjeri primjena:
+
+  * **Spiking MNIST**: 97.2% točnost, **8 µs latencija**, **2.4 µJ po slici**, ukupna potrošnja **0.2 W**
+  * **R-STDP Reinforcement Learning**: kontrola slider bara u igri sličnoj Atari PingPongu
+  * **Prepoznavanje govora** i druge SNN/ANN aplikacije
+
+---
+
+### ⚖️ **Prednosti i nedostaci:**
+
+**Prednosti:**
+
+* Ultra-brza analogna simulacija spiking neurona
+* Lokalno učenje podržano
+* Energetski vrlo efikasan
+
+**Nedostaci:**
+
+* **Nefleksibilan neuron model** (teško mijenjati funkcionalnost)
+* **Relativno velika površina** analognog neurona
+
+---
+
+### ✅ **Zaključak:**
+
+BrainScaleS je **analogno-inspirirani ASIC za spiking neurone**, ekstremno brz i energetski učinkovit, s podrškom za **lokalno učenje**, ali s ograničenom fleksibilnošću u definiranju neurona. Idealan je za **ultra-brze simulacije SNN i RL zadataka**.
+
+---
+
+---
+
+### 🔹 **NeuronFlow / GrAIOne (2020, GrAI Matter Labs)**
+
+**Porijeklo:** Projekt koji implementira **GrAIOne čip** i NeuronFlow arhitekturu za **brže obrade sparsnih i event-based podataka**.
+
+---
+
+### 🧠 **Arhitektura i karakteristike:**
+
+* **196 neuralnih jezgri**, svaka simulira **1,024 neurona** → ukupno **200,704 neurona**
+* Svaka jezgra ima **SRAM za pohranu stanja**
+* Komunikacija: **digitalni data bus + AER paketi**
+* Podržava **obradu i ANN i SNN**, ali **nema on-chip learning**
+
+---
+
+### ⚡ **NeuronFlow arhitektura:**
+
+* Ideja: **smanjiti nepotrebne izračune** koristeći **high correlation frames** u data-flow zadacima (video, audio)
+* Ako se aktivacija neurona **ne mijenja značajno između frameova**, **ne šalje se dalje**
+* **Rezultat:** drastično smanjenje broja sinaptičkih operacija i pristupa memoriji
+* Pogodno za **sporije promjenjive podatke**; za brzo promjenjive podatke prednosti nestaju
+
+---
+
+### 🔧 **Primjeri primjene:**
+
+* **PilotNet optimizacija** (Nvidia, autonomna vožnja):
+
+  * Smanjenje broja floating-point operacija **16×**
+  * Network prima sliku s prednje kamere i računa **kut upravljača**
+
+---
+
+### ✅ **Zaključak:**
+
+NeuronFlow / GrAIOne je **hibridni ANN/SNN akcelerator** fokusiran na **sparse i event-based podatke**, ekstremno efikasan u obradi sporih ili sličnih frameova, ali **bez mogućnosti učenja na čipu**. Idealan za **video/audio processing** i **autonomne sustave s visokom korelacijom podataka**.
+
+---
+
+---
+
+### 🔹 **DYNAP (Dynamic Neuromorphic Asynchronous Processors, SynSense, University of Zurich)**
+
+**Porijeklo:** Obitelj neuromorfnih rješenja s **patentiranom tehnologijom event-routing komunikacije** između jezgri.
+
+---
+
+### 🧠 **Arhitektura i karakteristike:**
+
+* **DYNAP-SE2 i DYNAP-SEL**: istraživački ASIC čipovi
+
+  * **Analogno računanje + digitalna komunikacija**
+* **DYNAP-CNN (2021, tinyML)**: komercijalni **fully digital chip** za SNN izvedene iz CNN-a
+* **DYNAP-SE2:**
+
+  * 4 jezgre, **1k LIFAT analognih neurona**, 65k sinapsi
+  * Konfigurabilni delay, težine i kratkotrajna plastičnost
+  * 4 tipa sinapsi: NMDA, AMPA, GABAa, GABAb
+* **DYNAP-SEL:**
+
+  * 5 jezgri, 1 jezgra s plastičnim sinapsama
+  * 1,000 analognih neurona, 80,000 konfigurabilnih sinapsi
+  * Podrška za **STDP** i lokalno učenje
+* **DYNAP-CNN:**
+
+  * 12 mm², **22nm tehnologija**
+  * > 1,000,000 spiking neurona, 4,000,000 parametara
+  * **Linear neuron model bez leak-a**
+  * Podržava SNN izvedene iz CNN-a (max 9 slojeva, 16 output klasa)
+  * **On-chip learning nije podržan**
+
+---
+
+### ⚡ **Primjene i performanse (Dynap-CNN):**
+
+* Optimalno kombiniran s **event-based senzorima (DVS)**
+* **Inference mode:** SNN konvertiran iz PyTorch CNN-a
+* Primjeri:
+
+  * **CIFAR-10:** 1 mJ @ 90% accuracy
+  * **Attention detection:** <50 ms, 10 mW
+  * **Gesture recognition:** <50 ms, 10 mW, 89% accuracy
+  * **Wake phrase detection:** <200 ms, 98% sensitivity, <1 false alarm/100 h
+
+---
+
+### ✅ **Zaključak:**
+
+DYNAP je **skup analogno-digitalnih i potpuno digitalnih neuromorfnih čipova** s fokusom na:
+
+* **Efikasnu komunikaciju između neurona (event-routing)**
+* **SNN izvedene iz CNN-a (Dynap-CNN)** za image/audio zadatke
+* **Istraživačke verzije (SE2, SEL)** podržavaju lokalno učenje i plastičnost
+* Idealan za **tinyML, DVS senzore i komercijalnu inferencu SNN-a**
+
+---
+
+#### JAKO BITNO
+---
+
+### 🔹 **Akida (2021, BrainChip, Australija)**
+
+**Prvi komercijalni neuromorfni procesor**, dostupan za **Edge computing**, **bez potrebe za eksternim CPU-om**.
+
+---
+
+### 🧠 **Arhitektura i karakteristike:**
+
+* **Power-efficient event-based processor**: 100 µW – 300 mW (ovisno o zadatku)
+* **1 chip** u mesh networku:
+
+  * 80 **Neural Processing Units (NPU)**
+  * Modelira **1,200,000 neurona** i **10,000,000,000 sinapsi**
+* TSMC 28 nm (1. generacija), 16 nm (2. generacija)
+* Podržava **CNN i Fully Connected ANN**, koje se mogu **transformirati u SNN**
+* **Ecosystem:**
+
+  * Free chip emulator
+  * TensorFlow kompatibilni **MetaTF framework**
+  * Set pre-trained modela
+* Ograničenja dizajna mreža:
+
+  * Max convolution size = 7
+  * Stride 2 podržan samo za convolution size 3
+  * Redoslijed slojeva i veličine mora biti kompatibilan s čipom
+
+---
+
+### ⚡ **Učenje i primjene (key feature!)**
+
+* **On-chip learning:**
+
+  * **Incremental**, **one-shot**, **continuous learning**
+  * **Samo zadnji fully connected layer** podržava synaptic plasticity
+  * Algoritam: **homeostatic STDP**
+* Primjeri:
+
+  * **One-shot face recognition** – prepoznavanje osobe nakon što je vidio samo jednom
+  * **Smart speaker** – prepoznavanje nove osobe i dodavanje imena u real-time
+  * **Event-based detection** – brzo pokretni objekti (npr. utrke automobila) i objekti izvan centra framea
+
+---
+
+### ✅ **Zaključak (što tebi treba za projekt)**
+
+* **Tvoj glavni fokus:**
+
+  * On-chip learning je ogroman plus za tvoje eksperimente
+  * Idealan za **event-based kamere** i **real-time SNN inference i learning**
+  * Možeš raditi **CNN → SNN transformacije** s MetaTF-om
+  * Komercijalno dostupan → možeš ga direktno koristiti, nema eksperimentalnih ograničenja
+
+---
+
