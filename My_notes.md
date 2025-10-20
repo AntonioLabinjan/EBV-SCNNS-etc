@@ -5872,3 +5872,42 @@ Structural sparsity (strukturna rijetkost):
 Mozak nema potpuno povezane slojeve — svaki neuron ima ograničen broj sinapsi (~5000).
 
 U dubokim mrežama moguće je “nultirati” preko 90% težina bez gubitka performansi, čime se dodatno smanjuje potrošnja resursa.
+
+Analog computing
+Digitalna reprezentacija i procesiranje informacija otkriva potencijal numeričkih metoda
+No, zbog velikog broja računalnih elemenata, taj je pristup skup
+Alternativa su analog circuits => mogu se koristiti za 2 svrhe: modeliranje dinamike membranskih potencijala i modeliranje sinaptičkih operacija
+Ponašanje bioliških neurona u pravilu se modelira sustavom diferencijalnih jednadžbi koje opisuju dinamuku membranskih potencijala i operacije ion pumpova
+U neodstatku analitičkog rješenja, numeričko rješavanje takvog sustava jednadžbi može biti vrlo skupo
+U mozgu, neuroni ne sadrže nodese koji odrađuju digital computation
+Koriste analog computation (dinamika membranskih potencijala)
+Slično rade i neki drugi fizički objekti (npr. RC circuits)
+Dakle, neuron se može modlirati ne samo numeričkim riješavanjem diferencijalnih jednadžbi, nego i korištenjem adekvatnog analognog strujnog kruga kojeg takve jednadžbe opisuju
+Analogni neuroni mogu biti 10000 puta brži i efikasniji i uz to podržavaju paralelizam
+
+Glavni nedostatak analognih neurona je nemogućnost direktne konfiguracije i debuggiranja zbog nedostatka digitalne memorije
+Analogni neuroni => princip: jedan neuron, jedan kompjuter
+Digitalni uređaji => jedan unit modelira mnogo neurona i koristi context switch između njih
+Analogni neuroni koriste se i za implementaciju sinaptičkih operacija
+
+
+---
+
+### **Analog computing – sinaptičke operacije**
+
+* Analogni sklopovi se koriste za **implementaciju sinaptičkih operacija** u neuronskim modelima.
+* Klasični neuronski model zahtijeva **Multiply and Accumulate (MAC)** operacije:
+  [
+  \text{sum} = W_1X_1 + W_2X_2 + ... + W_nX_n
+  ]
+* Ove se operacije mogu fizički realizirati pomoću **Ohmovog i Kirchhoffovog zakona**:
+  [
+  \text{sum} = I_1R_1 + I_2R_2 + ... + I_nR_n
+  ]
+  gdje:
+
+  * **struja (I)** predstavlja signal (X),
+  * **otpor (R)** predstavlja težinu (W).
+* U takvom analognom pristupu, **sve operacije množenja i zbrajanja odvijaju se paralelno** — **u jednom vremenskom taktu**, što značajno povećava brzinu i energetsku učinkovitost.
+
+---
