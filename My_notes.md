@@ -6344,3 +6344,69 @@ DYNAP je **skup analogno-digitalnih i potpuno digitalnih neuromorfnih čipova** 
 
 ---
 
+Memristors:
+🧠 Osnovni koncept:
+
+CMOS neuromorfni čipovi (TrueNorth, Loihi, Akida…) numerički simuliraju biološke mreže, ali nemaju stvarnu biološku sličnost na fizičkoj razini
+
+Memristori → dva terminala, provodljivost se mijenja ovisno o primijenjenom naponu/struji
+
+Teoretski predviđeni 1971, praktična demonstracija 2008
+
+Razni materijali na nano skali pokazuju memristivne osobine, različiti fizički mehanizmi
+
+⚡ Primjene memristora u neuromorfnoj elektronici:
+
+Vector-matrix multiplication u memoriji
+
+Ideja: brz i efikasan način za množenje težina i ulaza direktno u hardveru
+
+Spiking neural networks (SNN)
+
+Memristori mogu služiti za analogne sinapse i lokalne mehanizme učenja, puno bliže biološkom modelu
+
+✅ Zaključak:
+
+Memristori omogućuju hardverski neuromorfni dizajn koji je fizički sličniji biološkim mrežama
+
+Potencijal za brže, efikasnije i lokalno učeće SNN implementacije
+
+CMOS čipovi ostaju numerički simulacijski, memristori otvaraju novi pristup “analogno-biološkom” hardveru
+
+
+
+---
+
+### 🔹 **Što su memristori?** => memory + resistor :D
+
+Memristor je doslovno **“pametni otpornik”** ili **otpor koji pamti**. Evo kako to funkcionira:
+
+1. **Dva terminala** → slično otporniku, diode ili kondenzatoru
+2. **Promjena provodljivosti ovisi o struji/naponu koji kroz njega prolazi**
+
+   * Ako kroz njega pošalješ struju u jednom smjeru, postaje više provodan
+   * Ako struja ide u suprotnom smjeru, postaje manje provodan
+3. **Pamćenje** → kad ukloniš napon, memristor **“pamti” zadnju vrijednost otpora**
+
+   * To je kao da je tvoj memristor **sinapsa koja pamti koliko je jaka veza između neurona**
+
+---
+
+### 🔹 **Zašto je to važno za neuromorfni hardver:**
+
+* U klasičnom CMOS čipu: sinapsa je **broj u memoriji**, a neuroni su digitalni
+* S memristorom: sinapsa je **fizički element koji direktno uči i mijenja snagu veze**, baš kao u pravoj biologiji
+* Brže je i energetski efikasnije jer **nema potrebe za stalnim očitavanjem i pisanjem u RAM**
+
+---
+
+### 🔹 **Najlakša analogija:**
+
+* Zamisli **vodovod**:
+
+  * Normalni otpornik → čvrsto otporan, voda prolazi koliko dopušta
+  * Memristor → ventili koji **pamte koliko su bili otvoreni zadnji put** → ako si prošli put pustio puno vode, sad opet pušta lako, ako si zatvorio, sad pušta teško
+
+---
+
+
