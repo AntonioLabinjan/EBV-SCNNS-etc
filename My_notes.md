@@ -6466,3 +6466,68 @@ Množenje vektora i matrica u memoriji
 
 ---
 
+🔹 Memristori u SNN – glavni highlights:
+1️⃣ Učenje i STDP:
+
+Fokus je uglavnom na unsupervised learning
+
+Sinaptičke težine mijenjaju se prema biološki realističnom STDP pravilu
+
+Ako se koriste odgovarajući signali, memristor može adaptirati težine poput bioloških sinapsi
+
+IBM je demonstrirao 256 neuronski CMOS core + 65,536 memristorskih sinapsi s pojednostavljenim STDP
+
+Primjena: auto-asocijacija obrazaca
+
+2️⃣ Neuromorfni principi implementirani u memristorima:
+
+STDP (symmetric i asymmetric)
+
+SRDP – spike-rate-dependent plasticity
+
+LTD / LTP – long-term depression/potentiation
+
+Implementacije klasičnih neuron modela: Hodgkin–Huxley, Morris–Lecar, FitzHugh–Nagumo
+
+🔹 Osobine memristora važne za neuromorfni dizajn:
+
+Promjena fizičke strukture → promjena provodljivosti
+
+Duže zadržavanje stanja od SRAM/DRAM → pogodno za ReRAM
+
+ReRAM:
+
+Trajanje pohrane > 10 godina
+
+Napon rada < 1V
+
+Broj rewrite ciklusa > 10¹⁷
+
+Potrošnja 10 fJ/bit
+
+Digitalno i analogno:
+
+Analog: multilevel stanja → do 256 razina (8 bit)
+
+Ovisnost o struji i smjeru struje → pamti koliko i u kojem smjeru je struja prolazila
+
+Vrijeme rada: sekunde → nanosekunde
+
+Skalabilnost: <10 nm, kompatibilno s CMOS → visoka gustoća računa
+
+🔹 Problemi / izazovi:
+
+Parametri proizvedenih memristora mogu varirati (scatter)
+
+Nelinearnost struja-napon
+
+Ograničen raspon provodljivosti
+
+🔹 Zaključak:
+
+Memristori su fizički element koji integrira memoriju i izračun
+
+Omogućuju analogno i STDP učenje direktno u hardveru
+
+Već pokazali odlične rezultate u malim demonstracijama, ali komercijalna primjena još je u ranoj fazi zbog tehnoloških izazova
+
