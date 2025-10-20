@@ -5,3 +5,4 @@ Ovo mi je toliko bitno da ću hitit u readme😂
 Jebe me setupiranje cnn2snn alata...malo detaljnije kopat po temu :D
 
 https://doc.brainchipinc.com/user_guide/user_guide.html
+https://doc.brainchipinc.com/user_guide/cnn2snn.html
