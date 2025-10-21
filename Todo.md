@@ -1,3 +1,4 @@
+Za new best.py
 
 1. Treniraj CNN na CIFAR-10 s augmentacijama.
 
