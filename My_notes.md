@@ -7208,3 +7208,18 @@ Optimal Deployment Scenarios:
 - SageMaker => velike enterprise-level stvari
 - Akida => edge devices i slučajevi di bi tradicionalni kompjuter bili prespori ili trošili previše energije
 
+
+Tablica tunable parametara i ča oni znače
+
+| Parametar                  | Efekt                                                |
+| -------------------------- | ---------------------------------------------------- |
+| `filters` u Conv slojevima | Veći broj = veći kapacitet (ali više memorije)       |
+| `kernel_size`              | Veći kernel (5x5) bolje hvata strukture, ali sporije |
+| `stride`                   | Manji stride (1) čuva više detalja                   |
+| `BatchNormalization`       | Uvijek ga koristi                                    |
+| `epochs`                   | Više epoha → bolja točnost (do granice overfittinga) |
+| `learning_rate`            | Najkritičniji hiperparametar                         |
+| `augmentation`             | Ogroman utjecaj kod slikovnih datasetova             |
+| `quantization bits`        | Manje bita = brže, ali manja točnost                 |
+| `padding='same'`           | Održava prostorne dimenzije → stabilnije treniranje  |
+
