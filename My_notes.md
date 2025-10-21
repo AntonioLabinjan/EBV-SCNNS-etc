@@ -7128,3 +7128,83 @@ Omogućiti **učenje novih klasa direktno na čipu**, što omogućava **efikasno
 * **Prednost Akida:** omogućava on-chip learning → fleksibilno dodavanje novih klasa bez ponovnog treninga cijelog modela
 
 ---
+
+Analyzing Amazon SageMaker and BrainChip Akida Neuromorphic Processor, pioneering approaches in machine learning
+Rustam Khmadamov & co.
+
+Detaljna usporedna analiza 2 napredne machine learning tehnologije.
+Amazon SageMaker & BrainChip Akida neuromorfni procesori
+
+Amazon SageMaker => AWS servis koji omogućava skalabilno buildanje, treniranje i deployment machine learning modela
+Podržava razne frameworkove i nudi automatizirani infrastructure management
+
+BrainChip Akida uvodi neuromorfni pristup koji je dizajniran da imitira mozak (low-power AI computations ideal for edge devices)
+
+SageMaker => skalabilni cloud-based environmenti koji zahtjevaju robustnu obradu podataka i fleksibilnost u uporabi računalnih resursa
+
+AI i ML rapidno rastu i razvijaju se nove tehnologije.
+Neke od inovacija su BrainChip Akida i Amazon SageMaker
+ 
+Svaka od tih tehnologija nudi unikatan pristup machine learningu prilagođen za razna područja
+
+Amazon SageMaker => cloud based
+Omogućava rad s velikinbrojen ML frameworka i environmenta
+Podržava cijeli ML workflow od smišljanja same ideje modela do deploymenta i managementa
+Robusno i skalabilno
+Train once, run everywhere
+
+Akida BrainChip => promjena paradigme => neuromorfni dizajn procesora
+Oponašanje neuralne strukture ljudskog mozga
+Efikasni izračuni uz jako malo potrošene enrgije
+Edge computing: IOT, autonomna vozila itd.
+Lokalno procesiranje podataka, brži response time, smanjena ovisnost o cloud servisima
+
+Akida Development env ukljuuje: Akida Execution Engine, data-2-spike convertere i model zoo koji sadržava razne pre-created SNN modele
+Pisano u Pythonu
+
+Akida Execution Engine => softverska simulacija Akida neurona i sinapsi + brojne podržane trening metodologije
+Lako mu se pristupa koristeći API callove kroz python skripte
+Korisnik mže definirati svoje topologije neural networka, training metode i datasete za execution
+Na temelju strukture Akida neurona, execution engine podržava više trening metoda (uključujući unsupervised training i unsupervised training s labeliranim finalnim layerom)
+
+Ima mnogo raznolikih tehnologija. Od cloud-based skalabilnih platformi do edge-based efikasnih procesora.
+
+Amazon SageMaker => širok, fully managed servis koji pojednostavlja cijeli proces buildinga, treninga i deploymenta ML modela
+Nudi pristup postojećim ML frameworcima i ugrađene optimizirane algoritme
+
+Core Features:
+Versatile Framework Support: više ML frameworka (Tensorflow, Pytorch, MXNet)
+Ease of Deployment: brzi deployment i skaliranje s automatskim davanjem nužne infrastrukture
+Integrated Development Environment: SageMaker Studio => sve se more delat unutra (od treninga do deploymenta)
+
+Primjene: robust and scalable ML solutions (financije, medicina i sl.)
+
+Akida Brainchip => inspiriran neuronskim strukturama ljudskog mozga. Visoko efikasni neuralni izračuni na hardveru => edge applications di su bitni potrošnja snage i brzina
+
+Core Features:
+Event based processing => procesira inpute kao evente (slično kao neuroni u mozgu)
+Štedi energiju tako ča aktivira procesiranje samo kad dođu novi podaci
+
+On-Chip Learning => za razliku od tradicionalnih modela koji zahtjevaju da se podaci šalju nazad na cetralni server za retraining, Akida može učiti direktno na čipu (super za rad u remote i mobile environmentima)
+
+Low Power Requirement => izrazito mala potrošnja energije (ključno za deployment na edge devices (npr. senzori ili mobiteli)
+
+Primjene Akida arhitekture:
+Autonomna vozila, IOT, ostali slučajevi di je bitno lokalno i efikasno procesiranje bez latencije
+
+Komparativna analiza:
+Scalability VS Efficiency:
+- SageMaker roka u slučajevima di nan triba skalabilnost i fleksibilnost
+- Akida je super za slučajeve di nan triba efikasnost i lokalno procesiranje
+
+- SageMaker koristi cloud za large-scale data management i kompleksno treniranje modela
+- Akida se fokusira  na reliable edge computations
+
+Learning Capabilities:
+- SageMaker je super za scenarije di se modeli treniraju na velikim datasetima i rijeđe se updateaju
+- Akida je super za učenje " u letu " i za dinamične environmente di modeli terbaju kontinuirano evoluirati na temelju novih senzorskih inputa
+
+Optimal Deployment Scenarios:
+- SageMaker => velike enterprise-level stvari
+- Akida => edge devices i slučajevi di bi tradicionalni kompjuter bili prespori ili trošili previše energije
+
