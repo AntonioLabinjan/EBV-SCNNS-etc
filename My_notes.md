@@ -7223,3 +7223,1316 @@ Tablica tunable parametara i ča oni znače
 | `quantization bits`        | Manje bita = brže, ali manja točnost                 |
 | `padding='same'`           | Održava prostorne dimenzije → stabilnije treniranje  |
 
+
+################# PAPER O KONVERZIJAMA CNN U SNN #######################################
+Muy importante
+
+Problem:
+
+Duboke CNN mreže imaju odlične rezultate u stvarnim aplikacijama.
+
+Real-time inferencija u velikim CNN-ovima je izazov zbog računalnih zahtjeva.
+
+Rješenje:
+
+CNN se može konvertirati u duboke spiking neural networks (SNNs).
+
+SNN-ovi održavaju sličnu točnost kao CNN, ali:
+
+Smanjuju latenciju.
+
+Smanjuju računalni load zbog event-based (događajno pokretanog) stila računanja.
+
+Teorijski doprinos:
+
+Autori nude novu teoriju koja objašnjava uspješnost konverzije CNN → SNN.
+
+Na temelju teorije razvijaju alate za konverziju šire i moćnije klase deep mreža u SNN.
+
+Rješavanje grešaka u konverziji:
+
+Identificirani su glavni izvori aproksimacijskih grešaka u ranijim metodama.
+
+Predloženi su jednostavni mehanizmi za njihovo ispravljanje.
+
+Spiking implementacije ključnih CNN operacija:
+
+Max-pooling
+
+Softmax
+
+Batch-normalization
+
+Ove implementacije omogućuju skoro bez gubitka točnosti pri konverziji bilo koje CNN arhitekture u SNN.
+
+Rezultati i evaluacija:
+
+Testirano na MNIST i CIFAR10.
+
+Postignuti su najbolji rezultati SNN-a do sada.
+
+---
+
+### 🔹 Osnovna razlika: način obrade informacija
+
+* **SNNs** obrađuju informacije **samo kad dođe novi relevantan događaj (spike/event)**.
+* **ANNs** rade **frame-based obradu** – procesiraju cijeli ulaz, sloj po sloj, sve dok ne dobiju konačni izlaz.
+* Dakle, SNN = **event-driven**, ANN = **frame-driven**.
+
+---
+
+### 🔹 Prednosti SNN-ova
+
+* **Manja latencija**:
+
+  * Mogu dati rezultat **odmah nakon prvog izlaznog spike-a**.
+  * ANN mora čekati da svi slojevi kompletno obrade cijeli ulaz.
+* **Manji računalni trošak**:
+
+  * Aktivira se samo kad ima novi input → štedi energiju i vrijeme.
+* **Odlični za real-time primjene**.
+
+---
+
+### 🔹 Učinkovitost i performanse
+
+* Istraživanja (Neil et al. 2016, Farabet et al. 2012, O’Connor et al. 2013, itd.) pokazuju da je
+  **event-based obrada vrlo učinkovita** za **deep neural networke**.
+* Deep SNNs mogu **zadržati točnost ANNs-a**, ali uz **bržu i energetski efikasniju obradu**.
+
+---
+
+### 🔹 Kompatibilnost s event-based senzorima
+
+* **SNNs prirodno rade s event-based senzorima** (npr. DVS – Dynamic Vision Sensor).
+* Ali i kod klasičnih “frame-based” aplikacija (npr. object recognition, detection) su pokazali odlične rezultate.
+
+---
+
+### 🔹 Hardverska izvedba
+
+* SNN-ovi se posebno ističu kad rade na **neuromorfnom hardveru** (npr. TrueNorth, Loihi, Akida).
+* Tada su **brži, efikasniji i s nižom potrošnjom energije**.
+
+---
+
+### 🔹 Potencijalne primjene
+
+* **Real-time detekcija objekata u dinamičnim scenama**.
+* **Praćenje (tracking)** pokretnih objekata.
+* **Activity recognition** – prepoznavanje radnji ili pokreta u stvarnom vremenu.
+* Sve situacije gdje je bitna **brza i energetski učinkovita klasifikacija**.
+
+---
+---
+
+### 🔹 Problem treniranja SNN-ova
+
+* **Izravno treniranje dubokih SNN-ova** na temelju njihovih spike aktivnosti je **izuzetno teško**.
+* Tek su **nedavno** razvijene metode koje omogućuju **backpropagation-like učenje u SNN-ovima** (npr. Lee et al., 2016).
+
+---
+
+### 🔹 Alternativni pristup: konverzija iz ANN-a
+
+* Umjesto direktnog treniranja, **SNN-ovi se mogu konstruirati konverzijom** iz klasično treniranih ANNs.
+* Ideja:
+
+  * Aktivacije neurona u ANN-u se **mapiraju na frekvenciju spike-ova** u SNN-u (firing rate).
+  * Time se prenosi naučeno znanje iz ANN-a u SNN oblik.
+
+---
+
+
+### 🔹 Cilj rada
+
+* **Identificirati izazove i greške** koji se pojavljuju pri toj konverziji.
+* Razviti **novu teoriju** koja objašnjava te probleme.
+* Predložiti **nove mehanizme** koji **značajno poboljšavaju performanse dubokih SNN-ova** nakon konverzije.
+
+---
+---
+
+### 🔹 Rani radovi na ANN → SNN konverziji
+
+#### 🧠 (Perez-Carrasco et al., 2013)
+
+* **Prvi rad** koji je pokrenuo područje ANN→SNN konverzije.
+* CNN jedinice prevedene u **biološki inspirirane spiking neurone** s *leak* i *refractory period* mehanizmima.
+* Fokus: **obrada podataka s event-based senzora**.
+
+---
+
+#### ⚡ (Cao et al., 2015)
+
+* Uspostavili vezu između **firing frekvencije neurona** i **ReLU aktivacije** u ANN-u.
+* Pokazali da se ReLU jedinice mogu učinkovito mapirati na spiking neurone.
+* Postigli dobre rezultate na **standardnim vision benchmarkovima (npr. MNIST, CIFAR)**.
+* Ograničenja:
+
+  * CNN-ovi **bez bias-a**.
+  * Samo **average pooling** (bez max-poolinga).
+
+---
+
+#### 🧩 (Diehl et al., 2015)
+
+* Uveli **weight normalization** kako bi smanjili aproksimacijske pogreške.
+* Time omogućili **gotovo bezgubitnu konverziju** ANN→SNN za MNIST.
+* Normalizacija sprječava:
+
+  * Prekomjerno “firinganje” neurona.
+  * Ili premalo aktivaciju neurona (mrtvi neuroni).
+
+---
+
+#### 🔉 (Hunsberger & Eliasmith, 2015)
+
+* Uveli **noise injection tijekom treniranja ANN-a**.
+* To povećava **robustnost konvertiranog SNN-a** prema aproksimacijskim pogreškama.
+* Koristili **biološki realističnije neuron modele** (npr. LIF neurone).
+
+---
+
+#### 💾 (Esser et al., 2016)
+
+* Prilagodili CNN-ove za **neuromorfni hardver TrueNorth**.
+* Koristili **niskoprecizne težine** i **ograničene veze** između neurona.
+* Pokazali da se SNN-ovi mogu **optimizirati direktno za specifične čipove**.
+
+---
+
+#### 🔻 (Zambrano & Bohte, 2016)
+
+* Razvili **adaptive SNN-ove** koji kodiraju informaciju s **minimalnim brojem spikeova**.
+* Time postigli **visoku točnost** uz **red veličine manje spikeova** od drugih pristupa.
+
+---
+
+### 🔹 Glavni zaključak iz dosadašnjih radova
+
+* SNN-ovi mogu postići **blizu state-of-the-art točnost** ANNs-a.
+* Istovremeno omogućuju:
+
+  * **bržu klasifikaciju**,
+  * **manju potrošnju energije**,
+  * **izvršavanje na low-power neuromorfnim platformama**.
+
+---
+
+🔹 Fokus istraživanja
+
+Istražuje se algoritam konverzije Diehl et al. (2015).
+
+Taj algoritam je uspješno konvertirao male ANN modele u SNN uz minimalan gubitak točnosti
+→ <1% na MNIST-u.
+
+🔹 Problem kod većih mreža (CIFAR-10)
+
+Kada se isti algoritam koristi na većim i kompleksnijim mrežama,
+dolazi do velikog pada točnosti (~10% ili više).
+
+Uzrok:
+
+Smanjena firing frekvencija u višim slojevima mreže.
+
+To je posljedica pretjerano konzervativne (pessimistic) normalizacije težina.
+
+🔹 Ograničenja postojećih metoda (Diehl 2015, Cao 2015)
+
+Mogu konvertirati samo jednostavne CNN arhitekture.
+
+Nedostajala podrška za ključne komponente modernih CNN-ova:
+
+Max-pooling
+
+Softmax
+
+Batch Normalization (Ioffe & Szegedy, 2015)
+
+Bias neurona
+
+🔹 Cilj ovog rada
+
+Analitički istražiti problem konverzije ANN → SNN (u Section 2).
+
+Predstaviti nove alate i trikove (u Section 3) koji:
+
+Omogućuju konverziju šire klase CNN arhitektura.
+
+Znatno poboljšavaju točnost konvertiranih SNN-ova.
+
+Evaluacija novih metoda na CIFAR-10 benchmarku (u Section 4).
+
+🔹 Ključni doprinos
+
+➡️ Ovaj rad proširuje granice konverzije ANN→SNN — omogućava da se moderne CNN arhitekture (s max-poolingom, batch normom itd.)
+gotovo bez gubitka točnosti prevedu u efikasne, event-based SNN-ove pogodne za real-time obradu i neuromorfni hardver.
+
+🔹 Analitička analiza ANN → SNN konverzije
+🧠 Ideja
+
+Cilj je matematički objasniti kako firing rate neurona u SNN-u aproksimira ReLU aktivaciju u ANN-u.
+
+Ova poveznica je prvi put predložena u Cao et al. (2015), ali bez teorijske podloge.
+
+Autori sada razvijaju formalnu teoriju i uvode poboljšani reset mehanizam koji daje točniju aproksimaciju.
+
+🔹 Postavke modela
+
+Pretpostavlja se jedan-na-jedan odnos između ANN neurona i SNN neurona.
+
+ANN slojevi: 
+𝑎
+𝑖
+𝑙
+=
+max
+⁡
+(
+0
+,
+∑
+𝑗
+𝑊
+𝑖
+𝑗
+𝑙
+𝑎
+𝑗
+𝑙
+−
+1
++
+𝑏
+𝑖
+𝑙
+)
+a
+i
+l
+	​
+
+=max(0,∑
+j
+	​
+
+W
+ij
+l
+	​
+
+a
+j
+l−1
+	​
+
++b
+i
+l
+	​
+
+)
+
+SNN neuroni imaju membranski potencijal 
+𝑉
+𝑖
+𝑙
+(
+𝑡
+)
+V
+i
+l
+	​
+
+(t) i ulazni tok struje 
+𝑧
+𝑖
+𝑙
+(
+𝑡
+)
+z
+i
+l
+	​
+
+(t).
+
+Svaki neuron spike-a kad 
+𝑉
+𝑖
+𝑙
+(
+𝑡
+)
+V
+i
+l
+	​
+
+(t) premaši threshold.
+
+Firing rate 
+𝑟
+𝑖
+𝑙
+(
+𝑇
+)
+=
+𝑁
+𝑖
+𝑙
+(
+𝑇
+)
+/
+𝑇
+r
+i
+l
+	​
+
+(T)=N
+i
+l
+	​
+
+(T)/T, gdje 
+𝑁
+𝑖
+𝑙
+(
+𝑇
+)
+N
+i
+l
+	​
+
+(T) označava broj spike-ova u vremenu T.
+
+Cilj konverzije: 
+𝑟
+𝑖
+𝑙
+(
+𝑇
+)
+∝
+𝑎
+𝑖
+𝑙
+𝑟
+𝑚
+𝑎
+𝑥
+r
+i
+l
+	​
+
+(T)∝a
+i
+l
+	​
+
+r
+max
+	​
+
+
+🔹 Dva mehanizma reseta
+
+Reset-to-zero (Diehl et al., 2015)
+
+Nakon spike-a membranski potencijal se vraća na nulu.
+
+Jednostavno za implementaciju, ali:
+
+Uvodi sistemsku pogrešku aproksimacije koja se ne smanjuje ni s duljim vremenom simulacije.
+
+Pogreška se akumulira kroz slojeve → degradira točnost kod dubljih mreža (npr. CIFAR-10).
+
+Veći i manji inputi djelomično poboljšavaju aproksimaciju, ali uz veće vrijeme integracije.
+
+Weight normalization (Diehl 2015) pomaže jer osigurava da aktivacije ne prelaze 1 → smanjuje firing error.
+
+Preciznost se može dodatno povećati smanjenjem timestep-a, ali to povećava računski trošak.
+
+Reset-by-subtraction (novi pristup)
+
+Umjesto vraćanja na nulu, od 
+𝑉
+𝑖
+𝑙
+(
+𝑡
+)
+V
+i
+l
+	​
+
+(t) se oduzima threshold vrijednost.
+
+Ovo vodi do varijabilnog vremena između spike-ova, što bolje prati ReLU aktivaciju.
+
+Firing rate sada konvergira prema ciljnoj vrijednosti 
+𝑎
+𝑖
+𝑙
+𝑟
+𝑚
+𝑎
+𝑥
+a
+i
+l
+	​
+
+r
+max
+	​
+
+ s minimalnom greškom.
+
+Jedina preostala pogreška je zbog diskretizacije vremenskog koraka (sampling error).
+
+Rezultat: točnija aproksimacija i značajno bolja točnost kod dubljih mreža.
+
+🔹 Dodatna napomena — problem saturacije
+
+Ako je ulazni signal 
+𝑧
+𝑖
+1
+>
+𝜃
+z
+i
+1
+	​
+
+>θ, neuron postiže maksimalni firing rate 
+𝑟
+𝑚
+𝑎
+𝑥
+r
+max
+	​
+
+, ali ne može doseći ciljnu frekvenciju.
+
+Zato je weight normalization i dalje potreban → sprječava saturaciju i prevelike ulazne struje.
+
+🔹 Zaključak
+
+Novi reset-by-subtraction mehanizam uklanja glavni izvor aproksimacijske pogreške prethodnih metoda.
+
+Time se poboljšava preciznost ANN→SNN konverzije, osobito kod dubljih i kompleksnijih mreža poput onih za CIFAR-10.
+
+Empirijski rezultati (kasnije u Section 4) potvrđuju da ova promjena donosi značajan porast točnosti bez dodatnih troškova treniranja.
+
+Error propagation u firing rateovima kroz layere
+🧠 1. Glavna poanta
+
+Kad konvertiraš klasični ANN u SNN, ideja je da aktivacija ReLU neurona odgovara firing rateu spiking neurona.
+To u prvim slojevima dobro funkcionira jer su ulazi relativno "glatki" (konstantni ili analogni).
+Ali čim dođeš do viših slojeva, input neuroni ne daju više konstantne struje nego neredovite spike trainove.
+
+Zbog toga prosječni ulaz koji neuron vidi u višim slojevima nije stabilan — što znači da output firing rate postaje manje točan.
+
+🔁 2. Jednadžbe (7) i (8) — što znače
+
+Autori izvode analitički izraz za firing rate neurona u sloju l:
+
+𝑟
+𝑖
+𝑙
+(
+𝑇
+)
+=
+∑
+𝑗
+=
+1
+𝑀
+𝑙
+−
+1
+𝑊
+𝑖
+𝑗
+𝑙
+𝑟
+𝑗
+𝑙
+−
+1
+(
+𝑇
+)
++
+𝑟
+𝑚
+𝑎
+𝑥
+𝑏
+𝑖
+𝑙
+−
+𝑉
+𝑖
+𝑙
+(
+𝑇
+)
+𝑇
+r
+i
+l
+	​
+
+(T)=
+j=1
+∑
+M
+l−1
+	​
+
+	​
+
+W
+ij
+l
+	​
+
+r
+j
+l−1
+	​
+
+(T)+r
+max
+	​
+
+b
+i
+l
+	​
+
+−
+T
+V
+i
+l
+	​
+
+(T)
+	​
+
+
+prvi član → linearna kombinacija firing rateova iz prethodnog sloja
+
+drugi član → bias (skaliran maksimalnim firing rateom)
+
+treći član → aproksimacijska pogreška uzrokovana resetiranjem membranskog potencijala
+
+Kad se ovo iterativno primijeni sloj po sloj (vidi jednadžbu 8), vidi se da se pogreške akumuliraju!
+Dakle, ako prvi sloj ima firing rate 0.9 idealnog, drugi može pasti na 0.8, treći na 0.6…
+To je upravo ono što vodi do “silent neurons” u višim slojevima — neuroni koji gotovo uopće ne pucaju.
+
+📉 3. Posljedica
+
+Zbog akumuliranih pogrešaka i smanjenih firing rateova:
+
+visoki slojevi gube ekspresivnost
+
+mreža ne može “aktivirati” bitne značajke
+
+rezultat je značajan pad točnosti (10%+ na CIFAR-10)
+
+To je ono što su autori i empirijski vidjeli — da Diehl-ov algoritam radi odlično na MNIST-u, ali se raspada na CIFAR-10.
+
+⚙️ 4. Zašto se to događa
+
+“Reset-by-subtraction” model uvodi mali bias error svaki put kad neuron puca.
+
+Svaka razina taj bias umnoži svojim težinama, i tako pogreška raste eksponencijalno.
+
+Weight normalization (iz Diehl et al.) često bude previše konzervativan → svi neuroni pucaju premalo.
+
+Znači, iako normalizacija sprječava “previše spikeova”, ubija aktivnost viših slojeva.
+
+🚀 5. Što ovo motivira
+
+Zbog svega toga, ova sekcija motivira nove trikove koje će autori predložiti u idućem dijelu rada (Section 3), kao što su:
+
+optimiranije normalizacije težina
+
+dopuštanje biasova, batch norm, maxpoola
+
+metode za održavanje firing rateova stabilnima kroz dubinu mreže
+
+
+Cilj ovih novih metoda je smanjiti aproksimacijske pogreške i proširiti spektar ANN arhitektura koje se mogu konvertirati u SNN.
+
+Prethodne metode (Cao, Diehl, itd.) su bile previše ograničene:
+
+nisu dopuštale biasove
+
+nisu podržavale batch norm, maxpool, softmax
+
+često su ubijale firing rate u višim slojevima
+
+Ovaj rad to želi popraviti kroz tri ključne ideje (od kojih prve dvije su gore opisane):
+
+⚙️ 3.1 Converting Biases
+
+Problem:
+Prijašnje metode su jednostavno izbacivale biasove iz mreže jer nisu znali kako ih fizički interpretirati u spiking modelu.
+Ali to je loše — biasovi su ekstremno bitni za shiftanje aktivacija i stabilnost neuronskih distribucija.
+
+Rješenje:
+Autori kažu — “U SNN-u bias = konstantni ulazni tok struje u neuron” ⚡
+Dakle, bias se može emulirati tako da neuron u svakoj vremenskoj iteraciji prima dodatni “bias current” proporcionalan biasu iz ANN-a.
+
+Matematički:
+
+𝐼
+𝑖
+(
+𝑡
+)
+=
+∑
+𝑗
+𝑊
+𝑖
+𝑗
+𝑟
+𝑗
+(
+𝑡
+)
++
+𝑏
+𝑖
+I
+i
+	​
+
+(t)=
+j
+∑
+	​
+
+W
+ij
+	​
+
+r
+j
+	​
+
+(t)+b
+i
+	​
+
+
+Bias 
+𝑏
+𝑖
+b
+i
+	​
+
+ je samo konstantni dodatak membranskom potencijalu — nema ništa nebiološko u tome!
+
+Znači — problem riješen: možemo konvertirati bilo koju mrežu koja ima biasove (a to je praktički svaka CNN arhitektura danas).
+
+⚙️ 3.2 Parameter Normalization (prošireno)
+
+Kontekst:
+Diehl et al. (2015) su uveli weight normalization kako bi kontrolirali firing rateove unutar fizički mogućeg raspona [0, r_max].
+Ideja je bila:
+
+ako su težine prevelike → neuroni pucaju prečesto
+
+ako su premale → neuroni ne pucaju dovoljno
+
+Ali njihova normalizacija je bila podatkovno slijepa i nije podržavala biasove.
+
+Ovdje autori donose dvije ključne nadogradnje:
+
+🧩 1. Data-based normalization for biases
+
+Sada se i bias normalizira zajedno s težinama:
+
+𝑊
+~
+,
+𝑏
+~
+=
+𝑊
+,
+𝑏
+𝜆
+𝑙
+W
+~
+,
+b
+~
+=
+λ
+l
+	​
+
+W,b
+	​
+
+
+gdje je 
+𝜆
+𝑙
+λ
+l
+	​
+
+ faktor koji se računa iz najvećih aktivacija u sloju na stvarnim podacima (npr. kroz batch forward pass).
+
+To omogućuje da i neuroni s biasovima imaju kontroliran firing rate i ne sature u gornjoj granici.
+
+🧩 2. Outlier-robust normalization
+
+Prijašnji pristupi su koristili maksimalnu aktivaciju iz sloja za normalizaciju, što može biti loše ako imaš samo nekoliko ekstremnih neurona (outliere).
+To je dovodilo do prevelikog smanjenja težina → svi drugi neuroni pucaju presporo.
+
+Zato ovi autori uvode robustni heuristički pristup:
+
+umjesto max uzimaš, recimo, percentil 99.9% ili neku sličnu statistiku
+
+to čini normalizaciju stabilnijom i sprječava “underfiring problem”
+
+Zamisli to kao “clipping” ekstremnih vrijednosti, tako da cijela mreža diše normalno, bez da outlier ubije dinamiku.
+
+🧩 Ukratko — što si dobio ovim metodama:
+Problem u starim konverzijama	Rješenje ovdje	Efekt
+Biasovi nisu bili podržani	Bias → konstantni input current	Više arhitektura kompatibilno
+Weight norm bila slijepa i nestabilna	Data-driven i robust normalization	Stabilniji firing rateovi
+Outlieri ubijali dinamiku	Percentil-based heuristika	Ravnomjernija aktivnost po slojevima
+
+
+---
+
+## ⚙️ 3.2.1 Normalization with Biases
+
+### Problem:
+
+U prijašnjem Diehl-ovom algoritmu (2015), normalizacija težina bila je izvedena tako da se svi **ReLU outputi** ograniče ispod 1 (tj. `a < 1`), ali taj pristup **nije uključivao biasove**.
+
+To znači da si mogao normalizirati težine kako treba, ali su ti biasovi i dalje mogli “odletjeti” i preopteretiti neurone, uzrokujući saturaciju firing rate-a.
+
+---
+
+### Njihovo rješenje:
+
+Proširili su taj pristup tako da **biasovi i težine idu zajedno u istu skalu**.
+Dakle, ako sloj ima maksimalnu ReLU aktivaciju `λ_l`, onda:
+
+[
+W_l \leftarrow W_l \cdot \frac{\lambda_{l-1}}{\lambda_l}
+]
+[
+b_l \leftarrow b_l / \lambda_l
+]
+
+Ideja: **sve unutar jednog sloja se skalira zajednički**, jer se informacija (aktivacija) mora zadržati proporcionalno između svih neurona tog sloja.
+
+➡️ Time se osigurava da svi neuroni u tom sloju *“rade u istom energetskom rasponu”*, i da bias ne napravi kaos u dinamici spikinga.
+
+---
+
+## ⚙️ 3.2.2 Robust Normalization (“Percentile Normalization”)
+
+E sad dolazi *game changer*!
+
+### Problem s “max-norm” metodom:
+
+Diehl-ov algoritam je uzimao **maksimalnu aktivaciju kroz cijeli dataset** i koristio to kao normalizacijski faktor:
+
+[
+\lambda_l = \max(a_l)
+]
+
+To je ekstremno konzervativno — štiti te od saturacije, ali u praksi **ubija firing rate** kod većine neurona 😅
+
+Zamisli: ako jedan jedini sample izazove aktivaciju 3× veću od prosjeka → cijeli sloj se skalira prema njemu.
+Rezultat: 99% neurona sada jedva puca, jer su im težine previše oslabljene.
+
+To znači:
+
+* mreža postaje **“under-active”**
+* **informacija sporo putuje** kroz slojeve
+* **latencija** (vrijeme do klasifikacije) raste
+* **točnost pada**, pogotovo u dubljim mrežama
+
+---
+
+### Njihovo rješenje – Percentile-based normalization:
+
+Umjesto da se koristi *maksimum*, koristi se **percentil p-te vrijednosti aktivacija**.
+
+[
+\lambda_l = \text{percentile}_p(a_l)
+]
+
+npr. ako je `p = 99.9`, znači da se ignoriraju ekstremni outlieri iznad tog percentila.
+
+➡️ To povećava firing rate kod većine neurona, čineći mrežu življom i bržom, iako mali broj neurona sad može *saturirati* — ali to je *manje zlo*.
+
+---
+
+### Trade-off koji su otkrili:
+
+* **Previsok p (≈100)** → svi neuroni su preslabo aktivni
+* **Prenizak p (<99)** → previše saturacije
+* **Idealno**: p ∈ [99.0, 99.9, 99.9999]
+  (da, ovi decimalni su doslovno fino podešeni u njihovim eksperimentima)
+
+Autori su empirijski našli da **malo saturacije je bolje nego niska aktivnost**, jer neuroni koji ne pucaju — ne doprinose klasifikaciji.
+
+---
+
+### Dodatni bonus:
+
+Ova metoda se **savršeno kombinira s batch normalization-om** tijekom ANN treninga!
+
+BN već stabilizira aktivacije i smanjuje outliere, pa kad koristiš percentile normalization na BN-treniranoj mreži, dobiješ:
+
+* puno glađu distribuciju aktivacija
+* manje ekstremnih vrijednosti
+* stabilnije i brže konverzije u SNN
+
+Zato ova kombinacija (BN + robust normalization) kasnije omogućuje **uspješnu konverziju ResNet-a i VGG-a u SNN-ove** bez masivnog gubitka točnosti. 💪
+
+---
+
+### 🔍 Ukratko:
+
+| Metoda                | Kako radi              | Problem                      | Rješenje             | Efekt                         |
+| --------------------- | ---------------------- | ---------------------------- | -------------------- | ----------------------------- |
+| Max-Norm (Diehl 2015) | Skala = max aktivacija | Outlieri ubiju firing rate   | –                    | Spora i neaktivna mreža       |
+| Robust (ovaj rad)     | Skala = p-ti percentil | Manje outliera, više firinga | Mali broj saturacija | Brža i točnija SNN konverzija |
+
+---
+
+🧠 3.3 Conversion of Batch Normalization Layers
+🧩 Problem:
+
+Batch normalization (BN) je super stvar u ANN-ovima jer:
+
+stabilizira distribucije aktivacija kroz slojeve (tzv. reduces internal covariate shift)
+
+omogućuje brže i stabilnije treniranje
+
+Ali BN je noćna mora za SNN konverziju, jer dodaje posebne operacije (mean, variance, scale, shift) između slojeva — a te operacije ne postoje u “spike-only” domeni.
+
+💡 Rješenje – “BatchNorm Folding” (spajanje BN u težine):
+
+Autori su rekli — ajmo jednostavno ugraditi BN efekte direktno u težine i biasove prethodnog sloja.
+To znači da više nema zasebnog BN sloja, ali njegov efekt ostaje matematički identičan.
+
+Dakle, ako u ANN-u imaš BN izražen kao:
+
+𝐵
+𝑁
+[
+𝑥
+]
+=
+𝛾
+(
+𝑥
+−
+𝜇
+)
+𝜎
++
+𝛽
+BN[x]=γ
+σ
+(x−μ)
+	​
+
++β
+
+onda se to “folda” u parametre sloja:
+
+𝑊
+~
+𝑙
+=
+𝛾
+𝑙
+𝜎
+𝑙
+𝑊
+𝑙
+W
+~
+l
+	​
+
+=
+σ
+l
+	​
+
+γ
+l
+	​
+
+	​
+
+W
+l
+	​
+
+𝑏
+~
+𝑙
+=
+𝛾
+𝑙
+𝜎
+𝑙
+(
+𝑏
+𝑙
+−
+𝜇
+𝑙
+)
++
+𝛽
+𝑙
+b
+~
+l
+	​
+
+=
+σ
+l
+	​
+
+γ
+l
+	​
+
+	​
+
+(b
+l
+	​
+
+−μ
+l
+	​
+
+)+β
+l
+	​
+
+
+Ove nove 
+𝑊
+~
+𝑙
+W
+~
+l
+	​
+
+ i 
+𝑏
+~
+𝑙
+b
+~
+l
+	​
+
+ zamjenjuju stare vrijednosti — i BN sloj možeš doslovno izbrisati bez gubitka funkcionalnosti.
+
+✅ Efekt:
+
+Nema potrebe konvertirati BN slojeve (oni više ni ne postoje, jer su stopljeni s težinama).
+
+Zadržavaš sve prednosti BN-a iz treninga (stabilnost, bolje generaliziranje).
+
+Konverzija u SNN postaje trivijalna jer sad imaš samo obične linearne + ReLU slojeve.
+
+Empirijski su pokazali da je ovo lossless – dakle, nema pada točnosti kad se BN spoji na ovaj način.
+To je bio ogroman korak jer prije toga, BN-trenirane mreže nisu bile kompatibilne sa SNN-ovima.
+
+⚡ 3.4 Analog Input to the First Hidden Layer
+🧩 Problem:
+
+Standardni način kako se frame-based podaci (npr. slike iz MNIST-a ili CIFAR-10) pretvaraju u spike signale je da se svaka piksel vrijednost kodira kao Poisson spike train.
+
+To znači:
+
+svaki piksel “puca” s frekvencijom proporcionalnom intenzitetu (npr. svjetlini)
+
+ali to dodaje random varijabilnost (jer Poisson = stohastičan)
+
+i ta varijabilnost povećava šum, bez stvarne koristi
+
+💡 Njihov pristup:
+
+Kažu – nema smisla dodavati noise kad su ulazi već analogni!
+Zato neka prvi sloj prima analogne vrijednosti direktno, bez spike kodiranja.
+
+Dakle:
+
+ulazne slike ostaju “continuous” (float vrijednosti 0–1)
+
+tek od prvog skrivenog sloja nadalje prelazimo na spike-based komunikaciju
+
+✅ Efekt:
+
+Manje šuma → stabilniji spike obrazac
+
+Brža konvergencija → jer prvi sloj dobiva točne informacije, bez slučajnosti
+
+Bolje performanse u “low activation” režimu (kada bi spiking neuroni inače preslabo pucali)
+
+Autori su i empirijski potvrdili da ova tehnika donosi bolju preciznost, osobito kod datasetova poput CIFAR-10 gdje je ulaz kompleksniji od MNIST-a.
+
+🔍 Ukratko pregled:
+Tehnika	Što radi	Problem koji rješava	Rezultat
+BN Folding	Ugrađuje BN u težine i biasove	BN slojevi nisu kompatibilni s SNN	Lossless konverzija BN-treniranih mreža
+Analog Input Layer	Koristi analogne vrijednosti u prvom sloju	Poisson spike noise i undersampling	Stabilniji i precizniji SNN output
+
+💬 Bottom line:
+Ove dvije metode zajedno čine “glue” koji spaja cijeli konverzijski pipeline:
+
+Treniraj ANN normalno (koristi BN, ReLU, sve moderno).
+
+Foldaj BN u težine.
+
+Primijeni robust normalization (percentil, npr. p=99.9).
+
+Koristi analogni input u prvom sloju.
+
+Dobiješ SNN koji puca brzo, točno i energetski učinkovito.
+
+3.5 Spiking Softmax — “Neurons that never spike” problem
+
+Do sad, u većini radova konverzija završava s “winner-takes-all” pravilom: neuron koji ispuca najviše spikeova tijekom prezentacije slike = predikcija.
+Problem?
+👉 Ako svi neuroni na kraju dobiju negativne ulaze → nitko ne spika!
+Rezultat: mreža “šuti”, i nema klasifikacije.
+
+Njihovo rješenje:
+Inspirirano Nessler et al. (2009) — uvedu vanjski Poisson generator koji kontrolira spikeove.
+
+Neuroni ne pucaju sami od sebe, nego akumuliraju ulazne potencijale.
+
+Kad generator “povuče okidač”, napravi se softmax natjecanje među neuronima: vjerojatnost spikea proporcionalna je njihovoj akumuliranoj membranskoj potenciji.
+
+Dakle, generator umjetno potiče spikeove u skladu s distribucijom logita.
+
+✅ Time zadržavaš probabilističku prirodu softmaxa i izbjegavaš “silent network” situacije.
+Super pametan hack, i zapravo čini SNN output statistički konzistentnim s ANN outputom.
+
+⚡ 3.6 Spiking Max-Pooling Layers — rješavanje najveće glavobolje konverzije
+
+Max pooling u ANN-u: jednostavno uzmeš maksimum.
+U SNN-u: spikeovi dolaze u vremenu, i teško je izračunati “maksimum” nad stohastičnim događajima.
+
+Dosad su koristili:
+
+Average pooling (Cao i Diehl 2015) → radi, ali gubiš “najjači feature”.
+
+Lateral inhibition → bira pobjednika, ali ne zna kolika je njegova “snaga”.
+
+Time-to-first-spike (Orchard 2015) → brz, ali ne pouzdan ako neuroni imaju slične ulaze.
+
+Njihov prijedlog:
+Uvesti gating funkcije na izlazu max-pooling sloja:
+
+Svaki output neuron ima “vrata” koja propuštaju samo spikeove iz neurona koji trenutno ima najveću procijenjenu firing rate.
+
+Te procjene se računaju online, npr. eksponencijalno ponderiranim prosjekom (EWMA) spike frekvencija.
+
+Tako mreža može kontinuirano adaptirati koji neuron “vlada” pooling prostorom.
+
+✅ Rezultat: efektivna implementacija max-poolinga bez potrebe za posebnim spike timing kodiranjem.
+✅ Time SNN zadržava punu ekvivalentnost s ANN strukturom.
+
+💡 Ukratko:
+Problem	Rješenje	Efekt
+Output neurons ne spikaju ako su svi ulazi negativni	Spiking softmax s vanjskim Poisson generatorom	Održava probabilističku interpretaciju
+Nema max pooling mehanizma u SNN-ovima	Gating funkcije temeljene na firing rate procjenama	Omogućuje realni max pooling ekvivalent
+
+⚙️ 4.1 — Doprinos boljih ANN arhitektura
+
+Ovo poglavlje pokazuje da sama osnova koju konvertiraš (tj. ANN) jako utječe na konačni rezultat SNN-a.
+Prije su konverzijske metode bile ograničene — nisi mogao imat bias, batch-norm, softmax, max-pooling.
+Sad, uz nove metode iz Section 3, sve to možeš.
+
+Eksperiment:
+
+Dataset: CIFAR-10
+
+CNN arhitektura: 4 konvolucijska sloja
+(32×3×3 → 32×3×3 → 64×3×3 → 64×3×3),
+ReLU + BN + 2×2 max-pooling nakon 2. i 4. conv sloja,
+2 fully connected sloja (512 i 10 neurona), softmax output.
+
+Rezultati:
+
+Promjena	Točnost (%)
+Originalni CNN	87.86
+Bez bias-a	87.73
+Bez max-pool (average-pool)	87.69
+Bez softmax (samo ReLU output)	69.44 ❌
+
+💡 Zaključak:
+Softmax i max-pooling su ključni za visoku preciznost, a mogućnost da se sad i oni konvertiraju u SNN znači da konverzija kreće s jačeg ANN-a, pa time i završava s boljim SNN-om.
+
+⚡ 4.2 — Doprinos poboljšanih SNN konverzijskih metoda
+
+Sad kreće najzanimljiviji dio — koliko je svaka od novih metoda zapravo poboljšala SNN performanse.
+
+Eksperiment:
+
+Konverzija istog ANN-a u SNN, uz postupno dodavanje “popravaka”.
+
+Rezultati (CIFAR-10):
+
+Metoda	Točnost (%)	Napomena
+Defaultna konverzija (bez normalizacije, Poisson input, reset-to-zero)	16.5	Skoro nasumično
++ Weight normalization (Diehl 2015)	59.82	Veliki skok
++ Reset-by-subtraction (iz Section 2)	~80	+20% poboljšanje
++ Analog input umjesto Poisson spikeova	83.6	Manja varijabilnost
++ Robust normalization (99.9th percentile)	87.62	Skoro lossless konverzija!
+
+🔥 Boom.
+Iz 16.5% (random) na 87.6% (≈ ANN točnost 87.86%) — znači gotovo bez gubitka informacija u prijenosu na spiking domeni!
+
+🕒 Accuracy–Latency tradeoff
+
+Poznat fenomen u SNN-ovima: što duže mreža “spika”, to bolja točnost.
+Ali ako previše normaliziraš (prekonzervativno, kao u max-norm metodi), spike rate je nizak → mreža sporo konvergira.
+Ako koristiš percentile (npr. 99% ili 99.9%), dobivaš optimalan balans:
+
+Brže konvergira
+
+Doseže gotovo istu točnost kao ANN
+
+Spike rate nije ni prenizak ni presaturiran
+
+📈 Validacija na MNIST
+
+Testirali su i na MNIST:
+
+7-slojna mreža s max-poolingom
+
+Dobivena točnost: 99.44%
+
+Nadmašuje Diehl (2015) i Zambrano & Bohte (2016)
+
+💪 Znači da su ove metode generalizirale i nisu “CIFAR-specific”.
+
+🔍 Sažetak svega:
+Poboljšanje	Što rješava	Efekt
+Biases	Realističniji neuroni	Više fleksibilnosti
+Batch-norm fusion	Stabilnost i manji covariate shift	Više preciznosti
+Robust normalization	Bolji firing rate balans	+4%–6% acc
+Analog input	Manja stohastičnost	Stabilniji output
+Reset-by-subtraction	Precizniji membrane tracking	+20% acc boost
+Spiking softmax	Eliminira “no-spike” slučajeve	Ispravan output layer
+Max-pooling gating	Realistična down-sampling logika	Zadržava ANN arhitekturu
+Percentile scaling (99–99.9%)	Optimalan tradeoff	Brža i preciznija klasifikacija
+
+🚀 Glavni rezultati i usporedbe (Section 5 – Discussion / Results Recap)
+
+Autori naglašavaju dvije velike pobjede:
+
+Širi spektar CNN-ova može se konvertirati u SNN-ove
+– sad više nisu ograničeni na minijaturne mreže bez bias-a, BN-a i softmaxa
+– što znači: možeš koristiti “normalne” moderne CNN arhitekture!
+
+Nova konverzijska poboljšanja daju ogromne skokove u točnosti
+
+📊 Usporedba s prethodnim radovima
+Autor i godina	Dataset / Setup	Accuracy (%)	Napomena
+Cao et al., 2015	CIFAR10, 24×24 crop	77.43	Mala mreža
+Hunsberger & Eliasmith, 2015	CIFAR10, 24×24 crop	82.95	Nema normalization
+Ovaj rad	CIFAR10, full 32×32	87.82	Gotovo bez gubitka
+Esser et al., 2016 (TrueNorth)	CIFAR10, 8 čipova	89.32	Ogromna mreža, ternary weights
+Esser et al., 2016 (1 čip)	CIFAR10, manja mreža	83.41	Hardversko ograničenje
+Ovaj rad (BinaryConnect ANN)	CIFAR10	91.35	Novi SOTA rezultat!
+
+🔥 Znači:
+Samo softverskom konverzijom, bez specijalnog čipa, dosegli su 91.35% na CIFAR-10, što je tada najbolji rezultat za SNN ikad.
+To je manje od 1% gubitka u odnosu na početni ANN (91.94%).
+
+🧠 Glavna ideja
+
+Autori ističu da je cilj bio:
+
+“Expand the toolkit for ANN-to-SNN conversion to the point where large networks, using typical CNN mechanisms, can be converted with only minimal loss of accuracy.”
+
+I uspjeli su — gubitak točnosti je <1% između ANN i SNN.
+To znači da su SNN-ovi napokon kompetitivni s klasičnim CNN-ovima, ali s ogromnim energetskim benefitima.
+
+⏱️ Accuracy–Latency tradeoff
+
+I dalje postoji klasični SNN tradeoff: što dulje mreža spika → to bolja točnost.
+Ali autori napominju da nisu ni trenirali mreže posebno za brzinu konvergencije, pa uz dodatne trikove iz (Neil et al., 2016) očekuju još brže precizne SNN-ove.
+
+🔮 Pogled u budućnost (Section 6 – Conclusions)
+
+Ovo je kulminacija rada — izvučeno srce poruke:
+
+Prva čvrsta teorija za ANN-to-SNN konverziju
+– objašnjava zašto točnost pada
+– i pokazuje kako reset-by-subtraction i robust normalization to rješavaju
+
+Skoro lossless konverzija
+– točnost SNN-a ≈ točnost ANN-a
+– uz manje spike-ova i manju energiju
+
+Mogućnost primjene na veće datasete (ImageNet)
+– cilj: konvertirati velike CNN-ove (ResNet, VGG...)
+– minimalni pad performansi, maksimalna efikasnost
+
+Smjer budućnosti:
+
+Redukcija broja spikeova (redundancy elimination)
+
+Efikasniji prijenos informacija o statičnim ulazima
+
+Veća energetska ušteda uz istu točnost
+
+💥 Ukratko, što su postigli
+Cilj	Rezultat
+Teorijski okvir za ANN→SNN	✔️ izveden
+Rješavanje firing-rate degradacije	✔️ reset-by-subtraction
+Dodani biases, BN, softmax, pooling	✔️ konvertibilni
+Poboljšanje preciznosti na CIFAR-10	16.5% → 87.8%
+Najbolji SNN rezultat (BinaryConnect)	91.35%
+Accuracy drop vs ANN	< 1%
+Primjenjivost na veće CNN-ove	✔️ moguća
