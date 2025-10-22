@@ -1,3 +1,5 @@
+# 80epoha je gore nego 50 :D
+
 from tensorflow import keras
 from cnn2snn import check_model_compatibility, quantize, convert
 
