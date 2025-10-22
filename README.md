@@ -1,5 +1,9 @@
 - Sanity check: ako accuracy raste iz epohe u epohu, ali validation accuracy pada, vrlo vjerojatno se radi o overfittingu.
 - Solution: early stopping
+- sanity check by Gepetto
+✅ ±3–5% oscilacija → normalno, očekivano
+⚠️ nagli pad >10% → znak overfittinga ili prevelikog learning ratea
+🚀 stabilan rast + male oscilacije → idealno
 
 Ovo mi je toliko bitno da ću hitit u readme😂
 - https://doc.brainchipinc.com/user_guide/cnn2snn.html
