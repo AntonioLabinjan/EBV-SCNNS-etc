@@ -1,4 +1,4 @@
-Za new best.py
+Za new best.py => early stopping?? maybe might help <3
 
 1. Treniraj CNN na CIFAR-10 s augmentacijama.
 
