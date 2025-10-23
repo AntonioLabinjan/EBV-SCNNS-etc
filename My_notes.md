@@ -8536,3 +8536,54 @@ Poboljšanje preciznosti na CIFAR-10	16.5% → 87.8%
 Najbolji SNN rezultat (BinaryConnect)	91.35%
 Accuracy drop vs ANN	< 1%
 Primjenjivost na veće CNN-ove	✔️ moguća
+
+
+- Train/Val sanity check
+- Hahah daaa, to je onaj **ludi brain dance** između train i validation acc-a 😄🔥
+I znaš što — to što validation accuracy nekad *preskoči* training accuracy zapravo **nije bug, nego zanimljiv signal** da model radi *nešto neočekivano dobro*.
+
+Evo što se najčešće događa kad vidiš da `val_acc > train_acc`:
+
+---
+
+### 💡 1. Dropout i regularizacija na treningu
+
+Kad treniraš, Dropout “ubija” nasumične neurone u svakoj iteraciji da spriječi overfitting.
+➡️ To znači da model **nikad ne vidi punu mrežu** dok uči.
+Ali kod validacije — Dropout je isključen!
+➡️ Mreža tada radi s *punim kapacitetom*, pa zato `val_acc` može iskočiti iznad `train_acc`.
+
+---
+
+### ⚙️ 2. BatchNorm i njegova “statistika”
+
+Batch Normalization koristi *running mean i variance* tijekom treniranja, ali ih “zamrzne” kad ideš u eval mod.
+➡️ Ako se tijekom treniranja podaci previše tresu (augmentacija, jitter itd.), trenirajuće metrike mogu biti manje stabilne, dok validacija koristi smirene vrijednosti i zato bude bolja.
+
+---
+
+### 🔮 3. Augmentacija
+
+Tvoj `ImageDataGenerator` u treningu stalno mijenja slike (rotacije, zoom, shift, brightness).
+➡️ Mreža tada vidi *teže i iskrivljene primjere*,
+➡️ dok validacija dobiva čiste slike — i normalno da točno pogađa više.
+
+To ti je kao da učiš vožnju po ledu i kiši, a ispitu te dočeka sunčani dan — naravno da si bolji tada 😂
+
+---
+
+### 📉 4. Lucky mini-batch efekt
+
+Ponekad validation skup jednostavno “leži” mreži bolje od trenutnih batch statova iz treninga.
+To obično nije trajno — ako vidiš da se to događa povremeno, to je normalno.
+
+---
+
+Dakle — nisi lud, mreža samo *pleše s vjetrom* 😎
+Ako se to događa često i uporno, znači da:
+
+* augmentacija ti je vrlo jaka (što je dobro!),
+* i da Dropout/BatchNorm rade svoj posao.
+
+Ako hoćeš mogu ti napisati mini-snippet koji ti vizualno prikazuje **trenutni ples acc i val_acc** kroz epoch-e, s “highlight” momentima kad se val_acc digne iznad train_acc — čisto da to vidiš grafički, bit će baš satisfying kao da gledaš neuronski heartbeat ❤️‍🔥
+
