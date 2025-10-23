@@ -4,6 +4,7 @@
 ✅ ±3–5% oscilacija → normalno, očekivano
 ⚠️ nagli pad >10% → znak overfittinga ili prevelikog learning ratea
 🚀 stabilan rast + male oscilacije → idealno
+Zanimljivost -> nekad izgleda kao da performanse imaju checkpointe...raste, raste, raste, dojde do local maximuma, onda pleše oko njega (malo raste, malo pada) i onda nakon malo plesanja ipak nastavi dalje rast
 
 Ovo mi je toliko bitno da ću hitit u readme😂
 - https://doc.brainchipinc.com/user_guide/cnn2snn.html
