@@ -1,3 +1,5 @@
+
+- GRADIENT BOOSTING MIGHT HELP IN FUTURE
 - Sanity check: ako accuracy raste iz epohe u epohu, ali validation accuracy pada, vrlo vjerojatno se radi o overfittingu.
 - Solution: early stopping
 - sanity check by Gepetto
