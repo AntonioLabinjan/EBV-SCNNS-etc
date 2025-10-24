@@ -1,4 +1,5 @@
 Istražit STDP
+https://www.sciencedirect.com/science/article/abs/pii/S0893608017302903
 - GRADIENT BOOSTING MIGHT HELP IN FUTURE
 - Sanity check: ako accuracy raste iz epohe u epohu, ali validation accuracy pada, vrlo vjerojatno se radi o overfittingu.
 - Solution: early stopping
