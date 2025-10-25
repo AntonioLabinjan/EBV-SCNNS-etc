@@ -8660,4 +8660,21 @@ performanse dubljih layera direktno ovise o performansama prethodnih layera
 greška raste jer se u svakom novom laseru množi s weightovima
 svaki idući neuron u layeru prima mrvicu manji spike zbog sampling grešaka
 kad se te greške akumuliraju, performanse malo opadaju
-- 
+
+- Metode za poboljšanje accuracyja
+- Biases => eksplicitno su ih isključili iz najranijih verzija SNN-ova, ali bitno ih je implementirat jer pomoru
+- može ih se implmentirati koristeći konstantni input napona za svaki pojedini cell (proporcionalan ANN biasu)
+- to utječe na mebmranski potencijal
+- SNN neuroni imaju ograničen firing rate, dok klasični ANN-ovi to nemaju
+- koristi se weight normalizacija za smanjenje/izbjegavanje aproksimacijskih grešaka uzrokovanih prerijetkim/prečestim fireingom neurona
+- data-based weight normalizacija za neurone s biasima omogućava robustniju obradu outliera
+- ta je normalizacija bazirana na linearnosti ReLU-a
+- weightovi se normaliziraju tako da vrijednost aktivacije svakog bude manja od 1
+
+- Robusna normalizacija
+- Ako pretjeramo s weight normalizacijom, možemo smanjiti firing rate i dignuti latenciju (not good)
+- postavlja se max firing rate i osigurava se da firing ratesi neurona ne preskaču tu vrijednost koristeći normalizaciju svih weightova i biasa
+- problem toga je ča 1 outlier more jako povećat aktivacije za sebe, dok će posljedično aktivacije za ostale neurone opas
+- jako je bitno pazit na normalizaciju da ne naoravimo svinjariju (moguće je da kriva normalizacija onemogući aktivaciju većine neuorna)
+- ideja je da ne uzmemo najjaču aktivaciju, nego da uzmemo prosjek p-tog percentila svih aktivacija => eliminira ekstermne outliere i povećava firing rate za većinu sampleova
+- ako se iskombinira s batch normalizacijom, može standardizirati aktivacije i stvarati manje ekstremnih outliera
