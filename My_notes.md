@@ -8587,3 +8587,34 @@ Ako se to događa često i uporno, znači da:
 
 Ako hoćeš mogu ti napisati mini-snippet koji ti vizualno prikazuje **trenutni ples acc i val_acc** kroz epoch-e, s “highlight” momentima kad se val_acc digne iznad train_acc — čisto da to vidiš grafički, bit će baš satisfying kao da gledaš neuronski heartbeat ❤️‍🔥
 
+
+Moje dodatne solo bilješke za ovaj paper o teoriji i alatima za konverziju analognih CNN-ova u spiking CNN-ove
+- ostvaruju se slični rezultati, ali s manjom potrošnjom resursa koristeći SNN-ove
+- manja latencija i computational load
+- rezultati su ipak mrvicu slabiji u pravilu. Razlog tome su aproksimacijske greške => rad daje uvid u to koji su razlozi grešaka i kako popraviti
+- postoje brojni jednostavni mehanizmi za popravak
+- alati poput: max-poolinga, softmaxa i batch normalizacije omogućuju skoro losless konverziju
+- benchmark dataseti su: MNIST i CIFAR10
+
+- frame-based vision sucks (već znamo zašto)
+- event based vision smanjuje latenciju i load jer ne procesira sve podatke
+- daje brže rezultate jer omogućava querying već nakon ča se prvi output spike kreira (ANN-ovi daju rezultat tek nakon ča se svi layeri procesiraju)
+- SNN-ovi su prirodno prilagođeni da procesiraju input iz event-based senzora
+- odlično za vrtit na neuromorphic hardverima
+- brzo + efikasno + real-time + energetski efikasno=> more se žrtvovat malo performansi za to
+
+- direktno treniranje SNN-ova na temelju njihovih spiking aktivnosti je smrt
+- bolje je trenirat ANN, povezat aktivacija neurona u ANN sa fireanjem spiking neurona i tako konvertirat ANN u SNN
+- bio-inspired => spiking+leaks+refactory period
+- rad neurona u mozgu je veoma sličan ReLU aktivacijskoj funkciji
+- na mnist datasetu weight normalizacija jako umanjuje gubitke pri konverziji
+- rescaling weightova za smanjenje approximation errora
+- more se dodavat malo noisea pri treningu da se smanje aproksimacijske greške
+- LOW PRECISION WEIGHTS and RESTRICTED CONNECTIVITY => trueNorth
+
+- adapting SNNs => enkoding informacija s minimalnim brojem spikeova => dobar accuracy, ali puno manje neurona
+
+- cilj je omogućit konverziju ANN-a u SNN s minimalnim gubitkom performansi (1% ili manje bi bilo idealno)
+- gubitak performansi uzrokovan je uglavnom redukcijom firing ratea u višim layerima zbog prepesimistične weight normalizacije
+- stvari koje pomoru: MAX-POOLING, SOFTMAX, BATCH NORMALIZATION, BIASES
+- 
