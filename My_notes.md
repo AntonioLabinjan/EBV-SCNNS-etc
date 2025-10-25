@@ -8617,4 +8617,47 @@ Moje dodatne solo bilješke za ovaj paper o teoriji i alatima za konverziju anal
 - cilj je omogućit konverziju ANN-a u SNN s minimalnim gubitkom performansi (1% ili manje bi bilo idealno)
 - gubitak performansi uzrokovan je uglavnom redukcijom firing ratea u višim layerima zbog prepesimistične weight normalizacije
 - stvari koje pomoru: MAX-POOLING, SOFTMAX, BATCH NORMALIZATION, BIASES
+
+- firing rate parametar u SNN-ovima aproksimira ReLU aktivacije u ANN-ovima
+- iz osnovnih aproksimacijskih jednadžbi, može se izvući jednostavna funkcija za aproksimaciju jednadnžbi resetiranja neurona nakon spikeanja
+- SNN neuroni aproksimiraju target funkcije (zato se gubi par % performansi u odnosu na ANN)
+- input se normalizira na skalu od 0 do 1
+- svaki neuron ima svoj membranski potencijal na kojeg utječe napon inputa
+- ča se više piksela mijenja, to ima više inputa
+- firing rate kaže koliko se spikeova generiralo i proporcionalan je ANN aktivvacijama
+- gledamo neuronsku aktivaciju za svaki neuron i procjenjujemo firing rate
+- membrane equation prima i integrira sve inpute sve dok se ne nadmaši threshold i nastane spike
+- postoje 2 glavne reset mehanike => reset to zero i reset by substraction
+
+- **Reset by Subtraction (RbS):**
+
+* Kada neuron ispali (prekorači threshold), njegov se membranski potencijal **smanji za vrijednost thresholda**.
+* Formula:
+  ( V_{new} = V_{old} - V_{th} )
+* Zadržava “ostatak” potencijala, što omogućuje **preciznije vremensko kodiranje** i veću osjetljivost na naknadne spikeove.
+* Daje finiju granularnost u reprezentaciji informacija.
+
+**Reset to Zero (RtZ):**
+
+* Kada neuron ispali, potencijal se **potpuno resetira na nulu** (ili resting potencijal).
+* Formula:
+  ( V_{new} = 0 )
+* Gubi se višak energije iznad thresholda.
+* Pojednostavljuje dinamiku i hardverski je lakše implementirati.
+* Manje precizan, ali stabilniji i učinkovitiji za masivne mreže.
+
+Reset to zero pretpostavlja da postoji točan interval između spikeova i da je iznos nadmašivanja thresholda uvijek iti
+Sigurno ima aproksimacijske greške
+Zato je weight normalizacija obavezna
+
+U reset by substraction mehanizmu, pretpostavljamo da nema konstantnog timestampa i onda jedini approximation error nastaje zbog discrete samplinga
+Preciznije nego reset to zero
+Pomaže nan weight normalizacija
+
+Rezultati su temeljeni na pretpostavci da svaki neuron prima konstantni inout u svakom koraku simulacije; za spiking neurone to vrijedi samo u prvom koraku
+reset by substraction daje uvid u to kako se aproksimacijske greške propagiraju kroz dublje layere
+performanse dubljih layera direktno ovise o performansama prethodnih layera
+greška raste jer se u svakom novom laseru množi s weightovima
+svaki idući neuron u layeru prima mrvicu manji spike zbog sampling grešaka
+kad se te greške akumuliraju, performanse malo opadaju
 - 
