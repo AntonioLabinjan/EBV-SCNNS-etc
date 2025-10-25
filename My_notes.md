@@ -8723,3 +8723,9 @@ SNN => najprve verzije su bile oko 16.5% acc
 - 99th percentile activation za weight normalization diže acc na 87.62%
 
 - ja san trenutno na oko 78%
+
+- 7 layer network s max poolingon => oko 99%
+
+- Accuracy-latency tradeoff => accuracy improves the longer network is being simulated (zato nekad samo povećanje broja epoha digne performanse)
+
+- NA CIFAR 10 CILJAMO BAR 85% ACC NAKON SPIKING KONVERZIJE DA BI TO BIJA KVALITETAN REZULTAT
