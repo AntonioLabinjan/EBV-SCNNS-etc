@@ -8678,3 +8678,48 @@ kad se te greške akumuliraju, performanse malo opadaju
 - jako je bitno pazit na normalizaciju da ne naoravimo svinjariju (moguće je da kriva normalizacija onemogući aktivaciju većine neuorna)
 - ideja je da ne uzmemo najjaču aktivaciju, nego da uzmemo prosjek p-tog percentila svih aktivacija => eliminira ekstermne outliere i povećava firing rate za većinu sampleova
 - ako se iskombinira s batch normalizacijom, može standardizirati aktivacije i stvarati manje ekstremnih outliera
+
+- Batch normalizacija ubrzava trening
+- Integrira se u weight vektore da se izbjegnu nepotrebna, neoptimalna računanja
+- lakše je prilagođavati weightove nego delat normalizaciju na svakom layeru
+
+- Analog input
+- nema baš nekega specifičnega EB dataseta, pa se koriste MNIST i CIFAR
+- prije se radilo konvertiranje RGB u Grayscale i onda u poisson firing rates
+- to je dovodilo do prevelike varijabilnosti u firingu i rušilo performanse
+- alterantiva: analogni inputi u prvom hidden layeru i izračun spikeova
+- super za low-activation slučajeve kad želimo čim manje nepotrebnih aktivacija
+- glavni problem: UNDERSAMPLING SPIKING NEURONA => uzmemo premalo inputa
+
+- Spiking softmax
+- koristi se softmax jer je normaliziran i vraća samo pozitivne brojeve
+- rani primjeri nisu uspjeli konvertirati softmax pa su samo predictali klasu neurona koji je najviše spikeao
+- stvar faila ako u zadnjem layeru neuroni primaju samo negativan input pa ne spikeaju
+- softmax layeri se s konvertiraju pomoću poisson generatora s varijablinim firing rateom
+- spiking neuroni ne fireaju sami od sebe nego kad akumuliraju dovoljno inputa
+
+- Spiking max-pooling layers
+- većina uspješnih ANN-ova koristi max-pooling za prostorni down-sampling feature mapsa
+- U SNN-ovima se ne koristi baš jer ne kompleksno za implementirati
+- Koristio se simple average pooling, ali to ubija rezultate
+- isproban je lateral inhibition, ali ni to ne pomore jer samo odabire najjači neuron, ali ne zna se njegov firing rate
+- time-to-first-spike encoding =>prvi neuron koji firea se smatra maximally firing neuronom
+- mehanizam za max-pooling => gate koji dopušta samo spikeovima iz maximally firing neurona da prođu, a ostale odbaciuje
+- gating funkcija definira se računanjem procjena presinaptičkih firing ratesa => weighted average
+
+- Summa summarum:
+- 2 načina za poboljšanje perforamnsi SNN-ova nakon konverzije su:
+- 1) treniranje boljeg ANN-a prije konverzije
+  2) poboljšanje konverzije eliminiranjem aproksimacijskih grešaka SNN-a
+
+ JAAAAKOOOO BITNOOOO
+ - ---------------------------------------------------------------
+- CIFAR10 => CNN s 4 konvolucijska layera (32 3x3 - 32 3x3 - 64 3x3 - 64 3x3), ReLU aktivacijama, batch normalizacijom, 2x2 max-pooling layera nakon druge i četvrte konvolucije, onda 2 fully connected layera (512 i 10 neurona) i softmax outputom  => 87.86% accuracy => TU GOVORIMO O ORIGINAL ANN-u PRIJE KONVERZIJE
+- ----------------------------------------------------------------
+
+SNN => najprve verzije su bile oko 16.5% acc
+- Weight normalizacija diže acc na 59.82%
+- Reset-by-substraction diže acc na 83.6%
+- 99th percentile activation za weight normalization diže acc na 87.62%
+
+- ja san trenutno na oko 78%
