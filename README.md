@@ -1,3 +1,5 @@
+TODO: hitit se na detaljnije proučavanje onih STDP i Brainchip papera; kod pustit ća jeno malo...koncept san skužija, performanse ću ben peglat
+
 Istražit STDP
 https://www.sciencedirect.com/science/article/abs/pii/S0893608017302903
 - GRADIENT BOOSTING MIGHT HELP IN FUTURE
